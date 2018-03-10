@@ -16,7 +16,7 @@ defmodule HadrianWeb.Router do
   scope "/", HadrianWeb do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
+    resources "/sports_disciplines", SportsDisciplineController
   end
 
   # Other scopes may use custom stacks.

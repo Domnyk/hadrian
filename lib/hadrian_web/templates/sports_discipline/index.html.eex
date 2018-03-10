@@ -1,0 +1,30 @@
+<h2>Listing Sports disciplines</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Min num of people</th>
+      <th>Required equipment</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for sports_discipline <- @sports_disciplines do %>
+    <tr>
+      <td><%= sports_discipline.name %></td>
+      <td><%= sports_discipline.min_num_of_people %></td>
+      <td><%= sports_discipline.required_equipment %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: sports_discipline_path(@conn, :show, sports_discipline), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: sports_discipline_path(@conn, :edit, sports_discipline), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: sports_discipline_path(@conn, :delete, sports_discipline), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Sports discipline", to: sports_discipline_path(@conn, :new) %></span>

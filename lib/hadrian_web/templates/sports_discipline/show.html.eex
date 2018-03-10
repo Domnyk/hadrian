@@ -1,0 +1,23 @@
+<h2>Show Sports discipline</h2>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @sports_discipline.name %>
+  </li>
+
+  <li>
+    <strong>Min num of people:</strong>
+    <%= @sports_discipline.min_num_of_people %>
+  </li>
+
+  <li>
+    <strong>Required equipment:</strong>
+    <%= @sports_discipline.required_equipment %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: sports_discipline_path(@conn, :edit, @sports_discipline) %></span>
+<span><%= link "Back", to: sports_discipline_path(@conn, :index) %></span>
