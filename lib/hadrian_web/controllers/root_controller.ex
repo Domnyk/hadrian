@@ -1,4 +1,4 @@
-defmodule HadrianWeb.PageController do
+defmodule HadrianWeb.RootController do
   use HadrianWeb, :controller
 
   def index(conn, _params) do

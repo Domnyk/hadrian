@@ -20,12 +20,21 @@
   <body>
     <div class="container">
       <header class="header">
-        <nav role="navigation">
-          <ul class="nav nav-pills pull-right">
-            <li><a href="http://www.phoenixframework.org/docs">Get Started</a></li>
-          </ul>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
+          <a class="navbar-brand" href="#">Hadrian</a>
+
+          <div>
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-time active">
+                <%= if Hadrian.Auth.user_logged?(@conn) do %>
+                  <%= Hadrian.Auth.get_current_user(@conn).name  %>
+                <% else %>
+                  <a class="nav-link" href="/auth/facebook">Login</a>
+                <% end %>
+              </li>
+            </ul>
+          </div>
         </nav>
-        <span class="logo"></span>
       </header>
       
       <%= unless is_nil(get_flash(@conn, :success)) do %>
