@@ -18,30 +18,11 @@
   </head>
 
   <body>
-    <div class="container">
+    <div class="container-fluid">
       <header class="header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light" role="navigation">
-          <a class="navbar-brand" href="/">Hadrian</a>
-
-          <div>
-            <ul class="navbar-nav mr-auto">
-              <li class="nav-item active">
-                <%= if HadrianWeb.AuthController.user_logged?(@conn) do %>
-                  <a href="/" class="nav-link" ><%= HadrianWeb.AuthController.get_current_user(@conn).name  %></a>
-                <% else %>
-                  <a class="nav-link" href="/auth/facebook">Login</a>
-                <% end %>
-              </li>
-              <%= if HadrianWeb.AuthController.user_logged?(@conn) do %>
-                <li class="nav-item">
-                  <a class="nav-link" href="/auth/facebook/logout">Logout</a>
-                </li>
-              <% end %>
-            </ul>
-          </div>
-        </nav>
+        <%= render HadrianWeb.SharedView, "header.html", assigns %>
       </header>
-      
+
       <%= unless is_nil(get_flash(@conn, :success)) do %>
         <p class="alert alert-success" role="alert"><%= get_flash(@conn, :success) %></p>
       <% end %>

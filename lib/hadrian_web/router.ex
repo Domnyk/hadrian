@@ -15,12 +15,12 @@ defmodule HadrianWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/auth", HadrianWeb do
+  scope "/auth/:provider", HadrianWeb do
     pipe_through :browser
 
-    get "/:provider", AuthController, :request
-    get "/:provider/callback", AuthController, :callback
-    get "/:provider/logout", AuthController, :logout
+    get "/", AuthController, :login
+    get "/callback", AuthController, :login_callback
+    delete "/", AuthController, :logout
   end
 
   scope "/", HadrianWeb do

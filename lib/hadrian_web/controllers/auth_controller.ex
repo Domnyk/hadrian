@@ -1,32 +1,31 @@
 defmodule HadrianWeb.AuthController do
   use HadrianWeb, :controller
 
-  require Logger
-
-  import Plug.Conn
-
+  # import Plug.Conn
   alias Hadrian.Accounts
+  require Logger
 
   plug Ueberauth
 
-  def request(conn, _params) do
-    render conn, "index.html"
+  def login(conn, _params) do
+    conn
+    |> redirect(to: "/")
   end
 
   def logout(conn, _params) do
-    Plug.Conn.configure_session(conn, drop: true)
+    Plug.Conn.clear_session(conn)
     |> put_flash(:success, "You have been successfully logged out")
     |> redirect(to: "/")
   end
 
 
-  def callback(%{assigns: %{ueberauth_failure: _fails}} = conn, _params) do
+  def login_callback(%{assigns: %{ueberauth_failure: _fails}} = conn, _params) do
     conn
   	|> put_flash(:error, "There was an error while authorizaiton. Plase try again")
   	|> redirect(to: "/")
   end
 
-  def callback(%{assigns: %{ueberauth_auth: %{info: user}}} = conn, _params) do
+  def login_callback(%{assigns: %{ueberauth_auth: %{info: user}}} = conn, _params) do
     case Accounts.get_user_by_email(user.email) do
       %Accounts.User{:id => id} -> redirect_existing_user(conn, id)   
       nil -> redirect_new_user(conn, user)
