@@ -20,6 +20,7 @@ defmodule HadrianWeb.Router do
 
     get "/:provider", AuthController, :request
     get "/:provider/callback", AuthController, :callback
+    get "/:provider/logout", AuthController, :logout
   end
 
   scope "/", HadrianWeb do

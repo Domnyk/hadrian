@@ -3,6 +3,8 @@ defmodule HadrianWeb.AuthController do
 
   require Logger
 
+  import Plug.Conn
+
   alias Hadrian.Accounts
 
   plug Ueberauth
@@ -10,6 +12,13 @@ defmodule HadrianWeb.AuthController do
   def request(conn, _params) do
     render conn, "index.html"
   end
+
+  def logout(conn, _params) do
+    Plug.Conn.configure_session(conn, drop: true)
+    |> put_flash(:success, "You have been successfully logged out")
+    |> redirect(to: "/")
+  end
+
 
   def callback(%{assigns: %{ueberauth_failure: _fails}} = conn, _params) do
     conn
@@ -29,6 +38,16 @@ defmodule HadrianWeb.AuthController do
     |> put_session(:logged_user_id, user_id)
     |> put_flash(:success, "You have successfully signed in")
     |> redirect(to: "/")
+  end
+
+  def user_logged?(conn) do
+    !!Plug.Conn.get_session(conn, :logged_user_id)
+  end
+
+  def get_current_user(conn) do
+    user_id = Plug.Conn.get_session(conn, :logged_user_id)
+
+    Accounts.get_user!(user_id)
   end
 
   defp redirect_new_user(conn, user) do
