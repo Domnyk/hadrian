@@ -26,10 +26,10 @@ defmodule HadrianWeb.AuthController do
   end
 
   def login_callback(%{assigns: %{ueberauth_auth: %{info: user}}} = conn, _params) do
-    case Accounts.get_user_by_email(user.email) do
-      %Accounts.User{:id => id} -> redirect_existing_user(conn, id)   
-      nil -> redirect_new_user(conn, user)
-    end
+    # case Accounts.get_user_by_email(user.email) do
+    #  %Accounts.User{:user_id => id} -> redirect_existing_user(conn, id)   
+    #  nil -> redirect_new_user(conn, user)
+    # end
   end
 
   defp redirect_existing_user(conn, user_id) do
@@ -51,7 +51,7 @@ defmodule HadrianWeb.AuthController do
 
   defp redirect_new_user(conn, user) do
     case Accounts.create_user(%{:name => user.name, :email => user.email}) do
-      {:ok, %Accounts.User{:id => id}} -> 
+      {:ok, %Accounts.User{:user_id => id}} -> 
         conn
         |> put_session(:logged_user_id, id)
         |> put_flash(:success, "You have successfully signed up")
