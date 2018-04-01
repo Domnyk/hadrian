@@ -7,7 +7,7 @@ defmodule Hadrian.Owners.DailySchedule do
   schema "daily_schedules" do
     field :schedule_day, :date
 
-    belongs_to :sport_object, Hadrian.Owners.SportObject, references: :sport_object_id
+    belongs_to :sport_arena, Hadrian.Owners.SportArena, references: :sport_arena_id
     has_many :time_blocks, Hadrian.Owners.TimeBlock, foreign_key: :daily_schedule_id
   end
 

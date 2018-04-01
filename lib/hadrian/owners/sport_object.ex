@@ -10,7 +10,7 @@ defmodule Hadrian.Owners.SportObject do
     field :name, :string
 
     belongs_to :sport_complex, Hadrian.Owners.SportComplex, references: :sport_complex_id
-    has_many :daily_schedules, Hadrian.Owners.DailySchedule, foreign_key: :sport_object_id
+    has_many :sport_arenas, Hadrian.Owners.SportArena, foreign_key: :sport_object_id
   end
 
   @doc false
