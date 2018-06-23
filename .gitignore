@@ -25,3 +25,12 @@ npm-debug.log
 # secrets files as long as you replace their contents by environment
 # variables.
 /config/*.secret.exs
+
+# macOS
+.DS_Store
+
+# InteliJ
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/tasks.xml
+hadrian.iml
