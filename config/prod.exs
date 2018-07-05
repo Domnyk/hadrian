@@ -61,4 +61,13 @@ config :logger, level: :info
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
-import_config "prod.secret.exs"
+config :hadrian, Hadrian.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: System.get_env("POSTGRES_USER"),
+  password: System.get_env("POSTGRES_PASSWORD"),
+  database: System.get_env("POSTGRES_DB"),
+  hostname: System.get_env("POSTGRES_HOST"),
+  pool_size: 15
+
+config :hadrian, HadrianWeb.Endpoint,
+  secret_key_base: System.get_env("PHOENIX_SECRET_KEY_BASE")

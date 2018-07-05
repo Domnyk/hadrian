@@ -22,7 +22,10 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
 
-import_config "env.secret.exs"
+# API keys file is only present on dev machines
+if Mix.env == :dev do
+  import_config "api_keys.secret.exs"
+end
 
 # Configures Ueberauth
 config :ueberauth, Ueberauth,
