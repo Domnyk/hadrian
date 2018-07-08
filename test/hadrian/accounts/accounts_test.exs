@@ -6,9 +6,9 @@ defmodule Hadrian.AccountsTest do
   describe "users" do
     alias Hadrian.Accounts.User
 
-    @valid_attrs %{email: "some email", name: "some name"}
-    @update_attrs %{email: "some updated email", name: "some updated name"}
-    @invalid_attrs %{email: nil, name: nil}
+    @valid_attrs %{first_name: "John", last_name: "Cena"}
+    @update_attrs %{first_name: "Steve", last_name: "Madden"}
+    @invalid_attrs %{first_name: nil, last_name: nil}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -31,8 +31,9 @@ defmodule Hadrian.AccountsTest do
 
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
-      assert user.email == "some email"
-      assert user.name == "some name"
+      
+      assert user.first_name == @valid_attrs.first_name
+      assert user.last_name == @valid_attrs.last_name
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -43,8 +44,8 @@ defmodule Hadrian.AccountsTest do
       user = user_fixture()
       assert {:ok, user} = Accounts.update_user(user, @update_attrs)
       assert %User{} = user
-      assert user.email == "some updated email"
-      assert user.name == "some updated name"
+      assert user.first_name == "Steve"
+      assert user.last_name == "Madden"
     end
 
     test "update_user/2 with invalid data returns error changeset" do

@@ -6,9 +6,14 @@ defmodule Hadrian.ActivitiesTest do
   describe "events" do
     alias Hadrian.Activities.Event
 
-    @valid_attrs %{end_of_joining_phase: "2010-04-17 14:00:00.000000Z", max_num_of_participants: 42, min_num_of_participants: 42}
-    @update_attrs %{end_of_joining_phase: "2011-05-18 15:01:01.000000Z", max_num_of_participants: 43, min_num_of_participants: 43}
-    @invalid_attrs %{end_of_joining_phase: nil, max_num_of_participants: nil, min_num_of_participants: nil}
+    @valid_attrs %{max_num_of_participants: 100, min_num_of_participants: 42, 
+                    duration_of_joining_phase: %{months: 0, days: 7, secs: 0},
+                    duration_of_paying_phase: %{months: 0, days: 7, secs: 0}, time_block_id: 1}
+    @update_attrs %{max_num_of_participants: 50, min_num_of_participants: 43, 
+                    duration_of_joining_phase: %{months: 0, days: 5, secs: 0},
+                    duration_of_paying_phase: %{months: 0, days: 5, secs: 0}, time_block_id: 1}
+    @invalid_attrs %{max_num_of_participants: nil, min_num_of_participants: nil, duration_of_joining_phase: nil,
+                    duration_of_paying_phase: nil, time_block_id: nil}
 
     def event_fixture(attrs \\ %{}) do
       {:ok, event} =
@@ -21,6 +26,7 @@ defmodule Hadrian.ActivitiesTest do
 
     test "list_events/0 returns all events" do
       event = event_fixture()
+
       assert Activities.list_events() == [event]
     end
 
@@ -31,8 +37,9 @@ defmodule Hadrian.ActivitiesTest do
 
     test "create_event/1 with valid data creates a event" do
       assert {:ok, %Event{} = event} = Activities.create_event(@valid_attrs)
-      assert event.end_of_joining_phase == DateTime.from_naive!(~N[2010-04-17 14:00:00.000000Z], "Etc/UTC")
-      assert event.max_num_of_participants == 42
+      assert event.duration_of_joining_phase == %Postgrex.Interval{months: 0, days: 7, secs: 0}
+      assert event.duration_of_paying_phase == %Postgrex.Interval{months: 0, days: 7, secs: 0}
+      assert event.max_num_of_participants == 100
       assert event.min_num_of_participants == 42
     end
 
@@ -42,11 +49,12 @@ defmodule Hadrian.ActivitiesTest do
 
     test "update_event/2 with valid data updates the event" do
       event = event_fixture()
-      assert {:ok, event} = Activities.update_event(event, @update_attrs)
-      assert %Event{} = event
-      assert event.end_of_joining_phase == DateTime.from_naive!(~N[2011-05-18 15:01:01.000000Z], "Etc/UTC")
-      assert event.max_num_of_participants == 43
-      assert event.min_num_of_participants == 43
+      assert {:ok, updated_event} = Activities.update_event(event, @update_attrs)
+      assert %Event{} = updated_event
+      assert updated_event.duration_of_joining_phase == %Postgrex.Interval{months: 0, days: 5, secs: 0}
+      assert updated_event.duration_of_paying_phase == %Postgrex.Interval{months: 0, days: 5, secs: 0}
+      assert updated_event.max_num_of_participants == 50
+      assert updated_event.min_num_of_participants == 43
     end
 
     test "update_event/2 with invalid data returns error changeset" do

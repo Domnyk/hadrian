@@ -66,9 +66,9 @@ defmodule Hadrian.OwnersTest do
   describe "sport_objects" do
     alias Hadrian.Owners.SportObject
 
-    @valid_attrs %{latitude: 120.5, longitude: 120.5, name: "some name"}
-    @update_attrs %{latitude: 456.7, longitude: 456.7, name: "some updated name"}
-    @invalid_attrs %{latitude: nil, longitude: nil, name: nil}
+    @valid_attrs %{latitude: 89.5, longitude: 120.5, name: "some name", sport_complex_id: 1}
+    @update_attrs %{latitude: 76.7, longitude: 145.7, name: "some updated name", sport_complex_id: 2}
+    @invalid_attrs %{latitude: nil, longitude: nil, name: nil, sport_complex_id: nil}
 
     def sport_object_fixture(attrs \\ %{}) do
       {:ok, sport_object} =
@@ -91,7 +91,7 @@ defmodule Hadrian.OwnersTest do
 
     test "create_sport_object/1 with valid data creates a sport_object" do
       assert {:ok, %SportObject{} = sport_object} = Owners.create_sport_object(@valid_attrs)
-      assert sport_object.latitude == 120.5
+      assert sport_object.latitude == 89.5
       assert sport_object.longitude == 120.5
       assert sport_object.name == "some name"
     end
@@ -104,8 +104,8 @@ defmodule Hadrian.OwnersTest do
       sport_object = sport_object_fixture()
       assert {:ok, sport_object} = Owners.update_sport_object(sport_object, @update_attrs)
       assert %SportObject{} = sport_object
-      assert sport_object.latitude == 456.7
-      assert sport_object.longitude == 456.7
+      assert sport_object.latitude == 76.7
+      assert sport_object.longitude == 145.7
       assert sport_object.name == "some updated name"
     end
 
@@ -130,9 +130,9 @@ defmodule Hadrian.OwnersTest do
   describe "daily_schedules" do
     alias Hadrian.Owners.DailySchedule
 
-    @valid_attrs %{schedule_day: ~D[2010-04-17]}
-    @update_attrs %{schedule_day: ~D[2011-05-18]}
-    @invalid_attrs %{schedule_day: nil}
+    @valid_attrs %{schedule_day: ~D[2010-04-17], sport_arena_id: 1}
+    @update_attrs %{schedule_day: ~D[2011-05-18], sport_arena_id: 2}
+    @invalid_attrs %{schedule_day: nil, sport_arena_id: nil}
 
     def daily_schedule_fixture(attrs \\ %{}) do
       {:ok, daily_schedule} =
@@ -190,9 +190,9 @@ defmodule Hadrian.OwnersTest do
   describe "time_blocks" do
     alias Hadrian.Owners.TimeBlock
 
-    @valid_attrs %{end_hour: ~T[14:00:00.000000], start_hour: ~T[14:00:00.000000]}
-    @update_attrs %{end_hour: ~T[15:01:01.000000], start_hour: ~T[15:01:01.000000]}
-    @invalid_attrs %{end_hour: nil, start_hour: nil}
+    @valid_attrs %{end_hour: ~T[14:00:00.000000], start_hour: ~T[14:00:00.000000], daily_schedule_id: 1}
+    @update_attrs %{end_hour: ~T[15:01:01.000000], start_hour: ~T[15:01:01.000000], daily_schedule_id: 2}
+    @invalid_attrs %{end_hour: nil, start_hour: nil, daily_schedule_id: nil}
 
     def time_block_fixture(attrs \\ %{}) do
       {:ok, time_block} =
