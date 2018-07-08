@@ -51,7 +51,7 @@ defmodule HadrianWeb.AuthController do
 
   defp redirect_new_user(conn, user) do
     case Accounts.create_user(%{:name => user.name, :email => user.email}) do
-      {:ok, %Accounts.User{:user_id => id}} -> 
+      {:ok, %Accounts.User{:id => id}} -> 
         conn
         |> put_session(:logged_user_id, id)
         |> put_flash(:success, "You have successfully signed up")
