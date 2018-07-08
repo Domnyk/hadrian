@@ -2,8 +2,6 @@ defmodule Hadrian.Owners.TimeBlock do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @primary_key {:time_block_id, :id, autogenerate: true}
-
   schema "time_blocks" do
     field :end_hour, :time
     field :start_hour, :time
@@ -15,7 +13,7 @@ defmodule Hadrian.Owners.TimeBlock do
   @doc false
   def changeset(time_block, attrs) do
     time_block
-    |> cast(attrs, [:start_hour, :end_hour])
-    |> validate_required([:start_hour, :end_hour])
+    |> cast(attrs, [:start_hour, :end_hour, :daily_schedule_id])
+    |> validate_required([:start_hour, :end_hour, :daily_schedule_id])
   end
 end

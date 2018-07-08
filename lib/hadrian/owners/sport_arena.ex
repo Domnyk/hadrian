@@ -2,8 +2,6 @@ defmodule Hadrian.Owners.SportArena do
 	use Ecto.Schema
 	import Ecto.Changeset
 
-	@primary_key {:sport_arena_id, :id, autogenerate: true}
-
 	schema "sport_arenas" do
 		field :name, :string
 		field :type, :string
@@ -14,7 +12,7 @@ defmodule Hadrian.Owners.SportArena do
 
 	def changeset(sport_arena, attrs) do
     sport_arena
-    |> cast(attrs, [:name, :type])
-    |> validate_required([:name, :type])
+    |> cast(attrs, [:name, :type, :sport_object_id])
+    |> validate_required([:name, :type, :sport_object_id])
   end
 end

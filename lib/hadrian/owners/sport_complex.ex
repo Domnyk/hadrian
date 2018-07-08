@@ -2,8 +2,6 @@ defmodule Hadrian.Owners.SportComplex do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @primary_key {:sport_complex_id, :id, autogenerate: true}
-
   schema "sport_complexes" do
     field :name, :string
 

@@ -2,9 +2,6 @@ defmodule Hadrian.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-
-  @primary_key {:user_id, :id, autogenerate: true}
-
   schema "users" do
     field :first_name , :string
     field :last_name  , :string

@@ -2,8 +2,6 @@ defmodule Hadrian.Owners.DailySchedule do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @primary_key {:daily_schedule_id, :id, autogenerate: true}
-
   schema "daily_schedules" do
     field :schedule_day, :date
 
@@ -14,7 +12,7 @@ defmodule Hadrian.Owners.DailySchedule do
   @doc false
   def changeset(daily_schedule, attrs) do
     daily_schedule
-    |> cast(attrs, [:schedule_day])
-    |> validate_required([:schedule_day])
+    |> cast(attrs, [:schedule_day, :sport_arena_id])
+    |> validate_required([:schedule_day, :sport_arena_id])
   end
 end
