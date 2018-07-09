@@ -7,7 +7,7 @@ defmodule Hadrian.Owners.SportObject do
     field :longitude, :decimal
     field :name, :string
 
-    belongs_to :sport_complex, Hadrian.Owners.SportComplex, references: :sport_complex_id
+    belongs_to :sport_complex, Hadrian.Owners.SportComplex, references: :id
     has_many :sportl_arenas, Hadrian.Owners.SportArena, foreign_key: :sport_object_id
   end
 
