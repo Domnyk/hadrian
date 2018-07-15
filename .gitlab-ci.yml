@@ -15,7 +15,7 @@ variables:
 build:
   variables:
     MIX_ENV: prod
-    POSTGRES_DB: macsen_prod
+    POSTGRES_DB: hadrian_prod
   stage: build
   before_script:
     - npm install -g brunch
@@ -33,7 +33,7 @@ build:
 test:
   variables:
     MIX_ENV: test
-    POSTGRES_DB: macsen_test
+    POSTGRES_DB: hadrian_prod
   stage: test
   before_script:
     - apk --update add postgresql-client
