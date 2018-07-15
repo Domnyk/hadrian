@@ -14,7 +14,7 @@ defmodule Hadrian.Repo.Migrations.AddEventDoesNotFulfillTimeMarginTrigger do
         required_end_of_booking_phase DATE;
       BEGIN
         SELECT sport_objects.booking_margin, d_s.schedule_day INTO booking_margin, schedule_day from sport_objects
-        JOIN sport_arenas s_aa ON sport_objects.id = s_a.sport_object_id
+        JOIN sport_arenas s_a ON sport_objects.id = s_a.sport_object_id
         JOIN daily_schedules d_s ON s_a.id = d_s.sport_arena_id
         JOIN time_blocks t_b ON d_s.id = t_b.daily_schedule_id
         WHERE NEW.time_block_id = t_b.id;
