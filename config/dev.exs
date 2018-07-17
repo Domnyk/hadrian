@@ -53,6 +53,6 @@ config :hadrian, Hadrian.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: "dominiktrusinski",
   password: "dominiktrusinski",
-  database: "hadrian_dev",
+  database: "migrations",
   hostname: "localhost",
   pool_size: 10

@@ -21,6 +21,7 @@ defmodule Hadrian.DataCase do
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
+      import Hadrian.DataFactory
       import Hadrian.DataCase
     end
   end
