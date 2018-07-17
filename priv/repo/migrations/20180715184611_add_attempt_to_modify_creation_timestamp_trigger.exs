@@ -8,11 +8,7 @@ defmodule Hadrian.Repo.Migrations.AddAttemptToModifyCreationTimestampTrigger do
       LANGUAGE plpgsql
       AS $$
       BEGIN
-<<<<<<< HEAD
-        IF (NEW.created_at <> OLD.created_at) THEN
-=======
         IF (NEW.inserted_at <> OLD.inserted_at) THEN
->>>>>>> c4f1ba2dd11aa769312d904ce8a2fd4a403f56a6
           RAISE EXCEPTION 'Modifying creation timestamp is illegal';
         END IF;
   
