@@ -6,7 +6,7 @@ defmodule Hadrian.Owners.SportArena do
 		field :name, :string
 		field :type, :string
 
-		belongs_to :sport_object, Hadrian.Owners.SportObject, references: :sport_object_id
+		belongs_to :sport_object, Hadrian.Owners.SportObject, references: :id
 		has_many :daily_schedules, Hadrian.Owners.DailySchedule, foreign_key: :sport_arena_id 
 	end
 
