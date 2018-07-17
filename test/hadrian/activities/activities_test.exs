@@ -6,41 +6,36 @@ defmodule Hadrian.ActivitiesTest do
   describe "events" do
     alias Hadrian.Activities.Event
 
-    @valid_attrs %{max_num_of_participants: 100, min_num_of_participants: 42, 
-                    duration_of_joining_phase: %{months: 0, days: 7, secs: 0},
-                    duration_of_paying_phase: %{months: 0, days: 7, secs: 0}, time_block_id: 1}
+    
     @update_attrs %{max_num_of_participants: 50, min_num_of_participants: 43, 
                     duration_of_joining_phase: %{months: 0, days: 5, secs: 0},
-                    duration_of_paying_phase: %{months: 0, days: 5, secs: 0}, time_block_id: 1}
+                    duration_of_paying_phase: %{months: 0, days: 5, secs: 0}}
     @invalid_attrs %{max_num_of_participants: nil, min_num_of_participants: nil, duration_of_joining_phase: nil,
                     duration_of_paying_phase: nil, time_block_id: nil}
 
-    def event_fixture(attrs \\ %{}) do
-      {:ok, event} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Activities.create_event()
-
-      event
-    end
-
     test "list_events/0 returns all events" do
-      event = event_fixture()
+      events_list = insert_list(3, :event)
 
-      assert Activities.list_events() == [event]
+      assert Activities.list_events() == events_list
     end
 
     test "get_event!/1 returns the event with given id" do
-      event = event_fixture()
+      event = insert(:event)
+
       assert Activities.get_event!(event.id) == event
     end
 
-    test "create_event/1 with valid data creates a event" do
-      assert {:ok, %Event{} = event} = Activities.create_event(@valid_attrs)
+    test "create_event/1 with valid data creates an event" do
+      time_block = insert(:time_block)
+      valid_attrs = %{max_num_of_participants: 100, min_num_of_participants: 42, 
+                    duration_of_joining_phase: %{months: 0, days: 7, secs: 0},
+                    duration_of_paying_phase: %{months: 0, days: 7, secs: 0}, time_block_id: time_block.id}
+      
+      assert {:ok, %Event{} = event} = Activities.create_event(valid_attrs)
       assert event.duration_of_joining_phase == %Postgrex.Interval{months: 0, days: 7, secs: 0}
       assert event.duration_of_paying_phase == %Postgrex.Interval{months: 0, days: 7, secs: 0}
-      assert event.max_num_of_participants == 100
-      assert event.min_num_of_participants == 42
+      assert event.max_num_of_participants == valid_attrs.max_num_of_participants
+      assert event.min_num_of_participants == valid_attrs.min_num_of_participants
     end
 
     test "create_event/1 with invalid data returns error changeset" do
@@ -48,29 +43,34 @@ defmodule Hadrian.ActivitiesTest do
     end
 
     test "update_event/2 with valid data updates the event" do
-      event = event_fixture()
+      time_block = insert(:time_block)
+      event = insert(:event, time_block_id: time_block.id)
+
       assert {:ok, updated_event} = Activities.update_event(event, @update_attrs)
       assert %Event{} = updated_event
       assert updated_event.duration_of_joining_phase == %Postgrex.Interval{months: 0, days: 5, secs: 0}
       assert updated_event.duration_of_paying_phase == %Postgrex.Interval{months: 0, days: 5, secs: 0}
-      assert updated_event.max_num_of_participants == 50
-      assert updated_event.min_num_of_participants == 43
+      assert updated_event.max_num_of_participants == @update_attrs.max_num_of_participants
+      assert updated_event.min_num_of_participants == @update_attrs.min_num_of_participants
     end
 
     test "update_event/2 with invalid data returns error changeset" do
-      event = event_fixture()
+      event = insert(:event)
+
       assert {:error, %Ecto.Changeset{}} = Activities.update_event(event, @invalid_attrs)
       assert event == Activities.get_event!(event.id)
     end
 
     test "delete_event/1 deletes the event" do
-      event = event_fixture()
+      event = insert(:event)
+
       assert {:ok, %Event{}} = Activities.delete_event(event)
       assert_raise Ecto.NoResultsError, fn -> Activities.get_event!(event.id) end
     end
 
     test "change_event/1 returns a event changeset" do
-      event = event_fixture()
+      event = insert(:event)
+
       assert %Ecto.Changeset{} = Activities.change_event(event)
     end
   end
