@@ -34,7 +34,7 @@ build:
     #  - mix ecto.create
     #  - mix ecto.migrate
   script:
-    - docker info
+    - docker run --volumes-from build_data_$CI_COMMIT_SHA --rm -t ci-project-build-$CI_COMMIT_SHA
 
 # test:
 #   variables:
