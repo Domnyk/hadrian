@@ -17,6 +17,8 @@ build:
   #  MIX_ENV: prod
   #  POSTGRES_DB: hadrian_prod
   stage: build
+  tags:
+    - docker
   # before_script:
     # - docker build -f Dockerfile.build -t ci-project-build-$CI_COMMIT_SHA .
     #  - npm install -g brunch
