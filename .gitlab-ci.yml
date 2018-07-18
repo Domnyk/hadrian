@@ -1,47 +1,46 @@
-image: bitwalker/alpine-elixir-phoenix:latest
+image: docker:latest
+# image: bitwalker/alpine-elixir-phoenix:latest
 
-services:
-  - postgres:latest
+# services:
+#  - postgres:latest
 
 stages:
   - build
-  - test
-
-variables:
-  POSTGRES_HOST: postgres
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: "postgres"
-
+# 
+# variables:
+#   POSTGRES_HOST: postgres
+#   POSTGRES_USER: postgres
+#   POSTGRES_PASSWORD: "postgres"
+# 
 build:
-  variables:
-    MIX_ENV: prod
-    POSTGRES_DB: hadrian_prod
+  # variables:
+  #  MIX_ENV: prod
+  #  POSTGRES_DB: hadrian_prod
   stage: build
-  before_script:
-    - npm install -g brunch
-    - cd ./assets && npm install && cd ..
-    - mix local.hex --force
-    - mix local.rebar --force
-    - mix deps.get --only $MIX_ENV
-    - mix ecto.create
-    - mix ecto.migrate
+  # before_script:
+    # - docker build -f Dockerfile.build -t ci-project-build-$CI_COMMIT_SHA .
+    #  - npm install -g brunch
+    #  - cd ./assets && npm install && cd ..
+    #  - mix local.hex --force
+    #  - mix local.rebar --force
+    #  - mix deps.get --only $MIX_ENV
+    #  - mix ecto.create
+    #  - mix ecto.migrate
   script:
-    - cd ./assets && brunch build --production
-    - cd .. && mix phx.digest
-    - mix compile
+    - docker build -f Dockerfile.build -t ci-project-build-$CI_COMMIT_SHA .
 
-test:
-  variables:
-    MIX_ENV: test
-    POSTGRES_DB: hadrian_prod
-  stage: test
-  before_script:
-    - apk --update add postgresql-client
-    - mix local.hex --force
-    - mix local.rebar --force
-    - mix deps.get --only $MIX_ENV
-    - mix ecto.create
-    - mix ecto.migrate
-  script:
-    - mix test 
+# test:
+#   variables:
+#     MIX_ENV: test
+#     POSTGRES_DB: hadrian_prod
+#   stage: test
+#   before_script:
+#     - apk --update add postgresql-client
+#     - mix local.hex --force
+#     - mix local.rebar --force
+#     - mix deps.get --only $MIX_ENV
+#     - mix ecto.create
+#     - mix ecto.migrate
+#   script:
+#     - mix test 
 
