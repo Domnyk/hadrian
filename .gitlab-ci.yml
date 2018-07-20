@@ -27,7 +27,7 @@ Build container:
     #  - mix ecto.create
     #  - mix ecto.migrate
   script:
-    - docker build -f Dockerfile.build -t $IMAGE_NAME .
+    - docker build -f Dockerfile.build -t $CI_REGISTRY_IMAGE .
     - docker push $CI_REGISTRY_IMAGE:latest
 
 # test:
