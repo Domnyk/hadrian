@@ -20,12 +20,6 @@ build:
     - docker
   before_script:
     - docker build -f Dockerfile.build -t ci-project-build-$CI_COMMIT_SHA .
-    - docker create
-      -v /build/deps
-      -v /build/_build
-      -v /build/rel
-      -v /root/cache/rebar3/
-      --name build_data_$CI_COMMIT_SHA busybox /bin/true
     #  - npm install -g brunch
     #  - cd ./assets && npm install && cd ..
     #  - mix local.hex --force
@@ -34,7 +28,7 @@ build:
     #  - mix ecto.create
     #  - mix ecto.migrate
   script:
-    - docker run --volumes-from build_data_$CI_COMMIT_SHA --rm -t ci-project-build-$CI_COMMIT_SHA
+    - docker run --rm -t ci-project-build-$CI_COMMIT_SHA
 
 # test:
 #   variables:

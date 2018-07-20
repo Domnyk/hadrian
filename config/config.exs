@@ -22,9 +22,9 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
 
-# API keys file is only present on dev machines
-if Mix.env == :dev do
-  import_config "api_keys.secret.exs"
+api_keys_filename = "api_keys.secret.exs"
+if File.exists?("api_keys") do
+  import_config api_keys_filename
 end
 
 # Configures Ueberauth
