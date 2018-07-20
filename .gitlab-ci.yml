@@ -49,5 +49,5 @@ Test:
 #     - mix ecto.migrate
   script:
     - docker pull $CONTAINER_TEST_IMAGE
-    - docker run CONTAINER_TEST_IMAGE /bin/bash $TEST_CMD
+    - docker run $CONTAINER_TEST_IMAGE /bin/bash $TEST_CMD
 
