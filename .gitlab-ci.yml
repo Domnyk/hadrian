@@ -53,6 +53,6 @@ Test:
 #     - mix ecto.migrate
   script:
     - docker pull $CONTAINER_TEST_IMAGE
-    - docker run --link="postgres" -e POSTGRES_HOST -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB 
+    - docker run --link postgres:postgres -e POSTGRES_HOST -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB 
       $CONTAINER_TEST_IMAGE sh -c "mix ecto.create && mix ecto.migrate && mix test"
 
