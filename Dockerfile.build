@@ -6,3 +6,5 @@ WORKDIR /hadrian
 ADD . /hadrian
 
 RUN mix deps.get
+
+CMD sh

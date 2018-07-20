@@ -35,6 +35,7 @@ Build container:
     - docker push $CONTAINER_TEST_IMAGE
 
 Test:
+  image: $CONTAINER_TEST_IMAGE
   variables:
     POSTGRES_HOST: postgres
     POSTGRES_USER: postgres
@@ -42,7 +43,6 @@ Test:
     POSTGRES_DB: hadrian_prod  
   stage: test
   services:
-    - docker:dind
     - postgres:latest
 #   before_script:
 #     - apk --update add postgresql-client
@@ -52,7 +52,7 @@ Test:
 #     - mix ecto.create
 #     - mix ecto.migrate
   script:
-    - docker pull $CONTAINER_TEST_IMAGE
-    - docker run --link postgres:postgres -e POSTGRES_HOST -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB 
-      $CONTAINER_TEST_IMAGE sh -c "mix ecto.create && mix ecto.migrate && mix test"
+    - mix ecto.create && mix ecto.migrate && mix test
+    # - docker run --link postgres:postgres -e POSTGRES_HOST -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB 
+    # $CONTAINER_TEST_IMAGE sh -c "mix ecto.create && mix ecto.migrate && mix test"
 
