@@ -11,15 +11,14 @@ stages:
 #   POSTGRES_USER: postgres
 #   POSTGRES_PASSWORD: "postgres"
 # 
-build:
-  # variables:
-  #  MIX_ENV: prod
-  #  POSTGRES_DB: hadrian_prod
+Build container:
+  variables:
+    IMAGE_NAME: ci-project-build-$CI_COMMIT_SHA
   stage: build
   tags:
     - docker
   before_script:
-    - docker build -f Dockerfile.build -t ci-project-build-$CI_COMMIT_SHA .
+    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
     #  - npm install -g brunch
     #  - cd ./assets && npm install && cd ..
     #  - mix local.hex --force
@@ -28,7 +27,9 @@ build:
     #  - mix ecto.create
     #  - mix ecto.migrate
   script:
-    - docker run --rm -t ci-project-build-$CI_COMMIT_SHA
+    - echo $CI_REGISTRY_IMAGE
+    # - docker build -f Dockerfile.build -t $IMAGE_NAME .
+    # - docker push 
 
 # test:
 #   variables:

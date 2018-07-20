@@ -5,4 +5,4 @@ RUN apk add postgresql-client
 WORKDIR /hadrian
 ADD . /hadrian
 
-CMD mix deps.get
+RUN mix deps.get
