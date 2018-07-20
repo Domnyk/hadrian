@@ -36,6 +36,7 @@ Build container:
 Test:
   image: $CONTAINER_TEST_IMAGE
   variables:
+    GIT_STRATEGY: none
     POSTGRES_HOST: postgres
     POSTGRES_USER: postgres
     POSTGRES_PASSWORD: "postgres"  
@@ -43,7 +44,10 @@ Test:
   stage: test
   services:
     - postgres:latest
-#   before_script:
+  before_script:
+    - pwd
+    - cd /hadrian
+    - ls -l
 #     - apk --update add postgresql-client
 #     - mix local.hex --force
 #     - mix local.rebar --force
@@ -51,8 +55,6 @@ Test:
 #     - mix ecto.create
 #     - mix ecto.migrate
   script:
-    - pwd
-    - cd hadrian
     - mix ecto.create
     - mix ecto.migrate
     - mix test
