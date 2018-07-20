@@ -1,7 +1,7 @@
 image: docker:latest
 
 services:
-   - docker:dind
+  - docker:dind
 
 stages:
   - build
@@ -35,9 +35,14 @@ Build container:
     - docker push $CONTAINER_TEST_IMAGE
 
 Test:
-#     MIX_ENV: test
-#     POSTGRES_DB: hadrian_prod
+  variables:
+    POSTGRES_HOST: postgres
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: "postgres"  
+    POSTGRES_DB: hadrian_prod  
   stage: test
+  services:
+    - postgres:latest
 #   before_script:
 #     - apk --update add postgresql-client
 #     - mix local.hex --force
@@ -47,5 +52,6 @@ Test:
 #     - mix ecto.migrate
   script:
     - docker pull $CONTAINER_TEST_IMAGE
-    - docker run $CONTAINER_TEST_IMAGE mix test 
+    - docker run -e POSTGRES_HOST -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB $CONTAINER_TEST_IMAGE \
+      sh -c "mix ecto.create && mix ecto.migrate && mix test"
 
