@@ -17,7 +17,8 @@ before_script:
 
 Build container:
   variables:
-    IMAGE_NAME: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
+    CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHA
+    CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
   stage: build
   tags:
     - docker
@@ -29,11 +30,12 @@ Build container:
     #  - mix ecto.create
     #  - mix ecto.migrate
   script:
-    - docker build -f Dockerfile.build -t $IMAGE_NAME .
-    - docker push $IMAGE_NAME
+    - docker build -f Dockerfile.build -t $CONTAINER_TEST_IMAGE .
+    - docker push $CONTAINER_TEST_IMAGE
 
 Test:
   variables:
+      TEST_CMD: "mix test"
 #     MIX_ENV: test
 #     POSTGRES_DB: hadrian_prod
   stage: test
@@ -45,5 +47,6 @@ Test:
 #     - mix ecto.create
 #     - mix ecto.migrate
   script:
-    -  
+    - docker pull $CONTAINER_TEST_IMAGE
+    - docker run CONTAINER_TEST_IMAGE /bin/bash $TEST_CMD
 
