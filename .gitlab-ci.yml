@@ -6,14 +6,9 @@ services:
 stages:
   - build
   - test
-# 
-# variables:
-#   POSTGRES_HOST: postgres
-#   POSTGRES_USER: postgres
-#   POSTGRES_PASSWORD: "postgres"
-#
+
 variables:
-  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:$CI_COMMIT_SHA
+  CONTAINER_TEST_IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
   CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
 
 Build container:
@@ -29,6 +24,8 @@ Build container:
 Test:
   image: $CONTAINER_TEST_IMAGE
   variables:
+    # By default gitlab-runner will clone code from my repo into directory /builds/Domnyk/hadrian/
+    # Setting GIT_STRATEGY to none prevents it
     GIT_STRATEGY: none
     MIX_ENV: test
     POSTGRES_HOST: postgres
@@ -39,11 +36,8 @@ Test:
   services:
     - postgres:latest
   before_script:
+    # cd is necessary: by default gitlab-runner is launched in /builds/Domnyk/hadrian
     - cd /hadrian
-#     - apk --update add postgresql-client
-#     - mix local.hex --force
-#     - mix local.rebar --force
-#     - mix deps.get --only $MIX_ENV
   script:
     - mix ecto.create
     - mix ecto.migrate
