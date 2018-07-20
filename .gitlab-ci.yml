@@ -51,7 +51,7 @@ Test:
 #     - mix ecto.create
 #     - mix ecto.migrate
   script:
-    - mix ecto.create && mix ecto.migrate && mix test
+    - cd deps && ls -l
     # - docker run --link postgres:postgres -e POSTGRES_HOST -e POSTGRES_USER -e POSTGRES_PASSWORD -e POSTGRES_DB 
     # $CONTAINER_TEST_IMAGE sh -c "mix ecto.create && mix ecto.migrate && mix test"
 
