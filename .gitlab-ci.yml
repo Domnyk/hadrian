@@ -35,8 +35,6 @@ Build container:
     - docker push $CONTAINER_TEST_IMAGE
 
 Test:
-  variables:
-      TEST_CMD: "mix test"
 #     MIX_ENV: test
 #     POSTGRES_DB: hadrian_prod
   stage: test
@@ -49,5 +47,5 @@ Test:
 #     - mix ecto.migrate
   script:
     - docker pull $CONTAINER_TEST_IMAGE
-    - docker run $CONTAINER_TEST_IMAGE /bin/bash $TEST_CMD
+    - docker run $CONTAINER_TEST_IMAGE mix test 
 
