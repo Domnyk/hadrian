@@ -42,6 +42,7 @@ Test:
     POSTGRES_DB: hadrian_prod  
   stage: test
   services:
+    - docker:dind
     - postgres:latest
 #   before_script:
 #     - apk --update add postgresql-client
