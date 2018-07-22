@@ -10,7 +10,7 @@ RUN npm install -g brunch
 RUN cd ./assets && npm install && cd ..
 RUN mix local.hex --force
 RUN mix local.rebar --force
-RUN mix deps.get --only dev
+RUN mix deps.get --only prod
 RUN cd ./assets && brunch build --production && cd ..
 RUN mix phx.digest
 RUN mix compile
