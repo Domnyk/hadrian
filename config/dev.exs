@@ -51,8 +51,8 @@ config :phoenix, :stacktrace_depth, 20
 # Configure your database
 config :hadrian, Hadrian.Repo,
   adapter: Ecto.Adapters.Postgres,
-  username: "dominiktrusinski",
-  password: "dominiktrusinski",
-  database: "migrations",
-  hostname: "localhost",
+  username: System.get_env("POSTGRES_USER") || "dominiktrusinski",
+  password: System.get_env("POSTGRES_PASSWORD") || "dominiktrusinski",
+  database: System.get_env("POSTGRES_DB") || "migrations",
+  hostname: System.get_env("POSTGRES_HOST") || "localhost",
   pool_size: 10
