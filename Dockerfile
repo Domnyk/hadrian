@@ -11,10 +11,8 @@ RUN cd ./assets && npm install && cd ..
 RUN mix local.hex --force
 RUN mix local.rebar --force
 RUN mix deps.get --only dev
-RUN mix ecto.create
-RUN mix ecto.migrate
 RUN cd ./assets && brunch build --production && cd ..
 RUN mix phx.digest
 RUN mix compile
 
-CMD mix phx.server
+CMD mix app.launch

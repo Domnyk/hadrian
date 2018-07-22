@@ -57,6 +57,7 @@ defmodule Hadrian.Mixfile do
   defp aliases do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "app.launch": ["ecto.create", "ecto.migrate", "phx.server"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       "test": ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
