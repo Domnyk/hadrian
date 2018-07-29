@@ -1,8 +1,5 @@
 image: bitwalker/alpine-elixir-phoenix:1.6.6
 
-services:
-  - postgres:latest
-
 stages:
   - build
   - test
@@ -15,6 +12,8 @@ variables:
 
 Build:
   stage: build
+  services:
+    - postgres:latest
   variables:
     MIX_ENV: dev
     POSTGRES_DB: hadrian_dev
@@ -33,6 +32,8 @@ Build:
   
 Test:
   stage: test
+  services:
+    - postgres:latest
   variables:
     MIX_ENV: test
     POSTGRES_DB: hadrian_test
@@ -49,5 +50,6 @@ Test:
 Release:
   stage: release
   script:
+    - git remote add heroku https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_PROJECT_NAME.git
     - git push heroku master
   
