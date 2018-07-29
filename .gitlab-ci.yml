@@ -6,25 +6,12 @@ services:
 stages:
   - build
   - test
-  - staging
   - release
 
 variables:
-  CONTAINER_STAGING_IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME
-  CONTAINER_RELEASE_IMAGE: $CI_REGISTRY_IMAGE/$CI_COMMIT_REF_NAME:latest
   POSTGRES_HOST: postgres
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: "postgres"  
-
-#Build container:
-#  before_script:
-#    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
-#  stage: build
-#  tags:
-#    - docker
-#  script:
-#    - docker build -f Dockerfile.build -t $CONTAINER_TEST_IMAGE .
-#    - docker push $CONTAINER_TEST_IMAGE
 
 Build:
   stage: build
@@ -36,35 +23,14 @@ Build:
     - cd ./assets && npm install && cd ..
     - mix local.hex --force
     - mix local.rebar --force
-    - mix deps.get
+    - mix deps.get --only $MIX_ENV
     - mix ecto.create
     - mix ecto.migrate
   script:
     - cd ./assets && brunch build
     - cd .. && mix phx.digest
     - mix compile
-
-#Test:
-#  image: $CONTAINER_TEST_IMAGE
-#  variables:
-    # By default gitlab-runner will clone code from my repo into directory /builds/Domnyk/hadrian/
-    # Setting GIT_STRATEGY to none prevents it
- #   GIT_STRATEGY: none
- #   MIX_ENV: test
- #   POSTGRES_HOST: postgres
- #   POSTGRES_USER: postgres
- #   POSTGRES_PASSWORD: "postgres"  
- #   POSTGRES_DB: hadrian_prod  
- # stage: test
- # services:
- #   - postgres:latest
- # before_script:
-    # cd is necessary: by default gitlab-runner is launched in /builds/Domnyk/hadrian
-  #  - cd /hadrian
-  #script:
-  #  - mix ecto.create
-  #  - mix ecto.migrate
-  #  - mix test
+  
 Test:
   stage: test
   variables:
@@ -80,14 +46,8 @@ Test:
   script:
     - mix test
 
-Build docker image:
-  image: docker:latest
-  stage: staging
-  services:
-    - docker:dind
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_JOB_TOKEN $CI_REGISTRY_IMAGE
+Release:
+  stage: release
   script:
-    - docker build -f Dockerfile -t $CONTAINER_STAGING_IMAGE .
-    - docker push $CONTAINER_STAGING_IMAGE
+    - git push heroku master
   
