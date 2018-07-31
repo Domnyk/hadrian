@@ -1,8 +1,6 @@
 image: bitwalker/alpine-elixir-phoenix:1.6.6
 
 stages:
-  - deps download
-  - deps compilation
   - build
   - test
   - release
@@ -12,32 +10,6 @@ variables:
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: "postgres"  
 
-cache:
-  key: "$CI_COMMIT_REF_SLUG"
-  paths:
-    - ./deps
-    - ./_build
-
-Get dependencies for all envs:
-  stage: deps download
-  script:
-    - mix deps.get
-
-Compile dependencies for dev env:
-  stage: deps compilation
-  script:
-    - MIX_ENV=dev mix deps.compile
-
-Compile dependencies for test env:
-  stage: deps compilation
-  cache:
-    key: "$CI_COMMIT_REF_SLUG-test"
-    paths:
-      - ./deps
-      - ./_build 
-  script:
-    - MIX_ENV=test mix deps.compile
-
 Run migrations:
   stage: build
   variables:
@@ -46,6 +18,7 @@ Run migrations:
   services:
     - postgres:latest  
   before_script:
+    - mix deps.get --only $MIX_ENV
     - mix ecto.create
   script:
     - mix ecto.migrate
@@ -57,12 +30,16 @@ Build app:
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
+    - mix deps.get --only $MIX_ENV
   script:
     mix compile
 
 Compile static assets:
   stage: build
+  variables: 
+    MIX_ENV: dev
   before_script:
+    - mix deps.get --only $MIX_ENV
     - npm install -g brunch
     - cd ./assets && npm install && cd ..
   script:
@@ -71,11 +48,6 @@ Compile static assets:
   
 Test:
   stage: test
-  cache:
-    key: "$CI_COMMIT_REF_SLUG-test"
-    paths:
-      - ./deps
-      - ./_build
   services:
     - postgres:latest
   variables:
@@ -85,6 +57,7 @@ Test:
     - apk --update add postgresql-client
     - mix local.hex --force
     - mix local.rebar --force
+    - mix deps.get --only $MIX_ENV
     - mix ecto.create
     - mix ecto.migrate
   script:
