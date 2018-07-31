@@ -1,6 +1,7 @@
 image: bitwalker/alpine-elixir-phoenix:1.6.6
 
 stages:
+  - pre build
   - build
   - test
   - release
@@ -9,6 +10,15 @@ variables:
   POSTGRES_HOST: postgres
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: "postgres"  
+
+cache:
+  paths:
+    - ./deps
+
+Get dependencies:
+  stage: pre build
+  script:
+    - mix deps.get --only dev
 
 Run migrations:
   stage: build
@@ -43,26 +53,6 @@ Compile static assets:
   script:
     - cd ./assets && brunch build
     - cd .. && mix phx.digest
-
-# Build:
-#   stage: build
-#   services:
-#     - postgres:latest
-#   variables:
-#     MIX_ENV: dev
-#     POSTGRES_DB: hadrian_dev
-#   before_script:
-#     - npm install -g brunch
-#     - cd ./assets && npm install && cd ..
-#     - mix local.hex --force
-#     - mix local.rebar --force
-#     - mix deps.get --only $MIX_ENV
-#     - mix ecto.create
-#     - mix ecto.migrate
-#   script:
-#     - cd ./assets && brunch build
-#     - cd .. && mix phx.digest
-#     - mix compile
   
 Test:
   stage: test
@@ -83,12 +73,14 @@ Test:
 
 Release:
   stage: release
+  cache: {}
   before_script:
     - apk --update add ruby ruby-dev 
     - gem install --no-document json
     - gem install --no-document dpl
   script:
     - dpl --provider=heroku --app=$HEROKU_PROJECT_NAME --api-key=$HEROKU_API_KEY
-  # only:
-  #  - master
+  only:
+    - master
+  when: manual
   
