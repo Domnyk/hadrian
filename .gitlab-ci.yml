@@ -12,13 +12,16 @@ variables:
   POSTGRES_PASSWORD: "postgres"  
 
 cache:
+  key: "$CI_COMMIT_REF_SLUG"
   paths:
     - ./deps
+    - ./_build
 
 Get dependencies:
   stage: pre build
   script:
-    - mix deps.get --only dev
+    - mix deps.get
+    - mix deps.compile
 
 Run migrations:
   stage: build
