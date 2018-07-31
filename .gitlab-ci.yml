@@ -12,7 +12,7 @@ variables:
 
 Run migrations:
   stage: build
-    variables:
+  variables:
     MIX_ENV: dev
     POSTGRES_DB: hadrian_dev
   before_script:
