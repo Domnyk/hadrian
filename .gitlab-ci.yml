@@ -10,6 +10,14 @@ variables:
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: "postgres"  
 
+Release:
+  stage: release
+  before_script:
+    - apk --update add ruby-dev
+    - gem install dpl
+  script:
+    - dpl provider=heroku --app=$HEROKU_PROJECT_NAME --api-key=$HEROKU_API_KEY
+
 Build:
   stage: build
   services:
@@ -50,8 +58,7 @@ Test:
 Release:
   stage: release
   before_script:
-    - apt-get update -qy
-    - apt-get install -y ruby-dev
+    - apk --update add ruby ruby-dev
     - gem install dpl
   script:
     - dpl provider=heroku --app=$HEROKU_PROJECT_NAME --api-key=$HEROKU_API_KEY
