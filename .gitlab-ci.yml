@@ -39,6 +39,7 @@ Compile static assets:
   before_script:
     - npm install -g brunch
     - cd ./assets && npm install && cd ..
+    - mix deps.get --only $MIX_ENV
   script:
     - cd ./assets && brunch build
     - cd .. && mix phx.digest
