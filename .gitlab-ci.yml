@@ -30,6 +30,11 @@ Compile dependencies for dev env:
 
 Compile dependencies for test env:
   stage: deps compilation
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-test"
+    paths:
+      - ./deps
+      - ./_build 
   script:
     - MIX_ENV=test mix deps.compile
 
@@ -66,6 +71,11 @@ Compile static assets:
   
 Test:
   stage: test
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-test"
+    paths:
+      - ./deps
+      - ./_build
   services:
     - postgres:latest
   variables:
