@@ -31,7 +31,7 @@ Run migrations:
   services:
     - postgres:latest  
   before_script:
-    - mix deps.get --only $MIX_ENV
+    # - mix deps.get --only $MIX_ENV
     - mix ecto.create
   script:
     - mix ecto.migrate
@@ -43,7 +43,7 @@ Build app:
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
-    - mix deps.get --only $MIX_ENV
+    # - mix deps.get --only $MIX_ENV
   script:
     mix compile
 
@@ -52,7 +52,7 @@ Compile static assets:
   before_script:
     - npm install -g brunch
     - cd ./assets && npm install && cd ..
-    - mix deps.get --only $MIX_ENV
+    # - mix deps.get --only $MIX_ENV
   script:
     - cd ./assets && brunch build
     - cd .. && mix phx.digest
@@ -68,7 +68,7 @@ Test:
     - apk --update add postgresql-client
     - mix local.hex --force
     - mix local.rebar --force
-    - mix deps.get --only $MIX_ENV
+    # - mix deps.get --only $MIX_ENV
     - mix ecto.create
     - mix ecto.migrate
   script:
