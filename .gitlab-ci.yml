@@ -21,7 +21,8 @@ Get dependencies:
   stage: pre build
   script:
     - mix deps.get
-    - mix deps.compile
+    - MIX_ENV=dev mix deps.compile
+    - MIX_ENV=test mix deps.compile
 
 Run migrations:
   stage: build
