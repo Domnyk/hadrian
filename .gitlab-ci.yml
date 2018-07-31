@@ -1,7 +1,8 @@
 image: bitwalker/alpine-elixir-phoenix:1.6.6
 
 stages:
-  - pre build
+  - deps download
+  - deps compilation
   - build
   - test
   - release
@@ -17,11 +18,19 @@ cache:
     - ./deps
     - ./_build
 
-Get dependencies:
-  stage: pre build
+Get dependencies for all envs:
+  stage: deps download
   script:
     - mix deps.get
+
+Compile dependencies for dev env:
+  stage: deps compilation
+  script:
     - MIX_ENV=dev mix deps.compile
+
+Compile dependencies for test env:
+  stage: deps compilation
+  script:
     - MIX_ENV=test mix deps.compile
 
 Run migrations:
@@ -32,7 +41,6 @@ Run migrations:
   services:
     - postgres:latest  
   before_script:
-    # - mix deps.get --only $MIX_ENV
     - mix ecto.create
   script:
     - mix ecto.migrate
@@ -44,7 +52,6 @@ Build app:
   before_script:
     - mix local.hex --force
     - mix local.rebar --force
-    # - mix deps.get --only $MIX_ENV
   script:
     mix compile
 
@@ -53,7 +60,6 @@ Compile static assets:
   before_script:
     - npm install -g brunch
     - cd ./assets && npm install && cd ..
-    # - mix deps.get --only $MIX_ENV
   script:
     - cd ./assets && brunch build
     - cd .. && mix phx.digest
@@ -69,7 +75,6 @@ Test:
     - apk --update add postgresql-client
     - mix local.hex --force
     - mix local.rebar --force
-    # - mix deps.get --only $MIX_ENV
     - mix ecto.create
     - mix ecto.migrate
   script:
