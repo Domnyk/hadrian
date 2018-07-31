@@ -53,7 +53,7 @@ Release:
     - apk --update add ruby ruby-dev
     - gem install --no-ri --no-rdoc dpl
   script:
-    - dpl provider=heroku --app=$HEROKU_PROJECT_NAME --api-key=$HEROKU_API_KEY
+    - dpl --provider=heroku --app=$HEROKU_PROJECT_NAME --api-key=$HEROKU_API_KEY
   # only:
   #  - master
   
