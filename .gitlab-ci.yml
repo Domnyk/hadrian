@@ -15,6 +15,8 @@ Run migrations:
   variables:
     MIX_ENV: dev
     POSTGRES_DB: hadrian_dev
+  services:
+    - postgres:latest  
   before_script:
     - mix deps.get --only $MIX_ENV
     - mix ecto.create
