@@ -1,0 +1,28 @@
+<h2>Show Sport object</h2>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @sport_object.name %>
+  </li>
+
+  <li>
+    <strong>Longitude:</strong>
+    <%= @sport_object.longitude %>
+  </li>
+
+  <li>
+    <strong>Latitude:</strong>
+    <%= @sport_object.latitude %>
+  </li>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @sport_object.name %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: sport_object_path(@conn, :edit, @sport_object) %></span>
+<span><%= link "Back", to: sport_object_path(@conn, :index) %></span>

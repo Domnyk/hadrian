@@ -6,6 +6,7 @@ defmodule Hadrian.Owners.SportObject do
     field :latitude, :decimal
     field :longitude, :decimal
     field :name, :string
+    field :booking_margin, :string 
 
     belongs_to :sport_complex, Hadrian.Owners.SportComplex, references: :id
     has_many :sport_arenas, Hadrian.Owners.SportArena, foreign_key: :sport_object_id

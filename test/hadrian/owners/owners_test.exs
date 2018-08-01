@@ -238,4 +238,128 @@ defmodule Hadrian.OwnersTest do
       assert %Ecto.Changeset{} = Owners.change_time_block(time_block)
     end
   end
+
+  describe "sport_complexes" do
+    alias Hadrian.Owners.SportComplex
+
+    @valid_attrs %{name: "some name"}
+    @update_attrs %{name: "some updated name"}
+    @invalid_attrs %{name: nil}
+
+    def sport_complex_fixture(attrs \\ %{}) do
+      {:ok, sport_complex} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Owners.create_sport_complex()
+
+      sport_complex
+    end
+
+    test "list_sport_complexes/0 returns all sport_complexes" do
+      sport_complex = sport_complex_fixture()
+      assert Owners.list_sport_complexes() == [sport_complex]
+    end
+
+    test "get_sport_complex!/1 returns the sport_complex with given id" do
+      sport_complex = sport_complex_fixture()
+      assert Owners.get_sport_complex!(sport_complex.id) == sport_complex
+    end
+
+    test "create_sport_complex/1 with valid data creates a sport_complex" do
+      assert {:ok, %SportComplex{} = sport_complex} = Owners.create_sport_complex(@valid_attrs)
+      assert sport_complex.name == "some name"
+    end
+
+    test "create_sport_complex/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Owners.create_sport_complex(@invalid_attrs)
+    end
+
+    test "update_sport_complex/2 with valid data updates the sport_complex" do
+      sport_complex = sport_complex_fixture()
+      assert {:ok, sport_complex} = Owners.update_sport_complex(sport_complex, @update_attrs)
+      assert %SportComplex{} = sport_complex
+      assert sport_complex.name == "some updated name"
+    end
+
+    test "update_sport_complex/2 with invalid data returns error changeset" do
+      sport_complex = sport_complex_fixture()
+      assert {:error, %Ecto.Changeset{}} = Owners.update_sport_complex(sport_complex, @invalid_attrs)
+      assert sport_complex == Owners.get_sport_complex!(sport_complex.id)
+    end
+
+    test "delete_sport_complex/1 deletes the sport_complex" do
+      sport_complex = sport_complex_fixture()
+      assert {:ok, %SportComplex{}} = Owners.delete_sport_complex(sport_complex)
+      assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_complex!(sport_complex.id) end
+    end
+
+    test "change_sport_complex/1 returns a sport_complex changeset" do
+      sport_complex = sport_complex_fixture()
+      assert %Ecto.Changeset{} = Owners.change_sport_complex(sport_complex)
+    end
+  end
+
+  describe "sport_objects" do
+    alias Hadrian.Owners.SportObject
+
+    @valid_attrs %{latitude: "120.5", longitude: "120.5", name: "some name"}
+    @update_attrs %{latitude: "456.7", longitude: "456.7", name: "some updated name"}
+    @invalid_attrs %{latitude: nil, longitude: nil, name: nil}
+
+    def sport_object_fixture(attrs \\ %{}) do
+      {:ok, sport_object} =
+        attrs
+        |> Enum.into(@valid_attrs)
+        |> Owners.create_sport_object()
+
+      sport_object
+    end
+
+    test "list_sport_objects/0 returns all sport_objects" do
+      sport_object = sport_object_fixture()
+      assert Owners.list_sport_objects() == [sport_object]
+    end
+
+    test "get_sport_object!/1 returns the sport_object with given id" do
+      sport_object = sport_object_fixture()
+      assert Owners.get_sport_object!(sport_object.id) == sport_object
+    end
+
+    test "create_sport_object/1 with valid data creates a sport_object" do
+      assert {:ok, %SportObject{} = sport_object} = Owners.create_sport_object(@valid_attrs)
+      assert sport_object.latitude == Decimal.new("120.5")
+      assert sport_object.longitude == Decimal.new("120.5")
+      assert sport_object.name == "some name"
+    end
+
+    test "create_sport_object/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Owners.create_sport_object(@invalid_attrs)
+    end
+
+    test "update_sport_object/2 with valid data updates the sport_object" do
+      sport_object = sport_object_fixture()
+      assert {:ok, sport_object} = Owners.update_sport_object(sport_object, @update_attrs)
+      assert %SportObject{} = sport_object
+      assert sport_object.latitude == Decimal.new("456.7")
+      assert sport_object.longitude == Decimal.new("456.7")
+      assert sport_object.name == "some updated name"
+    end
+
+    test "update_sport_object/2 with invalid data returns error changeset" do
+      sport_object = sport_object_fixture()
+      assert {:error, %Ecto.Changeset{}} = Owners.update_sport_object(sport_object, @invalid_attrs)
+      assert sport_object == Owners.get_sport_object!(sport_object.id)
+    end
+
+    test "delete_sport_object/1 deletes the sport_object" do
+      sport_object = sport_object_fixture()
+      assert {:ok, %SportObject{}} = Owners.delete_sport_object(sport_object)
+      assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_object!(sport_object.id) end
+    end
+
+    test "change_sport_object/1 returns a sport_object changeset" do
+      sport_object = sport_object_fixture()
+      assert %Ecto.Changeset{} = Owners.change_sport_object(sport_object)
+    end
+  end
 end

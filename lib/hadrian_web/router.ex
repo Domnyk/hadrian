@@ -28,7 +28,8 @@ defmodule HadrianWeb.Router do
 
     get "/", RootController, :index
 
-    resources "/sports_disciplines", SportsDisciplineController
+    resources "/sport_complexes", SportComplexController
+    resources "/sport_objects", SportObjectController
     resources "/users", UserController
   end
 
