@@ -3,6 +3,7 @@ defmodule HadrianWeb.SportObjectController do
 
   alias Hadrian.Owners
   alias Hadrian.Owners.SportObject
+  alias HadrianWeb.BookingMarginHelper
 
   def index(conn, _params) do
     sport_objects = Owners.list_sport_objects()
@@ -15,6 +16,9 @@ defmodule HadrianWeb.SportObjectController do
   end
 
   def create(conn, %{"sport_object" => sport_object_params}) do
+    sport_object_params = sport_object_params
+    |> BookingMarginHelper.edit_map_to_fit_to_model_def
+    
     case Owners.create_sport_object(sport_object_params) do
       {:ok, sport_object} ->
         conn
