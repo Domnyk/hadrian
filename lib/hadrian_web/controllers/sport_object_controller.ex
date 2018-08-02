@@ -43,6 +43,9 @@ defmodule HadrianWeb.SportObjectController do
   def update(conn, %{"id" => id, "sport_object" => sport_object_params}) do
     sport_object = Owners.get_sport_object!(id)
 
+    sport_object_params = sport_object_params
+    |> BookingMarginHelper.edit_map_to_fit_to_model_def
+
     case Owners.update_sport_object(sport_object, sport_object_params) do
       {:ok, sport_object} ->
         conn

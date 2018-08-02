@@ -29,13 +29,15 @@
 
   <div class="form-group">
     <%= label f, :booking_margin_in_months, class: "control-label" %>
-    <%= number_input f, :booking_margin_months, step: "any", class: "form-control", min: "0" %>
+    <%= number_input f, :booking_margin_months, step: "any", class: "form-control", min: "0", 
+        value: Map.get(@changeset.data.booking_margin, :months) %>
     <%= error_tag f, :booking_margin_months %>
   </div>
 
   <div class="form-group">
     <%= label f, :booking_margin_in_days, class: "control-label" %>
-    <%= number_input f, :booking_margin_days, step: "any", class: "form-control", min: "0" %>
+    <%= number_input f, :booking_margin_days, step: "any", class: "form-control", min: "0", 
+        value: Map.get(@changeset.data.booking_margin, :days) %>
     <%= error_tag f, :booking_margin_days %>
   </div>
 

@@ -1,6 +1,11 @@
 defmodule Hadrian.DataFactory do
   use ExMachina.Ecto, repo: Hadrian.Repo
-  
+
+  def booking_margin_factory do
+    {:ok, booking_margin} = EctoInterval.cast(%{months: 3, days: 2, secs: 10})
+
+    booking_margin
+  end
 
   def sport_complex_factory do
     alias Hadrian.Owners.SportComplex

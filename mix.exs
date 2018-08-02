@@ -43,7 +43,7 @@ defmodule Hadrian.Mixfile do
       {:cowboy, "~> 1.0"},
       {:ueberauth, "~> 0.4"},
       {:ueberauth_facebook, "~> 0.7"},
-      {:ecto_interval, git: "https://github.com/Domnyk/ecto_interval.git", tag: "v0.2.0"},
+      {:ecto_interval, git: "https://github.com/Domnyk/ecto_interval.git", tag: "v0.2.1"},
       {:ex_machina, "~> 2.2", only: [:dev, :test]}
     ]
   end

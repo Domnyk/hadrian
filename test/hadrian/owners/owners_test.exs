@@ -58,7 +58,7 @@ defmodule Hadrian.OwnersTest do
   describe "sport_objects" do
     alias Hadrian.Owners.SportObject
 
-    @update_attrs %{latitude: 76.7, longitude: 145.7, name: "some updated name"}
+    @update_attrs %{latitude: 76.7, longitude: 145.7, name: "some updated name", booking_margin: build(:booking_margin)}
     @invalid_attrs %{latitude: nil, longitude: nil, name: nil, sport_complex_id: nil}
 
     test "list_sport_objects/0 returns all sport_objects" do
