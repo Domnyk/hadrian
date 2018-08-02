@@ -20,6 +20,7 @@ defmodule HadrianWeb.ConnCase do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
       import HadrianWeb.Router.Helpers
+      import Hadrian.DataFactory
 
       # The default endpoint for testing
       @endpoint HadrianWeb.Endpoint

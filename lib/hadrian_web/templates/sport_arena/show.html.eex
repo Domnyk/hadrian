@@ -1,0 +1,23 @@
+<h2>Show Sport arena</h2>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @sport_arena.name %>
+  </li>
+
+  <li>
+    <strong>Type:</strong>
+    <%= @sport_arena.type %>
+  </li>
+
+  <li>
+    <strong>Sport object:</strong>
+    <%= @sport_arena.sport_object_id %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: sport_arena_path(@conn, :edit, @sport_arena) %></span>
+<span><%= link "Back", to: sport_arena_path(@conn, :index) %></span>

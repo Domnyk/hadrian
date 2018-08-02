@@ -15,7 +15,7 @@ defmodule HadrianWeb.SportObjectController do
     render(conn, "new.html", changeset: changeset)
   end
 
-  def create(conn, %{"sport_object" => sport_object_params}) do
+  def create(conn, %{"sport_object" => sport_object_params}) do    
     sport_object_params = sport_object_params
     |> BookingMarginHelper.edit_map_to_fit_to_model_def
     

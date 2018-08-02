@@ -30,6 +30,7 @@ defmodule HadrianWeb.Router do
 
     resources "/sport_complexes", SportComplexController
     resources "/sport_objects", SportObjectController
+    resources "/sport_arenas", SportArenaController
     resources "/users", UserController
   end
 

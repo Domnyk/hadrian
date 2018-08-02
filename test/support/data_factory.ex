@@ -2,7 +2,8 @@ defmodule Hadrian.DataFactory do
   use ExMachina.Ecto, repo: Hadrian.Repo
 
   def booking_margin_factory do
-    {:ok, booking_margin} = EctoInterval.cast(%{months: 3, days: 2, secs: 10})
+    num_of_months = Enum.random(1..100)
+    {:ok, booking_margin} = EctoInterval.cast(%{months: num_of_months, days: 2, secs: 10})
 
     booking_margin
   end
@@ -20,8 +21,8 @@ defmodule Hadrian.DataFactory do
     alias Hadrian.Owners.SportObject
     
     name_val = &"Boisko nr. #{&1}"
-    latitude_val = &"56.12300#{&1}"
-    longitude_val = &"145.56700#{&1}"
+    latitude_val = &"56.#{&1 + 1}2300#{&1}"
+    longitude_val = &"145.#{&1 + 2}6700#{&1}"
     {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
 
     %SportObject{

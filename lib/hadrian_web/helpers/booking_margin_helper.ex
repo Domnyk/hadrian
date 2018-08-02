@@ -10,4 +10,12 @@ defmodule HadrianWeb.BookingMarginHelper do
     |> Map.delete("booking_margin_months")
     |> Map.delete("booking_margin_days")
   end
+
+  def get_booking_value(booking_margin, period) do
+    if booking_margin == nil do
+      "0"
+    else 
+      Map.get(booking_margin, period)
+    end
+  end 
 end

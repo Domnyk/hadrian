@@ -1,10 +1,12 @@
+<% alias HadrianWeb.BookingMarginHelper %>
+
 <%= form_for @changeset, @action, fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
       <p>Oops, something went wrong! Please check the errors below.</p>
 
       <div>
-        <%= @changeset.errors %>
+        <%= @changeset.errors |> inspect %>
       </div>
     </div>
   <% end %>
@@ -29,16 +31,16 @@
 
   <div class="form-group">
     <%= label f, :booking_margin_in_months, class: "control-label" %>
-    <%= number_input f, :booking_margin_months, step: "any", class: "form-control", min: "0", 
-        value: Map.get(@changeset.data.booking_margin, :months) %>
-    <%= error_tag f, :booking_margin_months %>
+    <%= number_input f, :booking_margin_months, step: "any", class: "form-control", min: "0", default: "0", 
+        value: BookingMarginHelper.get_booking_value(@changeset.data.booking_margin, :months) %>
+    <%= error_tag f, :booking_margin %>
   </div>
 
   <div class="form-group">
     <%= label f, :booking_margin_in_days, class: "control-label" %>
-    <%= number_input f, :booking_margin_days, step: "any", class: "form-control", min: "0", 
-        value: Map.get(@changeset.data.booking_margin, :days) %>
-    <%= error_tag f, :booking_margin_days %>
+    <%= number_input f, :booking_margin_days, step: "any", class: "form-control", min: "0", default: "0", 
+        value: BookingMarginHelper.get_booking_value(@changeset.data.booking_margin, :days) %>
+    <%= error_tag f, :booking_margin %>
   </div>
 
   <div class="form-group">

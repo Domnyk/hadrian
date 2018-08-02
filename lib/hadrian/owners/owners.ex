@@ -389,4 +389,100 @@ defmodule Hadrian.Owners do
   def change_time_block(%TimeBlock{} = time_block) do
     TimeBlock.changeset(time_block, %{})
   end
+
+  alias Hadrian.Owners.SportArena
+
+  @doc """
+  Returns the list of sport_arenas.
+
+  ## Examples
+
+      iex> list_sport_arenas()
+      [%SportArena{}, ...]
+
+  """
+  def list_sport_arenas do
+    Repo.all(SportArena)
+  end
+
+  @doc """
+  Gets a single sport_arena.
+
+  Raises `Ecto.NoResultsError` if the Sport arena does not exist.
+
+  ## Examples
+
+      iex> get_sport_arena!(123)
+      %SportArena{}
+
+      iex> get_sport_arena!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_sport_arena!(id), do: Repo.get!(SportArena, id)
+
+  @doc """
+  Creates a sport_arena.
+
+  ## Examples
+
+      iex> create_sport_arena(%{field: value})
+      {:ok, %SportArena{}}
+
+      iex> create_sport_arena(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_sport_arena(attrs \\ %{}) do
+    %SportArena{}
+    |> SportArena.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a sport_arena.
+
+  ## Examples
+
+      iex> update_sport_arena(sport_arena, %{field: new_value})
+      {:ok, %SportArena{}}
+
+      iex> update_sport_arena(sport_arena, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_sport_arena(%SportArena{} = sport_arena, attrs) do
+    sport_arena
+    |> SportArena.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a SportArena.
+
+  ## Examples
+
+      iex> delete_sport_arena(sport_arena)
+      {:ok, %SportArena{}}
+
+      iex> delete_sport_arena(sport_arena)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_sport_arena(%SportArena{} = sport_arena) do
+    Repo.delete(sport_arena)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking sport_arena changes.
+
+  ## Examples
+
+      iex> change_sport_arena(sport_arena)
+      %Ecto.Changeset{source: %SportArena{}}
+
+  """
+  def change_sport_arena(%SportArena{} = sport_arena) do
+    SportArena.changeset(sport_arena, %{})
+  end
 end
