@@ -17,11 +17,13 @@ defmodule Hadrian.DataFactory do
     name_val = &"Boisko nr. #{&1}"
     latitude_val = &"56.12300#{&1}"
     longitude_val = &"145.56700#{&1}"
+    {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
 
     %SportObject{
       name: sequence(:name, name_val),
       latitude: sequence(:latitude, latitude_val),
-      longitude: sequence(:longitude, longitude_val)
+      longitude: sequence(:longitude, longitude_val),
+      booking_margin: booking_margin_val
     }
   end
 
