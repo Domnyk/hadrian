@@ -26,7 +26,7 @@ defmodule HadrianWeb.SportObjectControllerTest do
   describe "create sport_object" do  
     test "redirects to show when data is valid", %{conn: conn} do
       insert(:sport_complex, id: @create_attrs["sport_complex_id"])
-      
+
       conn = post conn, sport_object_path(conn, :create), sport_object: @create_attrs
 
       assert %{id: id} = redirected_params(conn)
@@ -37,6 +37,8 @@ defmodule HadrianWeb.SportObjectControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
+      insert(:sport_complex, id: @invalid_attrs["sport_complex_id"])
+
       conn = post conn, sport_object_path(conn, :create), sport_object: @invalid_attrs
       assert html_response(conn, 200) =~ "New Sport object"
     end
@@ -57,7 +59,13 @@ defmodule HadrianWeb.SportObjectControllerTest do
   end
 
   describe "update sport_object" do
-    # setup [:create_sport_object]
+    setup do
+      insert(:sport_complex, id: @create_attrs["sport_complex_id"])
+      insert(:sport_complex, id: @update_attrs["sport_complex_id"])
+
+      sport_object = insert(:sport_object)
+      {:ok, sport_object: sport_object}
+    end
 
     test "redirects when data is valid", %{conn: conn, sport_object: sport_object} do
       conn = put conn, sport_object_path(conn, :update, sport_object), sport_object: @update_attrs
@@ -74,7 +82,12 @@ defmodule HadrianWeb.SportObjectControllerTest do
   end
 
   describe "delete sport_object" do
-    # setup [:create_sport_object]
+    setup do
+      insert(:sport_complex, id: @create_attrs["sport_complex_id"])
+
+      sport_object = insert(:sport_object)
+      {:ok, sport_object: sport_object}
+    end
 
     test "deletes chosen sport_object", %{conn: conn, sport_object: sport_object} do
       conn = delete conn, sport_object_path(conn, :delete, sport_object)

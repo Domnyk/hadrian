@@ -6,7 +6,7 @@ defmodule Hadrian.Owners.SportObject do
     field :latitude, :decimal
     field :longitude, :decimal
     field :name, :string
-    field :booking_margin, EctoInterval 
+    field :booking_margin, EctoInterval, default: %{months: 0, days: 0, secs: 0} 
 
     belongs_to :sport_complex, Hadrian.Owners.SportComplex, references: :id
     has_many :sport_arenas, Hadrian.Owners.SportArena, foreign_key: :sport_object_id
