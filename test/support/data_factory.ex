@@ -21,8 +21,8 @@ defmodule Hadrian.DataFactory do
     alias Hadrian.Owners.SportObject
     
     name_val = &"Boisko nr. #{&1}"
-    latitude_val = &"56.#{&1 + 1}2300#{&1}"
-    longitude_val = &"145.#{&1 + 2}6700#{&1}"
+    latitude_val = &"56.#{&1}2300#{&1}"
+    longitude_val = &"145.#{&1}6700#{&1}"
     {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
 
     %SportObject{
