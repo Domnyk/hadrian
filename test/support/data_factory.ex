@@ -1,6 +1,12 @@
 defmodule Hadrian.DataFactory do
   use ExMachina.Ecto, repo: Hadrian.Repo
-  
+
+  def booking_margin_factory do
+    num_of_months = Enum.random(1..100)
+    {:ok, booking_margin} = EctoInterval.cast(%{months: num_of_months, days: 2, secs: 10})
+
+    booking_margin
+  end
 
   def sport_complex_factory do
     alias Hadrian.Owners.SportComplex
@@ -15,14 +21,29 @@ defmodule Hadrian.DataFactory do
     alias Hadrian.Owners.SportObject
     
     name_val = &"Boisko nr. #{&1}"
-    latitude_val = &"56.12300#{&1}"
-    longitude_val = &"145.56700#{&1}"
+    {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
 
     %SportObject{
       name: sequence(:name, name_val),
-      latitude: sequence(:latitude, latitude_val),
-      longitude: sequence(:longitude, longitude_val)
+      latitude: sequence(:latitude, gen_latitude_val),
+      longitude: sequence(:longitude, gen_longitude_val),
     }
+  end
+
+  defp gen_latitude_val do
+    whole_val = "56"
+    fractional_val = Enum.random(100000..999999) |> Integer.to_string
+    latitude_val = whole_val <> "." <> fractional_val
+
+    fn _ -> latitude_val end
+  end
+
+  defp gen_longitude_val do
+    whole_val = "145"
+    fractional_val = Enum.random(100000..999999) |> Integer.to_string
+    longitude_val = whole_val <> "." <> fractional_val
+
+    fn _ -> longitude_val end
   end
 
   def sport_arena_factory do
