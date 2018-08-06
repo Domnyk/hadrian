@@ -29,26 +29,7 @@
     <%= error_tag f, :latitude %>
   </div>
 
-  <div class="form-group">
-    <%= label f, :booking_margin_in_months, class: "control-label" %>
-    <%= number_input f, :booking_margin, step: "any", class: "form-control", min: "0", name: "sport_object[booking_margin][months]",
-        value: @changeset.data.booking_margin.months %>
-    <%= error_tag f, :booking_margin %>
-  </div>
-
-  <div class="form-group">
-    <%= label f, :booking_margin_in_days, class: "control-label" %>
-    <%= number_input f, :booking_margin, step: "any", class: "form-control", min: "0", name: "sport_object[booking_margin][days]",
-        value: @changeset.data.booking_margin.days %>
-    <%= error_tag f, :booking_margin %>
-  </div>
-
-  <div class="form-group">
-    <%= label f, :booking_margin_in_secs, class: "control-label" %>
-    <%= number_input f, :booking_margin, step: "any", class: "form-control", min: "0", name: "sport_object[booking_margin][secs]",
-        value: @changeset.data.booking_margin.secs %>
-    <%= error_tag f, :booking_margin %>
-  </div>
+  <%= interval_input f, :booking_margin %>
 
   <div class="form-group">
     <%= label f, :sport_complex_id, class: "control-label" %>

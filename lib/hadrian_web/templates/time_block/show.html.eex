@@ -1,0 +1,23 @@
+<h2>Show Time block</h2>
+
+<ul>
+
+  <li>
+    <strong>Start hour:</strong>
+    <%= @time_block.start_hour %>
+  </li>
+
+  <li>
+    <strong>End hour:</strong>
+    <%= @time_block.end_hour %>
+  </li>
+
+  <li>
+    <strong>Daily schedule:</strong>
+    <%= @time_block.daily_schedule_id %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: time_block_path(@conn, :edit, @time_block) %></span>
+<span><%= link "Back", to: time_block_path(@conn, :index) %></span>

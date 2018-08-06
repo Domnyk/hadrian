@@ -21,16 +21,30 @@ defmodule Hadrian.DataFactory do
     alias Hadrian.Owners.SportObject
     
     name_val = &"Boisko nr. #{&1}"
-    latitude_val = &"56.#{&1}2300#{&1}"
-    longitude_val = &"145.#{&1}6700#{&1}"
     {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
 
     %SportObject{
       name: sequence(:name, name_val),
-      latitude: sequence(:latitude, latitude_val),
-      longitude: sequence(:longitude, longitude_val),
+      latitude: sequence(:latitude, gen_latitude_val),
+      longitude: sequence(:longitude, gen_longitude_val),
       booking_margin: booking_margin_val
     }
+  end
+
+  defp gen_latitude_val do
+    whole_val = "56"
+    fractional_val = Enum.random(100000..999999) |> Integer.to_string
+    latitude_val = whole_val <> "." <> fractional_val
+
+    fn _ -> latitude_val end
+  end
+
+  defp gen_longitude_val do
+    whole_val = "145"
+    fractional_val = Enum.random(100000..999999) |> Integer.to_string
+    longitude_val = whole_val <> "." <> fractional_val
+
+    fn _ -> longitude_val end
   end
 
   def sport_arena_factory do

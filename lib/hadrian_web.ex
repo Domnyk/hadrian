@@ -39,6 +39,7 @@ defmodule HadrianWeb do
 
       import HadrianWeb.Router.Helpers
       import HadrianWeb.ErrorHelpers
+      import HadrianWeb.InputHelpers
       import HadrianWeb.Gettext
     end
   end

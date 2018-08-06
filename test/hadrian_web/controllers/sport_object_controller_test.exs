@@ -3,11 +3,12 @@ defmodule HadrianWeb.SportObjectControllerTest do
 
   alias Hadrian.Owners
 
-  @create_attrs %{"latitude" => "10.5", "longitude" => "9.5", "name" => "some name", "sport_complex_id" => "23", 
-                  "booking_margin_months" => "2", "booking_margin_days" => "5"}
-  @update_attrs %{"latitude" => "11.5", "longitude" => "8.7", "name" => "some updated name", "sport_complex_id" => "24",
-                  "booking_margin_months" => "3", "booking_margin_days" => "4"}
-  @invalid_attrs %{"latitude" => nil, "longitude" => nil, "name" => nil, "booking_margin_months" => nil, "booking_margin_days" => nil}
+  @create_attrs %{latitude: 10.5, longitude: 9.5, name: "some name", sport_complex_id: 23, 
+                  booking_margin: %{months: "1", days: "6", secs: "1"}}
+  @update_attrs %{latitude: 11.5, longitude: 8.5, name: "some updated name", sport_complex_id: 25, 
+                  booking_margin: %{months: "3", days: "2", secs: "1"}}
+  @invalid_attrs %{latitude: nil, longitude: nil, name: nil,
+                  booking_margin: %{months: nil, days: nil, secs: nil}}
 
   describe "index" do
     test "lists all sport_objects", %{conn: conn} do
@@ -25,7 +26,7 @@ defmodule HadrianWeb.SportObjectControllerTest do
 
   describe "create sport_object" do  
     test "redirects to show when data is valid", %{conn: conn} do
-      insert(:sport_complex, id: @create_attrs["sport_complex_id"])
+      insert(:sport_complex, id: @create_attrs.sport_complex_id)
 
       conn = post conn, sport_object_path(conn, :create), sport_object: @create_attrs
 
@@ -45,12 +46,7 @@ defmodule HadrianWeb.SportObjectControllerTest do
   end
 
   describe "edit sport_object" do
-    setup do
-      insert(:sport_complex, id: @create_attrs["sport_complex_id"])
-
-      sport_object= insert(:sport_object)
-      {:ok, sport_object: sport_object}
-    end
+    setup [:insert_sport_complex_and_sport_object]
 
     test "renders form for editing chosen sport_object", %{conn: conn, sport_object: sport_object} do
       conn = get conn, sport_object_path(conn, :edit, sport_object)
@@ -60,8 +56,8 @@ defmodule HadrianWeb.SportObjectControllerTest do
 
   describe "update sport_object" do
     setup do
-      insert(:sport_complex, id: @create_attrs["sport_complex_id"])
-      insert(:sport_complex, id: @update_attrs["sport_complex_id"])
+      insert(:sport_complex, id: @create_attrs.sport_complex_id)
+      insert(:sport_complex, id: @update_attrs.sport_complex_id)
 
       sport_object = insert(:sport_object)
       {:ok, sport_object: sport_object}
@@ -82,12 +78,7 @@ defmodule HadrianWeb.SportObjectControllerTest do
   end
 
   describe "delete sport_object" do
-    setup do
-      insert(:sport_complex, id: @create_attrs["sport_complex_id"])
-
-      sport_object = insert(:sport_object)
-      {:ok, sport_object: sport_object}
-    end
+    setup [:insert_sport_complex_and_sport_object]
 
     test "deletes chosen sport_object", %{conn: conn, sport_object: sport_object} do
       conn = delete conn, sport_object_path(conn, :delete, sport_object)
@@ -96,5 +87,12 @@ defmodule HadrianWeb.SportObjectControllerTest do
         get conn, sport_object_path(conn, :show, sport_object)
       end
     end
+  end
+
+  defp insert_sport_complex_and_sport_object(_) do
+    insert(:sport_complex, id: @create_attrs.sport_complex_id)
+
+    sport_object = insert(:sport_object)
+    {:ok, sport_object: sport_object}   
   end
 end

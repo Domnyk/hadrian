@@ -41,12 +41,7 @@ defmodule HadrianWeb.SportArenaControllerTest do
   end
 
   describe "edit sport_arena" do
-    setup do
-      insert(:sport_object, id: @create_attrs.sport_object_id)
-
-      sport_arena = insert(:sport_arena)
-      {:ok, sport_arena: sport_arena}
-    end
+    setup [:insert_sport_object_and_sport_arena]
 
     test "renders form for editing chosen sport_arena", %{conn: conn, sport_arena: sport_arena} do
       conn = get conn, sport_arena_path(conn, :edit, sport_arena)
@@ -78,12 +73,7 @@ defmodule HadrianWeb.SportArenaControllerTest do
   end
 
   describe "delete sport_arena" do
-    setup do
-      insert(:sport_object, id: @create_attrs.sport_object_id)
-
-      sport_arena = insert(:sport_arena)
-      {:ok, sport_arena: sport_arena}
-    end
+    setup [:insert_sport_object_and_sport_arena]
     
     test "deletes chosen sport_arena", %{conn: conn, sport_arena: sport_arena} do
       conn = delete conn, sport_arena_path(conn, :delete, sport_arena)
@@ -92,5 +82,12 @@ defmodule HadrianWeb.SportArenaControllerTest do
         get conn, sport_arena_path(conn, :show, sport_arena)
       end
     end
+  end
+
+  defp insert_sport_object_and_sport_arena(_) do
+    insert(:sport_object, id: @create_attrs.sport_object_id)
+
+    sport_arena = insert(:sport_arena)
+    {:ok, sport_arena: sport_arena}    
   end
 end
