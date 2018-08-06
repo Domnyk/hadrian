@@ -5,6 +5,8 @@ defmodule Hadrian.Accounts.User do
   schema "users" do
     field :first_name , :string
     field :last_name  , :string
+
+    many_to_many :events, Hadrian.Activities.Event, join_through: "users_in_events"
   end
 
   @doc false

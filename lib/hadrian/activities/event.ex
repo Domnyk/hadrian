@@ -10,6 +10,7 @@ defmodule Hadrian.Activities.Event do
     timestamps()
 
     belongs_to :time_block, Hadrian.Owners.TimeBlock, references: :time_block_id
+    many_to_many :users, Hadrian.Accounts.User, join_through: "users_in_events"
   end
 
   @doc false
