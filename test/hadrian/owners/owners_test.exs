@@ -58,7 +58,7 @@ defmodule Hadrian.OwnersTest do
   describe "sport_objects" do
     alias Hadrian.Owners.SportObject
 
-    @update_attrs %{latitude: 76.7, longitude: 145.7, name: "some updated name"}
+    @update_attrs %{latitude: 76.7, longitude: 145.7, name: "some updated name", booking_margin: build(:booking_margin)}
     @invalid_attrs %{latitude: nil, longitude: nil, name: nil, sport_complex_id: nil}
 
     test "list_sport_objects/0 returns all sport_objects" do
@@ -73,12 +73,15 @@ defmodule Hadrian.OwnersTest do
 
     test "create_sport_object/1 with valid data creates a sport_object" do
       sport_complex = insert(:sport_complex)
-      valid_attrs = %{latitude: 89.5, longitude: 120.5, name: "some name", sport_complex_id: sport_complex.id}
+      {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
+      valid_attrs = %{latitude: 89.5, longitude: 120.5, name: "some name", sport_complex_id: sport_complex.id,
+                    booking_margin: booking_margin_val}
 
       assert {:ok, %SportObject{} = sport_object} = Owners.create_sport_object(valid_attrs)
       assert sport_object.latitude == Decimal.new(valid_attrs.latitude)
       assert sport_object.longitude == Decimal.new(valid_attrs.longitude)
       assert sport_object.name == valid_attrs.name
+      assert sport_object.booking_margin == valid_attrs.booking_margin
     end
 
     test "create_sport_object/1 with invalid data returns error changeset" do

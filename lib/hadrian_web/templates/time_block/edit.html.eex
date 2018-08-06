@@ -1,0 +1,5 @@
+<h2>Edit Time block</h2>
+
+<%= render "form.html", Map.put(assigns, :action, time_block_path(@conn, :update, @time_block)) %>
+
+<span><%= link "Back", to: time_block_path(@conn, :index) %></span>

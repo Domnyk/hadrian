@@ -1,0 +1,5 @@
+<h2>Edit Sport complex</h2>
+
+<%= render "form.html", Map.put(assigns, :action, sport_complex_path(@conn, :update, @sport_complex)) %>
+
+<span><%= link "Back", to: sport_complex_path(@conn, :index) %></span>

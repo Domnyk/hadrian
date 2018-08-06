@@ -1,0 +1,30 @@
+<h2>Listing Sport arenas</h2>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Sport object</th>
+
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+<%= for sport_arena <- @sport_arenas do %>
+    <tr>
+      <td><%= sport_arena.name %></td>
+      <td><%= sport_arena.type %></td>
+      <td><%= sport_arena.sport_object_id %></td>
+
+      <td class="text-right">
+        <span><%= link "Show", to: sport_arena_path(@conn, :show, sport_arena), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Edit", to: sport_arena_path(@conn, :edit, sport_arena), class: "btn btn-default btn-xs" %></span>
+        <span><%= link "Delete", to: sport_arena_path(@conn, :delete, sport_arena), method: :delete, data: [confirm: "Are you sure?"], class: "btn btn-danger btn-xs" %></span>
+      </td>
+    </tr>
+<% end %>
+  </tbody>
+</table>
+
+<span><%= link "New Sport arena", to: sport_arena_path(@conn, :new) %></span>

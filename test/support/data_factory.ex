@@ -27,6 +27,10 @@ defmodule Hadrian.DataFactory do
       name: sequence(:name, name_val),
       latitude: sequence(:latitude, gen_latitude_val),
       longitude: sequence(:longitude, gen_longitude_val),
+<<<<<<< HEAD
+=======
+      booking_margin: booking_margin_val
+>>>>>>> add_views
     }
   end
 

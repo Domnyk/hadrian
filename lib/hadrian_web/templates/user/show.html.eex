@@ -3,13 +3,13 @@
 <ul>
 
   <li>
-    <strong>Name:</strong>
-    <%= @user.name %>
+    <strong>First name:</strong>
+    <%= @user.first_name %>
   </li>
 
   <li>
-    <strong>Email:</strong>
-    <%= @user.email %>
+    <strong>Last name:</strong>
+    <%= @user.last_name %>
   </li>
 
 </ul>

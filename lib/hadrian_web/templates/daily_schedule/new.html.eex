@@ -1,0 +1,5 @@
+<h2>New Daily schedule</h2>
+
+<%= render "form.html", Map.put(assigns, :action, daily_schedule_path(@conn, :create)) %>
+
+<span><%= link "Back", to: daily_schedule_path(@conn, :index) %></span>
