@@ -48,6 +48,12 @@ config :logger, :console, format: "[$level] $message\n"
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
 
+# Include api keys. Will work only on dev machine
+api_keys_file_name = "api_keys.secret.exs"
+if File.exists?(api_keys_file_name) do
+  import_config api_keys_file_name
+end
+
 # Configure your database
 config :hadrian, Hadrian.Repo,
   adapter: Ecto.Adapters.Postgres,

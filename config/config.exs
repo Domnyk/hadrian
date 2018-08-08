@@ -22,15 +22,16 @@ config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:user_id]
 
-api_keys_filename = "api_keys.secret.exs"
-if File.exists?("api_keys") do
-  import_config api_keys_filename
+api_keys_filename = "./config/api_keys.secret.exs"
+if File.exists?(api_keys_filename) do
+  import_config "api_keys.secret.exs"
 end
 
 # Configures Ueberauth
 config :ueberauth, Ueberauth,
   providers: [
-    facebook: { Ueberauth.Strategy.Facebook, [] }
+    facebook: { Ueberauth.Strategy.Facebook, [request_path: "/sign_in/facebook",
+                                              callback_path: "/sign_in/facebook/callback"] }
   ]
 
 # Configures Ueberauth facebook strategy

@@ -4,9 +4,11 @@ defmodule Hadrian.Accounts do
   """
 
   import Ecto.Query, warn: false
+  
   alias Hadrian.Repo
-
   alias Hadrian.Accounts.User
+  alias Hadrian.Accounts.Registration
+  alias Hadrian.Accounts.Session
 
   @doc """
   Returns the list of users.
@@ -36,6 +38,19 @@ defmodule Hadrian.Accounts do
 
   """
   def get_user!(id), do: Repo.get!(User, id)
+
+  @doc """
+  Registers a user.
+
+  Hashes password and calls create_user/1
+  """
+  def register_user(attrs \\ %{}) do
+    password = Map.get(attrs, "password")
+    
+    attrs
+    |> Map.put("password_hash", Registration.create_hash(password))
+    |> create_user()
+  end
 
   @doc """
   Creates a user.

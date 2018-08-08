@@ -1,7 +1,7 @@
 defmodule HadrianWeb.Router do
   use HadrianWeb, :router
 
-  require Ueberauth
+  # require Ueberauth
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -15,12 +15,21 @@ defmodule HadrianWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/auth/:provider", HadrianWeb do
+  scope "/sign_up", HadrianWeb do
     pipe_through :browser
 
-    get "/", AuthController, :login
-    get "/callback", AuthController, :login_callback
-    delete "/", AuthController, :logout
+    get "/in_app", RegistrationController, :new
+    post "/in_app", RegistrationController, :create
+  end
+
+  scope "/sign_in", HadrianWeb do
+    pipe_through :browser
+
+    get "/in_app", SessionController, :new
+    post "/in_app", SessionController, :create
+
+    get "/facebook", SessionController, :new
+    get "/facebook/callback", SessionController, :create
   end
 
   scope "/", HadrianWeb do
@@ -34,7 +43,11 @@ defmodule HadrianWeb.Router do
     resources "/daily_schedules", DailyScheduleController
     resources "/time_blocks", TimeBlockController
     resources "/events", EventController
-    resources "/users", UserController
+    # resources "/users", UserController
+
+    # get "/sign_in", SessionController, :new
+    # post "/sign_in", SessionController, :create
+    delete "/sign_out", SessionController, :delete
   end
 
   # Other scopes may use custom stacks.
