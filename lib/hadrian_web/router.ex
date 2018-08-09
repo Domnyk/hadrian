@@ -18,8 +18,8 @@ defmodule HadrianWeb.Router do
   scope "/sign_up", HadrianWeb do
     pipe_through :browser
 
-    get "/in_app", RegistrationController, :new
-    post "/in_app", RegistrationController, :create
+    get "/", RegistrationController, :new
+    post "/", RegistrationController, :create
   end
 
   scope "/sign_in", HadrianWeb do
@@ -43,7 +43,8 @@ defmodule HadrianWeb.Router do
     resources "/daily_schedules", DailyScheduleController
     resources "/time_blocks", TimeBlockController
     resources "/events", EventController
-    # resources "/users", UserController
+    resources "/roles", RoleController
+    resources "/users", UserController
 
     # get "/sign_in", SessionController, :new
     # post "/sign_in", SessionController, :create

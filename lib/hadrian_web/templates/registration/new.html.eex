@@ -8,6 +8,12 @@
   <% end %>
 
   <div class="form-group">
+    <%= label f, "Role", class: "control-lalbe" %> <br />
+    <%= select f, :role_id, @roles %>
+    <%= error_tag f, :role_id %>
+  </div>
+
+  <div class="form-group">
     <%= label f, "Email", class: "control-label" %>
     <%= email_input f, :email, class: "form-control" %>
     <%= error_tag f, :email %>
