@@ -25,9 +25,8 @@ defmodule Hadrian.Accounts.User do
     |> unique_constraint(:email)
     |> validate_length(:password, min: 8)
     |> validate_format(:login, alphanum_or_blank)
-    # |> validate_format(:display_name, alphanum_or_blank)
+    |> validate_format(:display_name, alphanum_or_blank)
     |> validate_format(:email, email)
-    # |> validate_required([:password, :email])
-    |> validate_required([:email])
+    |> validate_required([:password, :email])
   end
 end
