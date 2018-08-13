@@ -78,7 +78,7 @@ defmodule Hadrian.DataFactory do
 
     %User{
       password: "Very strong password",
-      email: "test@domain.com"
+      email: sequence(:email, &"test#{&1}@domain.com")
     }
   end
 

@@ -6,26 +6,38 @@ defmodule Hadrian.AccountsTest do
   describe "users" do
     alias Hadrian.Accounts.User
 
-    @update_attrs %{first_name: "Steve", last_name: "Madden"}
-    @invalid_attrs %{first_name: nil, last_name: nil}
+    @update_attrs %{email: "new@domain.com", password: "Very weak password"}
+    @invalid_attrs %{email: nil, password: nil}
 
     test "list_users/0 returns all users" do
-      users_list = insert_list(3, :user)
-      assert Accounts.list_users() == users_list
+      num_of_users = 3
+      users_list = insert_list(num_of_users, :user, %{password_hash: Comeonin.Bcrypt.hashpwsalt("Password")})
+
+      users_list_from_db = Accounts.list_users()
+      assert length(users_list_from_db) == num_of_users
+      for i <- 0..num_of_users - 1 do
+        user = Enum.at(users_list, i)
+        user_from_db = Enum.at(users_list_from_db, i)
+
+        assert_that_users_are_equal(user, user_from_db)
+        assert user_from_db.password_hash != nil
+      end     
     end
 
     test "get_user!/1 returns the user with given id" do
-      user = insert(:user)
+      user = insert_with_hashed_password(:user)
 
-      assert Accounts.get_user!(user.id) == user
+      user_from_db = Accounts.get_user!(user.id)
+
+      assert_that_users_are_equal(user, user_from_db)
+      assert user_from_db.password_hash != nil
     end
 
     test "create_user/1 with valid data creates a user" do
-      valid_attrs = %{first_name: "John", last_name: "Cena"}
+      valid_attrs = build(:user_attrs)
 
       assert {:ok, %User{} = user} = Accounts.create_user(valid_attrs)
-      assert user.first_name == valid_attrs.first_name
-      assert user.last_name == valid_attrs.last_name
+      assert user.email == valid_attrs["email"]
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -37,15 +49,17 @@ defmodule Hadrian.AccountsTest do
 
       assert {:ok, user} = Accounts.update_user(user, @update_attrs)
       assert %User{} = user
-      assert user.first_name == @update_attrs.first_name
-      assert user.last_name == @update_attrs.last_name
+      assert user.email == @update_attrs.email
     end
 
     test "update_user/2 with invalid data returns error changeset" do
-      user = insert(:user)
+      original_user = insert(:user)
 
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
-      assert user == Accounts.get_user!(user.id)
+      user_to_update = Accounts.get_user!(original_user.id)
+
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user_to_update, @invalid_attrs)
+      assert original_user.id == user_to_update.id
+      assert original_user.email == user_to_update.email
     end
 
     test "delete_user/1 deletes the user" do
@@ -59,6 +73,18 @@ defmodule Hadrian.AccountsTest do
       user = insert(:user)
       
       assert %Ecto.Changeset{} = Accounts.change_user(user)
+    end
+
+    defp insert_with_hashed_password(:user) do
+      user = build(:user)
+      password_hash = Comeonin.Bcrypt.hashpwsalt(user.password)
+      
+      insert(:user, %{password_hash: password_hash})
+    end
+
+    defp assert_that_users_are_equal(%User{} = user_1, %User{} = user_2) do
+      assert user_1.id == user_2.id
+      assert user_1.email == user_2.email
     end
   end
 
