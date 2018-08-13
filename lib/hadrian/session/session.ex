@@ -12,8 +12,6 @@ defmodule Hadrian.Session do
   end
 
   def login(conn, source) do
-    source |> inspect |> IO.puts
-
     case source do
       :in_app -> InApp.login(conn)
       :facebook -> Facebook.login(conn)
