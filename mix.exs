@@ -46,7 +46,8 @@ defmodule Hadrian.Mixfile do
       {:ecto_interval, git: "https://github.com/Domnyk/ecto_interval.git", tag: "v0.2.1"},
       {:ex_machina, "~> 2.2", only: [:dev, :test]},
       {:comeonin, "~> 4.0"},
-      {:bcrypt_elixir, "~> 1.0"}
+      {:bcrypt_elixir, "~> 1.0"},
+      {:phoenix_integration, "~> 0.5", only: :test}
     ]
   end
 
