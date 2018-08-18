@@ -37,6 +37,10 @@ defmodule HadrianWeb.Endpoint do
     key: "_hadrian_key",
     signing_salt: "rrY7P9+r"
 
+  # CORS Plug to allow requests from external apps
+  plug CORSPlug,
+    origin: ["http://localhost:8080"]
+
   plug HadrianWeb.Router
 
   @doc """

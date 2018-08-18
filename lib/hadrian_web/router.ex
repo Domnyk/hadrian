@@ -11,9 +11,7 @@ defmodule HadrianWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-  end
+
 
   scope "/auth/:provider", HadrianWeb do
     pipe_through :browser
@@ -36,9 +34,15 @@ defmodule HadrianWeb.Router do
     resources "/events", EventController
     resources "/users", UserController
   end
+ 
+  pipeline :api do
+    plug :accepts, ["json"]
+  end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", HadrianWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", HadrianWeb do
+    pipe_through :api
+
+    # options "/users", Api.UserController, :options
+    get "/users", Api.UserController, :index
+  end
 end
