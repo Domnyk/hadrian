@@ -56,7 +56,7 @@ defmodule HadrianWeb.Router do
   scope "/api", HadrianWeb do
     pipe_through :api
 
-    # options "/users", Api.UserController, :options
     get "/users", Api.UserController, :index
+    post "/users", Api.UserController, :create
   end
 end
