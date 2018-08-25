@@ -17,3 +17,7 @@ config :hadrian, Hadrian.Repo,
   database: System.get_env("POSTGRES_DB") || "hadrian_test_created_with_migration",
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
+
+# Required by PhoenixIntegration
+config :phoenix_integration,
+  endpoint: HadrianWeb.Endpoint

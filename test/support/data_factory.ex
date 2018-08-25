@@ -76,10 +76,16 @@ defmodule Hadrian.DataFactory do
   def user_factory do
     alias Hadrian.Accounts.User
 
-    # AKA Captain America :D
     %User{
-      first_name: "Steve",
-      last_name: "Rogers"
+      password: "Very strong password",
+      email: sequence(:email, &"test#{&1}@domain.com")
+    }
+  end
+
+  def user_attrs_factory do
+    %{
+      "password" => "Very strong password",
+      "email" => "test@domain.com"
     }
   end
 
