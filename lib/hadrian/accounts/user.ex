@@ -15,6 +15,8 @@ defmodule Hadrian.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     alphanum_or_blank = ~r/^(\A\z|\w+)$/
+    
+    # Based on: https://gist.github.com/corpsee/4264638
     email = ~r/^[\p{L}\p{Nd}]{1}([-\p{L}\p{Nd}_]+[\.]{0,2}[+]?)+@([-\p{L}\p{Nd}_]{1,}\.)+[\p{L}\p{Nd}]{2,4}$/xiu
 
     user

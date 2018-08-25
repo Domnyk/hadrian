@@ -37,6 +37,9 @@ defmodule HadrianWeb do
       # Use all HTML functionality (forms, tags, etc)
       use Phoenix.HTML
 
+      # Check if user is logged in
+      import Hadrian.Session, only: [current_user: 1, logged_in?: 1]
+
       import HadrianWeb.Router.Helpers
       import HadrianWeb.ErrorHelpers
       import HadrianWeb.InputHelpers

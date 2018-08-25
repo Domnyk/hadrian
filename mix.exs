@@ -45,7 +45,13 @@ defmodule Hadrian.Mixfile do
       {:ueberauth_facebook, "~> 0.7"},
       {:ecto_interval, git: "https://github.com/Domnyk/ecto_interval.git", tag: "v0.2.1"},
       {:ex_machina, "~> 2.2", only: [:dev, :test]},
+<<<<<<< HEAD
       {:cors_plug, "~> 1.5"}
+=======
+      {:comeonin, "~> 4.0"},
+      {:bcrypt_elixir, "~> 1.0"},
+      {:phoenix_integration, "~> 0.5", only: :test}
+>>>>>>> master
     ]
   end
 

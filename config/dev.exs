@@ -7,7 +7,7 @@ use Mix.Config
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
 config :hadrian, HadrianWeb.Endpoint,
-  http: [port: 4000],
+  https: [port: 4000, keyfile: "priv/server.key", certfile: "priv/server.pem"],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
@@ -47,6 +47,12 @@ config :logger, :console, format: "[$level] $message\n"
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.
 config :phoenix, :stacktrace_depth, 20
+
+# Include api keys. Will work only on dev machine
+api_keys_file_name = "api_keys.secret.exs"
+if File.exists?(api_keys_file_name) do
+  import_config api_keys_file_name
+end
 
 # Configure your database
 config :hadrian, Hadrian.Repo,
