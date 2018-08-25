@@ -1,5 +1,0 @@
-<h2>New Sport arena</h2>
-
-<%= render "form.html", Map.put(assigns, :action, sport_arena_path(@conn, :create)) %>
-
-<span><%= link "Back", to: sport_arena_path(@conn, :index) %></span>

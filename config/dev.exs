@@ -12,8 +12,7 @@ config :hadrian, HadrianWeb.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin",
-                    cd: Path.expand("../assets", __DIR__)]]
+  watchers: []
 
 # ## SSL Support
 #
@@ -35,10 +34,8 @@ config :hadrian, HadrianWeb.Endpoint,
 config :hadrian, HadrianWeb.Endpoint,
   live_reload: [
     patterns: [
-      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
       ~r{lib/hadrian_web/views/.*(ex)$},
-      ~r{lib/hadrian_web/templates/.*(eex)$}
     ]
   ]
 
