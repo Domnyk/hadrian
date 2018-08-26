@@ -42,7 +42,7 @@ defmodule HadrianWeb.Api.UserControllerTest do
       conn = post conn, user_path(conn, :create), Map.from_struct(build(:user, email: email))
       resp = json_response(conn, 200)
 
-      assert resp["email"] == "has already been taken"
+      assert resp["email"] == ["has already been taken"]
     end
 
     test "return json with field 'status' set to 'error' when email is not unique", %{conn: conn} do

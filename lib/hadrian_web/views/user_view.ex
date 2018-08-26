@@ -19,16 +19,20 @@ defmodule HadrianWeb.Api.UserView do
       display_name: user.display_name}
   end
 
-  def render("error.create.json", %{errors: errors}) do
-    Enum.reduce(errors, %{}, &put_error_into_acc/2)
+  def render("error.create.json", %{changeset: changeset}) do
+    import Ecto.Changeset, only: [traverse_errors: 2]
+
+    parse_errors(changeset)
     |> Map.put(:status, :error)
   end
 
-  defp put_error_into_acc(error, acc) do
-    field = elem(error, 0)
-    extra_info = elem(error, 1)
-    reason = elem(extra_info, 0)
+  defp parse_errors(changeset) do
+    import Ecto.Changeset, only: [traverse_errors: 2]
 
-    Map.put(acc, field, reason)
+    traverse_errors(changeset, fn {msg, opts} ->
+      Enum.reduce(opts, msg, fn {key, value}, acc ->
+        String.replace(acc, "%{#{key}}", to_string(value))
+      end)
+    end)
   end
 end

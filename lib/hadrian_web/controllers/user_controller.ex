@@ -14,7 +14,7 @@ defmodule HadrianWeb.Api.UserController do
       {:ok, user} ->
         render(conn, "ok.create.json", user: user)
       {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "error.create.json", errors: changeset.errors)
+        render(conn, "error.create.json", changeset: changeset)
     end
   end
 end
