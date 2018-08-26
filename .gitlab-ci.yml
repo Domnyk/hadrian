@@ -33,18 +33,6 @@ Build app:
     - mix deps.get --only $MIX_ENV
   script:
     mix compile
-
-Compile static assets:
-  stage: build
-  variables: 
-    MIX_ENV: dev
-  before_script:
-    - mix deps.get --only $MIX_ENV
-    - npm install -g brunch
-    - cd ./assets && npm install && cd ..
-  script:
-    - cd ./assets && brunch build
-    - cd .. && mix phx.digest
   
 Test:
   stage: test
