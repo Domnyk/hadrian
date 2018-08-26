@@ -52,9 +52,16 @@ defmodule Hadrian.Accounts do
 
   """
   def create_user(attrs \\ %{}) do
-    %User{}
-    |> User.changeset(attrs)
-    |> Repo.insert()
+    alias Hadrian.Registration
+    
+    changeset = User.changeset(%User{}, attrs)
+    if changeset.valid? do
+      changeset
+      |> Registration.insert_password_hash
+      |> Repo.insert() 
+    else
+      {:error, changeset}
+    end
   end
 
   @doc """
