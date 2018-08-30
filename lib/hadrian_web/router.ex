@@ -8,7 +8,7 @@ defmodule HadrianWeb.Router do
   scope "/api", HadrianWeb do
     pipe_through :api
 
-    get "/users", Api.UserController, :index
-    post "/users", Api.UserController, :create
+    resources "/users", Api.UserController, only: [:index, :create]
+    resources "/sessions", Api.SessionController, only: [:create]
   end
 end
