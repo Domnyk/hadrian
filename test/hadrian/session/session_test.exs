@@ -1,5 +1,5 @@
 defmodule Hadrian.SessionTest do
-  use Hadrian.DataCase
+  use Hadrian.DataCase, async: false
 
   alias Hadrian.Session
   alias Hadrian.Accounts.User
