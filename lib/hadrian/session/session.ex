@@ -1,6 +1,4 @@
 defmodule Hadrian.Session do
-  alias Hadrian.Repo
-  alias Hadrian.Accounts.User
   alias Hadrian.Session.InApp
   alias Hadrian.Session.Facebook
 

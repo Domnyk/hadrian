@@ -1,6 +1,5 @@
 defmodule Hadrian.Session.Facebook do
   alias Hadrian.Repo
-  alias Hadrian.Accounts
   alias Hadrian.Accounts.User  
   
   @access_token Application.get_env(:hadrian, :access_token)

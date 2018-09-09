@@ -1,7 +1,7 @@
 defmodule Hadrian.Session.Facebook.AccessToken.HTTP do
   use HTTPoison.Base
 
-  import Logger
+  require Logger
 
   @behaviour Hadrian.Session.Facebook.AccessToken
 
@@ -12,7 +12,7 @@ defmodule Hadrian.Session.Facebook.AccessToken.HTTP do
       false
     else
       case inspect_token_in_fb(fb_access_token) do
-        {:ok, %HTTPoison.Response{body: body} = resp} ->
+        {:ok, %HTTPoison.Response{body: body}} ->
           Poison.decode!(body)["data"]["is_valid"]
           |> Utils.String.to_boolean!
         {:error, _} -> false
@@ -27,7 +27,7 @@ defmodule Hadrian.Session.Facebook.AccessToken.HTTP do
 
     case get(verification_url) do
       {:ok, %HTTPoison.Response{status_code: 200} = resp} -> {:ok, resp}
-      {:error, resp} -> {:error, "Error while checking access token"}
+      {:error, _} -> {:error, "Error while checking access token"}
     end
   end
 
