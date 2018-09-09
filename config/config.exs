@@ -27,22 +27,9 @@ if File.exists?(api_keys_filename) do
   import_config "api_keys.secret.exs"
 end
 
-# Configures Ueberauth
-config :ueberauth, Ueberauth,
-  providers: [
-    facebook: { Ueberauth.Strategy.Facebook, [request_path: "/sign_in/facebook",
-                                              callback_path: "/sign_in/facebook/callback"] }
-  ]
-
-# Configures Ueberauth facebook strategy
-config :ueberauth, Ueberauth.Strategy.Facebook.OAuth,
-	client_id: System.get_env("FACEBOOK_APP_ID"),
-	client_secret: System.get_env("FACEBOOK_APP_SECRET"),
-	redirect_uri: System.get_env("FACEBOOK_REDIRECT_URI")
-
-config :guardian, Hadrian.Guardian,
+config :hadrian, Hadrian.Guardian,
   issuer: "Hadrian",
-  secret_key: Mix.env()  
+  secret_key: "xDbl0IB46hIl8Biax3Tm3WBErLcKIgLRyvS/8KAxEb4u6KRnLfV/Yj3IHsFXL4gm"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

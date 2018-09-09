@@ -3,23 +3,16 @@ defmodule Hadrian.Session do
   alias Hadrian.Accounts.User
   alias Hadrian.Session.InApp
   alias Hadrian.Session.Facebook
-  
-  def current_user(conn) do
-    id = Plug.Conn.get_session(conn, :current_user)
-    if id do
-      Hadrian.Repo.get(User, id)
+
+  def login(%{"auth_method" => auth_method} = params) do
+    case auth_method do
+      "in_app" -> InApp.login(params["user"])
+      "facebook" -> Facebook.login(params["user"])
+      _ -> {:error, reason: "Unkown authorization method in params map"}
     end
   end
 
-  def login(conn, source) do
-    case source do
-      :in_app -> InApp.login(conn)
-      :facebook -> Facebook.login(conn)
-      _ -> :error
-    end
-  end
-
-  def logged_in?(conn) do
-    !!current_user(conn)
+  def login(_) do
+    {:error, reason: "No authorization method in params map"}
   end
 end

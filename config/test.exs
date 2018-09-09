@@ -21,3 +21,6 @@ config :hadrian, Hadrian.Repo,
 # Required by PhoenixIntegration
 config :phoenix_integration,
   endpoint: HadrianWeb.Endpoint
+
+# Configure access token module for Facebook
+config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.InMemory

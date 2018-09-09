@@ -60,3 +60,6 @@ config :hadrian, Hadrian.Repo,
   database: System.get_env("POSTGRES_DB") || "migrations",
   hostname: System.get_env("POSTGRES_HOST") || "localhost",
   pool_size: 10
+
+# Configure access token module for Facebook
+config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.HTTP

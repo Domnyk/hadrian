@@ -5,10 +5,10 @@ defmodule HadrianWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/api", HadrianWeb do
+  scope "/api", HadrianWeb.Api do
     pipe_through :api
 
-    resources "/users", Api.UserController, only: [:index, :create]
-    resources "/sessions", Api.SessionController, only: [:create]
+    resources "/users", UserController, only: [:index, :create]
+    post "/token", TokenController, :create
   end
 end

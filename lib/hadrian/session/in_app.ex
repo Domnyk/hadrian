@@ -14,7 +14,7 @@ defmodule Hadrian.Session.InApp do
 
     case authenticate(user, params["password"]) do
       true  -> {:ok, user}
-      _     -> :error
+      _     -> {:error, params}
     end
   end
 end

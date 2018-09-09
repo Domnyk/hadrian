@@ -5,20 +5,20 @@ defmodule Hadrian.Guardian do
   alias Hadrian.Accounts
   alias Hadrian.Accounts.User
 
-  def for_token(user = %User{}) do
+  def subject_for_token(user = %User{}, _claims) do
     {:ok, "User:#{user.id}"}
   end
 
-  def for_token(_) do
+  def subject_for_token(_resource, _claims) do
     {:error, "Unkown resource type"}
   end
 
-  def from_claims(claims) do
+  def resource_from_claims(claims) do
     id = claims["sub"]
     {:ok, Repo.get(User, id)}
   end
 
-  def from_claims(_) do
+  def resource_from_claims(_) do
     {:error, "Unkown resource type"}
   end
 end
