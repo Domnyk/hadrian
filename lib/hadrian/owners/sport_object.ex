@@ -3,8 +3,7 @@ defmodule Hadrian.Owners.SportObject do
   import Ecto.Changeset
 
   schema "sport_objects" do
-    field :latitude, :decimal
-    field :longitude, :decimal
+    field :geo_coordinates, Types.GeoCoordinates.Ecto
     field :name, :string
     field :booking_margin, EctoInterval, default: %{months: 0, days: 0, secs: 0} 
 

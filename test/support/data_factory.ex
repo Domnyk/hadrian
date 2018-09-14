@@ -16,20 +16,20 @@ defmodule Hadrian.DataFactory do
     }
   end
 
-  def sport_object_factory do
-    alias Decimal
-    alias Hadrian.Owners.SportObject
-    
-    name_val = &"Boisko nr. #{&1}"
-    {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
-
-    %SportObject{
-      name: sequence(:name, name_val),
-      latitude: sequence(:latitude, gen_latitude_val),
-      longitude: sequence(:longitude, gen_longitude_val),
-      booking_margin: booking_margin_val
-    }
-  end
+  # def sport_object_factory do
+  #   alias Decimal
+  #   alias Hadrian.Owners.SportObject
+  #   
+  #   name_val = &"Boisko nr. #{&1}"
+  #   {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
+# 
+  #   %SportObject{
+  #     name: sequence(:name, name_val),
+  #     latitude: sequence(:latitude, gen_latitude_val),
+  #     longitude: sequence(:longitude, gen_longitude_val),
+  #     booking_margin: booking_margin_val
+  #   }
+  # end
 
   defp gen_latitude_val do
     whole_val = "56"
