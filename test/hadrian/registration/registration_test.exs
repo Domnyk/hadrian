@@ -14,7 +14,7 @@ defmodule Hadrian.RegistrationTest do
       user_attrs = build(:user_attrs)
       |> Map.update("password", nil, fn _ -> nil end)
 
-      assert {:ok, %User{} = user} = Registration.register_user(user_attrs, :facebook)
+      assert {:ok, %User{}} = Registration.register_user(user_attrs, :facebook)
     end
   end
 end
