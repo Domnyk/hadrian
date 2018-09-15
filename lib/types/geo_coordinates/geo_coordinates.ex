@@ -5,7 +5,7 @@ defmodule Types.GeoCoordinates do
             longitude: nil
 
   @type t() :: %__MODULE__ {
-    latitude: Decimal.t(),
-    longitude: Decimal.t()
+    latitude: float(),
+    longitude: float()
   }
 end

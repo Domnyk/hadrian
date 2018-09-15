@@ -16,20 +16,30 @@ defmodule Hadrian.DataFactory do
     }
   end
 
-  # def sport_object_factory do
-  #   alias Decimal
-  #   alias Hadrian.Owners.SportObject
-  #   
-  #   name_val = &"Boisko nr. #{&1}"
-  #   {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
-# 
-  #   %SportObject{
-  #     name: sequence(:name, name_val),
-  #     latitude: sequence(:latitude, gen_latitude_val),
-  #     longitude: sequence(:longitude, gen_longitude_val),
-  #     booking_margin: booking_margin_val
-  #   }
-  # end
+  def sport_object_factory do
+    alias Decimal
+    alias Hadrian.Owners.SportObject
+    
+    name_val = &"Sport object number #{&1}"
+    {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
+    
+    %SportObject{
+      name: sequence(:name, name_val),
+      geo_coordinates: sequence(:geo_coordinates, gen_geo_coordinates_val),
+      booking_margin: booking_margin_val
+    }
+  end
+
+  defp gen_geo_coordinates_val do
+    alias Types.GeoCoordinates
+
+    geo_coordinates = %GeoCoordinates{
+      latitude: sequence(:latitude, gen_latitude_val),
+      longitude: sequence(:longitude, gen_longitude_val)
+    }
+
+    fn _ -> geo_coordinates end
+  end
 
   defp gen_latitude_val do
     whole_val = "56"
@@ -85,7 +95,7 @@ defmodule Hadrian.DataFactory do
   def user_attrs_factory do
     %{
       "password" => "Very strong password",
-      "email" => "test@domain.com"
+      "email" => sequence(:email, &"test#{&1}@domain.com")
     }
   end
 

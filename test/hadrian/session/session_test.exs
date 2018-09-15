@@ -2,6 +2,7 @@ defmodule Hadrian.SessionTest do
   use Hadrian.DataCase, async: false
 
   alias Hadrian.Session
+  alias Hadrian.Accounts
   alias Hadrian.Accounts.User
 
   describe "login/1" do
@@ -22,9 +23,10 @@ defmodule Hadrian.SessionTest do
     setup [:use_in_app_auth]
 
     test "returns {:ok, %User{}} tuple when user exists", %{params: params} do
-      user = insert(:user)
-      params = Map.put(params, "user", %{"email" => user.email, "password" => user.password})
-      
+      user_attrs = build(:user_attrs)
+      params = Map.put(params, "user", user_attrs)
+      Accounts.create_user(user_attrs)
+
       assert {:ok, %User{}} = Session.login(params)
     end
 

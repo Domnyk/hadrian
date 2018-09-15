@@ -12,7 +12,7 @@ defmodule Hadrian.RegistrationTest do
 
     test "returns {:ok, user} tuple when registering using facebook option" do
       user_attrs = build(:user_attrs)
-      |> Map.update("password", nil, fn val -> nil end)
+      |> Map.update("password", nil, fn _ -> nil end)
 
       assert {:ok, %User{} = user} = Registration.register_user(user_attrs, :facebook)
     end

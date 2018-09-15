@@ -23,7 +23,7 @@ defmodule Types.GeoCoordinates.Ecto do
         {String.to_existing_atom(key), val}
       end
 
-    {:ok, struct!(data)}
+    {:ok, struct!(GeoCoordinates, data)}
   end
 
   def dump(%GeoCoordinates{} = geo_coordinates) do
