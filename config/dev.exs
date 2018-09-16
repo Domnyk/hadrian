@@ -8,7 +8,7 @@ use Mix.Config
 # with brunch.io to recompile .js and .css sources.
 config :hadrian, HadrianWeb.Endpoint,
   http: [port: 4001],
-  https: [port: 4000, keyfile: "priv/server.key", certfile: "priv/server.pem"],
+  https: [port: 4000, keyfile: "priv/server.key", certfile: "priv/server.crt"],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,

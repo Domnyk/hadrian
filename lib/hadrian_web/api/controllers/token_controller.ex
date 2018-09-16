@@ -22,7 +22,7 @@ defmodule HadrianWeb.Api.TokenController do
     case Session.login(user_params) do
       {:ok, %User{} = user} ->
         {:ok, token, _claims} = Guardian.encode_and_sign(user)
-        render(conn, "ok.create.json", jwt: token)
+        render(conn, "ok.create.json", token: token, current_user: user)
       {:error, _} ->
         render(conn, "error.create.json", reason: "Error during sign in")
     end
