@@ -74,7 +74,7 @@ defmodule HadrianWeb.Api.TokenControllerTest do
       resp = json_response(conn, 200)
 
       assert resp["status"] == "ok"
-      assert resp["jwt"]
+      assert resp["token"]
     end
   end
 
