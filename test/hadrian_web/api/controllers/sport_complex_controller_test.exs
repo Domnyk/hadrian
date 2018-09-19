@@ -17,4 +17,31 @@ defmodule HadrianWeb.Api.SportComplexControllerTest do
       assert sport_complex_json_2["id"] == sport_complex_2.id
     end
   end
+
+  describe "create" do
+    alias Hadrian.Repo
+    alias Hadrian.Owners.SportComplex
+    
+    test "when no errors occured inserts new sport complex into DB", %{conn: conn} do
+      params = build(:sport_complex)
+      |> Map.from_struct
+
+      conn = post conn, sport_complex_path(conn, :create), params
+      resp = json_response(conn, 200)
+
+      assert %SportComplex{} = sport_complex_from_db = Repo.get_by(SportComplex, name: params.name)
+      assert resp["data"]["name"] == sport_complex_from_db.name
+    end
+
+    test "when no errors occured returns response with status \"ok\" and sport complex data", %{conn: conn} do
+      params = build(:sport_complex)
+      |> Map.from_struct
+
+      conn = post conn, sport_complex_path(conn, :create), params
+      resp = json_response(conn, 200)
+      assert resp["status"] == "ok"
+      assert Kernel.get_in(resp, ["data", "id"]) 
+      assert resp["data"]["name"] == params.name
+    end
+  end
 end
