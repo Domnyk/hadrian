@@ -2,6 +2,7 @@ defmodule HadrianWeb.Api.SportComplexView do
   use HadrianWeb, :view
   
   alias HadrianWeb.Api.SportComplexView
+  alias HadrianWeb.ErrorView
 
   def render("index.json", %{sport_complexs: sport_complexs}) do
     %{status: :ok,
@@ -19,19 +20,10 @@ defmodule HadrianWeb.Api.SportComplexView do
   end
 
   def render("error.create.json", %{changeset: changeset}) do
-    import Ecto.Changeset, only: [traverse_errors: 2]
+    errors = ErrorView.parse_errors(changeset)
 
-    parse_errors(changeset)
+    %{}
+    |> Map.put(:errors, errors)
     |> Map.put(:status, :error)
-  end
-
-  defp parse_errors(changeset) do
-    import Ecto.Changeset, only: [traverse_errors: 2]
-
-    traverse_errors(changeset, fn {msg, opts} ->
-      Enum.reduce(opts, msg, fn {key, value}, acc ->
-        String.replace(acc, "%{#{key}}", to_string(value))
-      end)
-    end)
   end
 end
