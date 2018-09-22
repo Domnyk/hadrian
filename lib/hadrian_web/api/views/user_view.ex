@@ -1,6 +1,7 @@
 defmodule HadrianWeb.Api.UserView do
   use HadrianWeb, :view
   alias HadrianWeb.Api.UserView
+  alias HadrianWeb.ErrorView
 
   def render("index.json", %{users: users}) do
     %{data: render_many(users, UserView, "user.json")}
@@ -22,17 +23,10 @@ defmodule HadrianWeb.Api.UserView do
   def render("error.create.json", %{changeset: changeset}) do
     import Ecto.Changeset, only: [traverse_errors: 2]
 
-    parse_errors(changeset)
+    errors = ErrorView.parse_errors(changeset)
+
+    %{}
+    |> Map.put(:errors, errors)
     |> Map.put(:status, :error)
-  end
-
-  defp parse_errors(changeset) do
-    import Ecto.Changeset, only: [traverse_errors: 2]
-
-    traverse_errors(changeset, fn {msg, opts} ->
-      Enum.reduce(opts, msg, fn {key, value}, acc ->
-        String.replace(acc, "%{#{key}}", to_string(value))
-      end)
-    end)
   end
 end

@@ -12,6 +12,7 @@ defmodule Hadrian.Owners.SportComplex do
   def changeset(sport_complex, attrs) do
     sport_complex
     |> cast(attrs, [:name])
+    |> unique_constraint(:name, name: "sport_complex_name_idx")
     |> validate_required([:name])
   end
 end
