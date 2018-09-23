@@ -31,7 +31,7 @@ defmodule HadrianWeb.Endpoint do
 
   # CORS Plug to allow requests from external apps
   plug CORSPlug,
-    origin: ["http://localhost:8080", "https://localhost:8080"]
+    origin: ["https://localhost:8080", System.get_env("CLIENT_PRODUCTION_ADDRESS")]
 
   plug HadrianWeb.Router
 
