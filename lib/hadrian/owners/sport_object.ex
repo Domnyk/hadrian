@@ -15,6 +15,7 @@ defmodule Hadrian.Owners.SportObject do
   def changeset(sport_object, attrs) do
     sport_object
     |> cast(attrs, [:name, :geo_coordinates, :sport_complex_id, :booking_margin])
+    |> foreign_key_constraint(:sport_complex_id)
     |> validate_required([:name, :geo_coordinates, :sport_complex_id, :booking_margin])
   end
 end

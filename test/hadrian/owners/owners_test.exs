@@ -43,10 +43,28 @@ defmodule Hadrian.OwnersTest do
       assert sport_complex == Owners.get_sport_complex!(sport_complex.id)
     end
 
-    test "delete_sport_complex/1 deletes the sport_complex" do
+    test "when passed %SportComplex{} struct delete_sport_complex/1 deletes the sport_complex" do
       sport_complex = insert(:sport_complex)
       assert {:ok, %SportComplex{}} = Owners.delete_sport_complex(sport_complex)
       assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_complex!(sport_complex.id) end
+    end
+
+    test "when passed id of existing sport complex delete_sport_complex_1 deletes it" do
+      sport_complex = insert(:sport_complex)
+      id = Integer.to_string(sport_complex.id)
+      assert {:ok, %SportComplex{}} = Owners.delete_sport_complex(id)
+    end
+
+    test "when passed id of existing sport complex but it cannot be deleted due to DB constraints delete_sport_comlex 
+          returns :error" do
+      sport_complex = insert(:sport_complex)
+      insert(:sport_object, sport_complex_id: sport_complex.id)
+      id = Integer.to_string(sport_complex.id)
+      assert {:error, %Ecto.Changeset{}} = Owners.delete_sport_complex(id)
+    end
+
+    test "when passed id of non existing sport complex delete_sport_complex_1 returns :error" do
+      assert {:error, :no_such_sport_complex} = Owners.delete_sport_complex("1")
     end
 
     test "change_sport_complex/1 returns a sport_complex changeset" do

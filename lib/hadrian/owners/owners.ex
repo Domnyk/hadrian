@@ -74,7 +74,7 @@ defmodule Hadrian.Owners do
   end
 
   @doc """
-  Deletes a SportComplex.
+  Deletes a SportComplex by %SportComplex{} struct.
 
   ## Examples
 
@@ -88,6 +88,34 @@ defmodule Hadrian.Owners do
   def delete_sport_complex(%SportComplex{} = sport_complex) do
     Repo.delete(sport_complex)
   end
+
+
+  @doc """
+  Deletes a SportComplex by id.
+
+  ## Examples
+      
+      iex> delete_sport_complex(sport_complex)
+      {:ok, %SportComplex{}}
+
+      iex> delete_sport_complex(sport_complex)
+      {:error, :no_such_sport_complex}
+
+      iex> delete_sport_complex(sport_complex)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_sport_complex(id) do
+    case Repo.get(SportComplex, id) do
+      %SportComplex{} = sport_complex ->
+        sport_complex
+        |> change_sport_complex
+        |> Repo.delete
+      nil -> {:error, :no_such_sport_complex}
+    end
+  end
+
+
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking sport_complex changes.

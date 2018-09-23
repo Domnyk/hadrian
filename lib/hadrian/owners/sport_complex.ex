@@ -13,6 +13,7 @@ defmodule Hadrian.Owners.SportComplex do
     sport_complex
     |> cast(attrs, [:name])
     |> unique_constraint(:name, name: "sport_complex_name_idx")
+    |> no_assoc_constraint(:sport_objects)
     |> validate_required([:name])
   end
 end
