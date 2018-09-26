@@ -8,4 +8,7 @@ defmodule HadrianWeb.Api.SportObjectController do
 
     render(conn, "index.json", sport_objects: sport_objects)
   end
+
+  def create(conn, %{"data" => %{"sport_object" => sport_object_params}}) do
+  end
 end
