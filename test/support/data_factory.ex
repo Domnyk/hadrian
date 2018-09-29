@@ -18,13 +18,12 @@ defmodule Hadrian.DataFactory do
   def sport_object_factory do
     alias Decimal
     alias Hadrian.Owners.SportObject
-    alias Types.TimeInterval
     
     name_val = &"Sport object number #{&1}"
     
     %SportObject{
       name: sequence(:name, name_val),
-      geo_coordinates: sequence(:geo_coordinates, gen_geo_coordinates_val),
+      geo_coordinates: sequence(:geo_coordinates, gen_geo_coordinates_val()),
       booking_margin: %{"months" => 1, "days" => 2, "secs" => 3}
     }
   end
@@ -36,13 +35,13 @@ defmodule Hadrian.DataFactory do
         "sport_object" => %{
           "name" => "Some funny sport object name",
           "geo_coordinates" => %{
-            "latitude" => sequence(:latitude, gen_latitude_val),
-            "longitude" => sequence(:longitude, gen_longitude_val)
+            "latitude" => sequence(:latitude, gen_latitude_val()),
+            "longitude" => sequence(:longitude, gen_longitude_val())
           },
           "booking_margin" => %{
-            "months" => "1",
-            "days" => "1",
-            "secs" => "1"
+            "months" => 1,
+            "days" => 1,
+            "secs" => 1
           },
           "sport_complex_id" => 1
         }
@@ -54,8 +53,8 @@ defmodule Hadrian.DataFactory do
     alias Types.GeoCoordinates
 
     geo_coordinates = %GeoCoordinates{
-      latitude: sequence(:latitude, gen_latitude_val),
-      longitude: sequence(:longitude, gen_longitude_val)
+      latitude: sequence(:latitude, gen_latitude_val()),
+      longitude: sequence(:longitude, gen_longitude_val())
     }
 
     fn _ -> geo_coordinates end
