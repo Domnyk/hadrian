@@ -3,9 +3,8 @@ defmodule Hadrian.DataFactory do
 
   def booking_margin_factory do
     num_of_months = Enum.random(1..100)
-    {:ok, booking_margin} = EctoInterval.cast(%{months: num_of_months, days: 2, secs: 10})
-
-    booking_margin
+     
+    %{"months" => num_of_months, "days" => 2, "secs" => 10}
   end
 
   def sport_complex_factory do
@@ -19,20 +18,36 @@ defmodule Hadrian.DataFactory do
   def sport_object_factory do
     alias Decimal
     alias Hadrian.Owners.SportObject
+    alias Types.TimeInterval
     
     name_val = &"Sport object number #{&1}"
-    {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
     
     %SportObject{
       name: sequence(:name, name_val),
       geo_coordinates: sequence(:geo_coordinates, gen_geo_coordinates_val),
-      booking_margin: booking_margin_val
+      booking_margin: %{"months" => 1, "days" => 2, "secs" => 3}
     }
   end
 
   # TODO: Generate sport object params map. Maybe this could be done via sport_object_factory/0 ?
   def sport_object_params_factory do
-    
+    %{
+      "data" => %{
+        "sport_object" => %{
+          "name" => "Some funny sport object name",
+          "geo_coordinates" => %{
+            "latitude" => sequence(:latitude, gen_latitude_val),
+            "longitude" => sequence(:longitude, gen_longitude_val)
+          },
+          "booking_margin" => %{
+            "months" => "1",
+            "days" => "1",
+            "secs" => "1"
+          },
+          "sport_complex_id" => 1
+        }
+      }
+    }
   end
 
   defp gen_geo_coordinates_val do
@@ -49,7 +64,7 @@ defmodule Hadrian.DataFactory do
   defp gen_latitude_val do
     whole_val = "56"
     fractional_val = Enum.random(100000..999999) |> Integer.to_string
-    latitude_val = whole_val <> "." <> fractional_val
+    latitude_val = String.to_float(whole_val <> "." <> fractional_val)
 
     fn _ -> latitude_val end
   end
@@ -57,7 +72,7 @@ defmodule Hadrian.DataFactory do
   defp gen_longitude_val do
     whole_val = "145"
     fractional_val = Enum.random(100000..999999) |> Integer.to_string
-    longitude_val = whole_val <> "." <> fractional_val
+    longitude_val = String.to_float(whole_val <> "." <> fractional_val)
 
     fn _ -> longitude_val end
   end

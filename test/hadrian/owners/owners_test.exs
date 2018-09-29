@@ -91,7 +91,7 @@ defmodule Hadrian.OwnersTest do
 
     test "create_sport_object/1 with valid data creates a sport_object" do
       sport_complex = insert(:sport_complex)
-      {:ok, booking_margin_val} = EctoInterval.cast(%{"months" => "1", "days" => "2", "secs" => "3"})
+      booking_margin_val = %{"months" => 1, "days" => 2, "secs" => 3}
       valid_attrs = %{geo_coordinates: %{latitude: 89.5, longitude: 120.5}, name: "some name", 
                       sport_complex_id: sport_complex.id, booking_margin: booking_margin_val}
 
@@ -99,7 +99,9 @@ defmodule Hadrian.OwnersTest do
       assert sport_object.geo_coordinates.latitude == valid_attrs.geo_coordinates.latitude
       assert sport_object.geo_coordinates.longitude == valid_attrs.geo_coordinates.longitude
       assert sport_object.name == valid_attrs.name
-      assert sport_object.booking_margin == valid_attrs.booking_margin
+      assert sport_object.booking_margin.months == valid_attrs.booking_margin["months"]
+      assert sport_object.booking_margin.days == valid_attrs.booking_margin["days"]
+      assert sport_object.booking_margin.secs == valid_attrs.booking_margin["secs"]
     end
 
     test "create_sport_object/1 with invalid data returns error changeset" do
