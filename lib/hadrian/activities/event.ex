@@ -1,12 +1,15 @@
 defmodule Hadrian.Activities.Event do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Types.TimeInterval
 
   schema "events" do
     field :max_num_of_participants, :integer
     field :min_num_of_participants, :integer
-    field :duration_of_joining_phase, EctoInterval, default: %{months: 0, days: 0, secs: 0}
-    field :duration_of_paying_phase, EctoInterval, default: %{months: 0, days: 0, secs: 0}
+    # field :duration_of_joining_phase, EctoInterval, default: %{months: 0, days: 0, secs: 0}
+    # field :duration_of_paying_phase, EctoInterval, default: %{months: 0, days: 0, secs: 0}
+    field :duration_of_joining_phase, TimeInterval, default: %{months: 0, days: 0, secs: 0}
+    field :duration_of_paying_phase, TimeInterval, default: %{months: 0, days: 0, secs: 0}
     timestamps()
 
     belongs_to :time_block, Hadrian.Owners.TimeBlock, references: :time_block_id

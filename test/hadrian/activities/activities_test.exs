@@ -8,8 +8,8 @@ defmodule Hadrian.ActivitiesTest do
 
     
     @update_attrs %{max_num_of_participants: 50, min_num_of_participants: 43, 
-                    duration_of_joining_phase: %{months: 0, days: 5, secs: 0},
-                    duration_of_paying_phase: %{months: 0, days: 5, secs: 0}}
+                    duration_of_joining_phase: %{"months" => 0, "days" => 5, "secs" => 0},
+                    duration_of_paying_phase: %{"months" => 0, "days" => 5, "secs" => 0}}
     @invalid_attrs %{max_num_of_participants: nil, min_num_of_participants: nil, duration_of_joining_phase: nil,
                     duration_of_paying_phase: nil, time_block_id: nil}
 
@@ -28,8 +28,8 @@ defmodule Hadrian.ActivitiesTest do
     test "create_event/1 with valid data creates an event" do
       time_block = insert(:time_block)
       valid_attrs = %{max_num_of_participants: 100, min_num_of_participants: 42, 
-                    duration_of_joining_phase: %{months: 0, days: 7, secs: 0},
-                    duration_of_paying_phase: %{months: 0, days: 7, secs: 0}, time_block_id: time_block.id}
+                    duration_of_joining_phase: %{"months" => 0, "days" => 7, "secs" => 0},
+                    duration_of_paying_phase: %{"months" => 0, "days" => 7, "secs" => 0}, time_block_id: time_block.id}
       
       assert {:ok, %Event{} = event} = Activities.create_event(valid_attrs)
       assert event.duration_of_joining_phase == %Postgrex.Interval{months: 0, days: 7, secs: 0}

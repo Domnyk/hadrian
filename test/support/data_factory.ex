@@ -123,8 +123,8 @@ defmodule Hadrian.DataFactory do
     %Event{
       min_num_of_participants: 2,
       max_num_of_participants: 10,
-      duration_of_joining_phase: %{months: 0, days: 5, secs: 0},
-      duration_of_paying_phase: %{months: 1, days: 7, secs: 0}
+      duration_of_joining_phase: %{"months" => 0, "days" => 5, "secs" => 0},
+      duration_of_paying_phase: %{"months" => 1, "days" => 7, "secs" => 0}
     }
   end
 end
