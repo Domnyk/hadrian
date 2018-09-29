@@ -28,7 +28,6 @@ defmodule Hadrian.DataFactory do
     }
   end
 
-  # TODO: Generate sport object params map. Maybe this could be done via sport_object_factory/0 ?
   def sport_object_params_factory do
     %{
       "data" => %{
