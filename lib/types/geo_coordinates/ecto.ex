@@ -13,6 +13,10 @@ defmodule Types.GeoCoordinates.Ecto do
     {:ok, struct}
   end
 
+  def cast(%{"latitude" => latitude, "longitude" => longitude} = geo_coordinates) do
+    cast(%{latitude: latitude, longitude: longitude}) 
+  end
+
   def cast(_) do 
     :error
   end

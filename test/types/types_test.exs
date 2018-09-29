@@ -4,12 +4,20 @@ defmodule TypesTest do
   describe "GeoCoordinastes" do
     alias Types.GeoCoordinates
 
-    test "when casting from map returns {:ok, %Types.GeoCoordinates}" do
+    test "when casting from map with symbol keys returns {:ok, %Types.GeoCoordinates}" do
       external_data = %{latitude: 1.234, longitude: 2.345}
 
       assert {:ok, internal_data = %GeoCoordinates{}} = GeoCoordinates.Ecto.cast(external_data)
       assert internal_data.latitude == external_data.latitude
       assert internal_data.longitude == external_data.longitude
+    end
+
+    test "when casting from map with string keys returns {:ok, %Types.GeoCoordinates}" do
+      external_data = %{"latitude" => 1.234, "longitude" => 2.345}
+
+      assert {:ok, internal_data = %GeoCoordinates{}} = GeoCoordinates.Ecto.cast(external_data)
+      assert internal_data.latitude == external_data["latitude"]
+      assert internal_data.longitude == external_data["longitude"]
     end
 
     test "when casting from something diffrent than map returns :error" do
