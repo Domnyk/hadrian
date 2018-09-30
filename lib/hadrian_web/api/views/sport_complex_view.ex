@@ -5,8 +5,12 @@ defmodule HadrianWeb.Api.SportComplexView do
   alias HadrianWeb.ErrorView
 
   def render("index.json", %{sport_complexs: sport_complexs}) do
-    %{status: :ok,
-      data: render_many(sport_complexs, SportComplexView, "sport_complex.json")}
+    %{
+      status: :ok,
+      data: %{
+        sport_complexes: render_many(sport_complexs, SportComplexView, "sport_complex.json")
+      }
+    }
   end
 
   def render("sport_complex.json", %{sport_complex: sport_complex}) do

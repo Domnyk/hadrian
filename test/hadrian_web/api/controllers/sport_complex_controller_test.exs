@@ -8,7 +8,7 @@ defmodule HadrianWeb.Api.SportComplexControllerTest do
 
       conn = get conn, sport_complex_path(conn, :index)
       resp = json_response(conn, 200)
-      [sport_complex_json_1 | [sport_complex_json_2 | _]] = resp["data"]
+      [sport_complex_json_1 | [sport_complex_json_2 | _]] = resp["data"]["sport_complexes"]
 
       assert resp["status"] == "ok"
       assert sport_complex_json_1["name"] == sport_complex_1.name
