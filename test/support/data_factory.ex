@@ -15,6 +15,16 @@ defmodule Hadrian.DataFactory do
     }
   end
 
+  def sport_complex_params_factory do
+    %{
+      "data" => %{
+        "sport_complex" => %{
+          "name" => sequence(:name, &"OSIR #{&1}")
+        }
+      }   
+    }
+  end
+
   def sport_object_factory do
     alias Decimal
     alias Hadrian.Owners.SportObject

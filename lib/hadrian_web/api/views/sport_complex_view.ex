@@ -15,8 +15,12 @@ defmodule HadrianWeb.Api.SportComplexView do
   end
 
   def render("ok.create.json", %{sport_complex: sport_complex}) do
-    %{status: :ok,
-      data: render("sport_complex.json", sport_complex: sport_complex)}
+    %{
+      status: :ok,
+      data: %{
+        sport_complex: render("sport_complex.json", sport_complex: sport_complex)
+      }
+    }
   end
 
   def render("error.create.json", %{changeset: changeset}) do

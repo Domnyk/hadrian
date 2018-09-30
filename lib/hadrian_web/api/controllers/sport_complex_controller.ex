@@ -11,8 +11,8 @@ defmodule HadrianWeb.Api.SportComplexController do
     render(conn, "index.json", sport_complexs: sport_complexs)
   end
 
-  def create(conn, params) do
-    case Owners.create_sport_complex(params) do
+  def create(conn, %{"data" => %{"sport_complex" => sport_complex_params}}) do
+    case Owners.create_sport_complex(sport_complex_params) do
       {:ok, sport_complex} -> render(conn, "ok.create.json", sport_complex: sport_complex)
       {:error, changeset} -> render(conn, "error.create.json", changeset: changeset)
     end
