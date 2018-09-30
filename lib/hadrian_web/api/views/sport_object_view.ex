@@ -4,7 +4,12 @@ defmodule HadrianWeb.Api.SportObjectView do
   alias HadrianWeb.ErrorView
 
   def render("index.json", %{sport_objects: sport_objects}) do
-    render_many(sport_objects, SportObjectView, "sport_object.json")
+    %{
+      status: :ok,
+      data: %{
+        sport_objects: render_many(sport_objects, SportObjectView, "sport_object.json")
+      }
+    }
   end
 
   def render("sport_object.json", %{sport_object: sport_object}) do

@@ -14,12 +14,13 @@ defmodule HadrianWeb.SportObjectControllerTest do
 
       conn = get conn, sport_object_path(conn, :index)
       resp = json_response(conn, @status_code_to_assert)
-      sport_object_from_resp_1 = Enum.at(resp, 0)
-      sport_object_from_resp_2 = Enum.at(resp, 1)
+      sport_objects_array = resp["data"]["sport_objects"]
+      sport_object_from_resp_1 = Enum.at(sport_objects_array, 0)
+      sport_object_from_resp_2 = Enum.at(sport_objects_array, 1)
 
       assert are_sport_objects_the_same(sport_object_1, sport_object_from_resp_1)
       assert are_sport_objects_the_same(sport_object_2, sport_object_from_resp_2)
-      assert length(resp) == num_of_sport_objects_inserted
+      assert length(sport_objects_array) == num_of_sport_objects_inserted
     end
 
     defp are_sport_objects_the_same(%SportObject{} = sport_object, sport_object_in_json_format) do
