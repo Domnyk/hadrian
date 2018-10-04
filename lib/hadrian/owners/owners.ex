@@ -513,4 +513,99 @@ defmodule Hadrian.Owners do
   def change_sport_arena(%SportArena{} = sport_arena) do
     SportArena.changeset(sport_arena, %{})
   end
+
+  alias Hadrian.Owners.SportDiscipline
+
+  @doc """
+  Returns the list of sport_disciplines.
+
+  ## Examples
+
+      iex> list_sport_disciplines()
+      [%SportDiscipline{}, ...]
+
+  """
+  def list_sport_disciplines do
+    Repo.all(SportDiscipline)
+  end
+
+  @doc """
+  Gets a single sport_discipline.
+
+  Raises if the Sport discipline does not exist.
+
+  ## Examples
+
+      iex> get_sport_discipline!(123)
+      %SportDiscipline{}
+
+  """
+  def get_sport_discipline!(id) do
+     Repo.get!(SportDiscipline, id)
+  end
+
+  @doc """
+  Creates a sport_discipline.
+
+  ## Examples
+
+      iex> create_sport_discipline(%{field: value})
+      {:ok, %SportDiscipline{}}
+
+      iex> create_sport_discipline(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_sport_discipline(attrs \\ %{}) do
+    %SportDiscipline{}
+    |> SportDiscipline.changeset(attrs)
+    |> Repo.insert
+  end
+
+  @doc """
+  Updates a sport_discipline.
+
+  ## Examples
+
+      iex> update_sport_discipline(sport_discipline, %{field: new_value})
+      {:ok, %SportDiscipline{}}
+
+      iex> update_sport_discipline(sport_discipline, %{field: bad_value})
+      {:error, %Ecto.Changeset}
+
+  """
+  def update_sport_discipline(%SportDiscipline{} = sport_discipline, attrs) do
+    sport_discipline
+    |> SportDiscipline.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a SportDiscipline.
+
+  ## Examples
+
+      iex> delete_sport_discipline(sport_discipline)
+      {:ok, %SportDiscipline{}}
+
+      iex> delete_sport_discipline(sport_discipline)
+      {:error, ...}
+
+  """
+  def delete_sport_discipline(%SportDiscipline{} = sport_discipline) do
+    Repo.delete(sport_discipline)
+  end
+
+  @doc """
+  Returns a datastructure for tracking sport_discipline changes.
+
+  ## Examples
+
+      iex> change_sport_discipline(sport_discipline)
+      %Todo{...}
+
+  """
+  def change_sport_discipline(%SportDiscipline{} = sport_discipline) do
+    SportDiscipline.changeset(sport_discipline, %{})
+  end
 end

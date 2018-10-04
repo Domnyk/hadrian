@@ -94,6 +94,14 @@ defmodule Hadrian.DataFactory do
     }
   end
 
+  def sport_discipline_factory do
+    alias Hadrian.Owners.SportDiscipline
+
+    %SportDiscipline{
+      name: "Football"
+    }
+  end
+
   def daily_schedule_factory do
     alias Hadrian.Owners.DailySchedule
 

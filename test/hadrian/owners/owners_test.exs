@@ -261,4 +261,60 @@ defmodule Hadrian.OwnersTest do
       assert %Ecto.Changeset{} = Owners.change_time_block(time_block)
     end
   end
+
+  describe "sport_disciplines" do
+    alias Hadrian.Owners.SportDiscipline
+
+    @invalid_attrs %{name: nil}
+
+    test "list_sport_disciplines/0 returns all sport_disciplines" do
+      football = insert(:sport_discipline)
+      basketball = insert(:sport_discipline, name: "Basketball")
+      assert Owners.list_sport_disciplines() == [football, basketball]
+    end
+
+    test "get_sport_discipline!/1 returns the sport_discipline with given id" do
+      sport_discipline = insert(:sport_discipline)
+      assert Owners.get_sport_discipline!(sport_discipline.id) == sport_discipline
+    end
+
+    test "create_sport_discipline/1 with valid data creates a sport_discipline" do
+      valid_attrs = %{name: "some name"}
+      
+      assert {:ok, %SportDiscipline{} = sport_discipline} = Owners.create_sport_discipline(valid_attrs)
+      assert sport_discipline.name == "some name"
+    end
+
+    test "create_sport_discipline/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Owners.create_sport_discipline(@invalid_attrs)
+    end
+
+    test "update_sport_discipline/2 with valid data updates the sport_discipline" do
+      sport_discipline = insert(:sport_discipline)
+      update_attrs = %{name: "Basketball"}
+      
+      assert {:ok, sport_discipline} = Owners.update_sport_discipline(sport_discipline, update_attrs)
+      assert %SportDiscipline{} = sport_discipline
+      assert sport_discipline.name == update_attrs.name
+    end
+
+    test "update_sport_discipline/2 with invalid data returns error changeset" do
+      sport_discipline = insert(:sport_discipline)
+
+      assert {:error, %Ecto.Changeset{}} = Owners.update_sport_discipline(sport_discipline, @invalid_attrs)
+      assert sport_discipline == Owners.get_sport_discipline!(sport_discipline.id)
+    end
+
+    test "delete_sport_discipline/1 deletes the sport_discipline" do
+      sport_discipline = insert(:sport_discipline)
+
+      assert {:ok, %SportDiscipline{}} = Owners.delete_sport_discipline(sport_discipline)
+      assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_discipline!(sport_discipline.id) end
+    end
+
+    test "change_sport_discipline/1 returns a sport_discipline changeset" do
+      sport_discipline = insert(:sport_discipline)
+      assert %Ecto.Changeset{} = Owners.change_sport_discipline(sport_discipline)
+    end
+  end
 end
