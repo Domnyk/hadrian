@@ -41,6 +41,10 @@ defmodule Hadrian.Accounts do
     Repo.get!(User, id)
   end
 
+  def get_user_by_email(email) do
+    Repo.get_by(User, email: email)
+  end
+
   @doc """
   Creates a user.
 

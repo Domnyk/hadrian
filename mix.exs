@@ -20,7 +20,7 @@ defmodule Hadrian.Mixfile do
   def application do
     [
       mod: {Hadrian.Application, []},
-      extra_applications: [:logger, :runtime_tools, :ueberauth, :ueberauth_facebook]
+      extra_applications: [:logger, :runtime_tools, :crypto, :ueberauth, :ueberauth_facebook]
     ]
   end
 

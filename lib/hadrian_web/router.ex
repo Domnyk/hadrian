@@ -12,5 +12,8 @@ defmodule HadrianWeb.Router do
     resources "/sport_objects", SportObjectController, only: [:index, :create] 
     resources "/users", UserController, only: [:index, :create]
     post "/token", TokenController, :create
+    get "/token/new", TokenController, :redirect_to_fb
+    get "/token/new_callback", TokenController, :handle_fb_login_resp
+
   end
 end
