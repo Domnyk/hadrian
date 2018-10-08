@@ -1,91 +1,90 @@
 defmodule HadrianWeb.Api.TokenControllerTest do
   use HadrianWeb.ConnCase
 
-  describe "create when body is empty" do
-    test "returns response with status equal to :error", %{conn: conn} do
-      conn = post conn, token_path(conn, :create)
-      resp = json_response(conn, 200)
 
-      assert resp["status"] == "error"
-      assert resp["reason"] == "Not enough data"
+  describe "redirect_to_fb" do
+    test "redirects to facebook sign in endpoint", %{conn: conn} do
+      conn = get conn, token_path(conn, :redirect_to_fb)
+
+      redirected_conn = redirected_to(conn)
+      assert redirected_conn =~ "https://www.facebook.com/v3.1/dialog/oauth"
+    end
+
+    test "sets proper url parameters", %{conn: conn} do
+      conn = get conn, token_path(conn, :redirect_to_fb)
+
+      redirected_conn = redirected_to(conn)
+      assert redirected_conn =~ "client_id=#{System.get_env("FACEBOOK_APP_ID")}"
+      assert redirected_conn =~ "&redirect_uri=#{HadrianWeb.Endpoint.url}/api/token/new_callback"
+      assert redirected_conn =~ "&scope=email"
     end
   end
 
-  describe "create when 'auth_method' key is not present in body" do
-    test "returns response with status equal to :error", %{conn: conn} do
-      conn = post conn, token_path(conn, :create)
-      resp = json_response(conn, 200)
+  describe "handle_fb_sign_in_resp when sign in failed" do
+    test "redirects to client application with url parameter 'sign_in_status' equal to 'error'", %{conn: conn} do
+      connection_params = %{"error" => "access_denied", "error_reason" => "user_denied"}
+      conn = get conn, token_path(conn, :handle_fb_sign_in_resp), connection_params
 
-      assert resp["status"] == "error"
-      assert resp["reason"] == "Not enough data"
+      redirected_conn = redirected_to(conn)
+      assert redirected_conn =~ Application.get_env(:hadrian, :client_url)
+      assert redirected_conn =~ "?sign_in_status=error"
     end
   end
 
-  describe "create when 'auth_method key is present in body and equals to 'in_app'" do
+  describe "handle_fb_sign_in_resp when sign in succeded" do
+    # TODO: Implement this test suite
   end
 
-  describe "create when 'auth_method' key is present in body and equals to 'facebook'" do
-    test ~s(when body has not user.email field returns response with status "error"), %{conn: conn} do      
-      body = %{"auth_method" => "facebook", "user" => %{"access_token" => "12345"}}
-      conn = post conn, token_path(conn, :create), body
-      resp = json_response(conn, 200)
-      
-      assert resp["status"] == "error"
-      assert resp["reason"] == "Not enough data" 
-    end
+  describe "create with login and password" do
+    test "when user exists in DB returns JWT token", %{conn: conn} do
+      {:ok, email, password} = create_user("bob@test.com", "Good password")
 
-    test ~s(when body has not user.access_token field returns response with status "error"), %{conn: conn} do      
-      body = %{"auth_method" => "facebook", "user" => %{"email" => "test@domain.com"}}
-      conn = post conn, token_path(conn, :create), body
-      resp = json_response(conn, 200)
-      
-      assert resp["status"] == "error"
-      assert resp["reason"] == "Not enough data" 
-    end
-
-    test ~s(when access token is empty returns response with status "error"), %{conn: conn} do      
-      body = %{"auth_method" => "facebook", "user" => %{"email" => "test@domain.com", "access_token" => ""}}
-      conn = post conn, token_path(conn, :create), body
-      resp = json_response(conn, 200)
-      
-      assert resp["status"] == "error"
-      assert resp["reason"] == "Error during sign in" 
-    end
-
-    test ~s(when access token is valid and user isn't in DB returns response with status "error"), %{conn: conn} do
-      access_token = "CAAEe4ALTtoMBAPfhNONNBJcfFsT3C9C1ky3tZAXxF9k4HBybM7o3V8bGofuXOtz6TgIEGObmDSKwUGr0LYZChBTMU2QtP" <>
-        "5995mkteEMsqyKHuVr9rUbEFvHT7kz7Rjkw3rxeUfxNKRdZBQ3ym4YZB4FFKuAbhzrxe2ltYhxEQKEXepJ2q7oITJ2w2j7A7vBiZB9JNC4k" <>
-        "fRwZDZD"
-      body = %{"auth_method" => "facebook", "user" => %{"email" => "test@domain.com", "access_token" => access_token}}
-      conn = post conn, token_path(conn, :create), body
+      post_params = %{"auth_method" => "in_app", "user" => %{"email" => email , "password" => password}}
+      conn = post conn, token_path(conn, :create), post_params
       resp = json_response(conn, 200)
 
-      assert resp["status"] == "error"
-      assert resp["reason"] == "Error during sign in"
-    end
-
-    test ~s(when access token is valid and user is in DB returns response with jwt), %{conn: conn} do
-      access_token = "CAAEe4ALTtoMBAPfhNONNBJcfFsT3C9C1ky3tZAXxF9k4HBybM7o3V8bGofuXOtz6TgIEGObmDSKwUGr0LYZChBTMU2QtP" <>
-        "5995mkteEMsqyKHuVr9rUbEFvHT7kz7Rjkw3rxeUfxNKRdZBQ3ym4YZB4FFKuAbhzrxe2ltYhxEQKEXepJ2q7oITJ2w2j7A7vBiZB9JNC4k" <>
-        "fRwZDZD"
-      user = insert(:user)
-      body = %{"auth_method" => "facebook", "user" => %{"email" => user.email, "access_token" => access_token}}
-      conn = post conn, token_path(conn, :create), body
-      resp = json_response(conn, 200)
-
-      assert resp["status"] == "ok"
       assert resp["token"]
+      assert resp["status"] == "ok"
+      assert resp["email"] == email 
+      assert resp["access_type"] == "admin" # This value is hardcoced in controller for now
+    end
+
+    test "when user does not exist returns 'Wrong user or password'", %{conn: conn} do
+      post_params = %{"auth_method" => "in_app", "user" => %{"email" => "non@existing.com"}}
+      conn = post conn, token_path(conn, :create), post_params
+      resp = json_response(conn, 200)
+
+      assert resp["status"] == "error"
+      assert resp["reason"] == "Wrong email or password"
+    end
+
+    test "when password is wrong returns 'Wrong user or password'", %{conn: conn} do
+      {:ok, email, _password} = create_user("bob@test.com", "Good password")
+
+      post_params = %{"auth_method" => "in_app", "user" => %{"email" => email , "password" => "Bad password"}}
+      conn = post conn, token_path(conn, :create), post_params
+      resp = json_response(conn, 200)
+
+      assert resp["status"] == "error"
+      assert resp["reason"] == "Wrong email or password"
     end
   end
 
-  describe "create when 'auth_method' key is present in body and equals to non existing authentication method" do
-    test ~s(returns response with error status), %{conn: conn} do      
-      body = %{"auth_method" => "non_existing_auth_method"}
-      conn = post conn, token_path(conn, :create), body
+  describe "create/2 when params don't match other create/2 definitions" do
+    test "returns response with status equal to :error", %{conn: conn} do
+      conn = post conn, token_path(conn, :create)
       resp = json_response(conn, 200)
-      
+
       assert resp["status"] == "error"
-      assert resp["reason"] == "Not enough data" 
-    end  
+      assert resp["reason"] == "Wrong data for sign in"
+    end
+  end
+
+  defp create_user(email, password) do
+    alias Hadrian.Accounts
+
+    user_params = %{"email" => email, "password" => password}
+    Accounts.create_user(user_params)
+    {:ok, email, password}
   end
 end

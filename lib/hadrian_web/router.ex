@@ -13,7 +13,7 @@ defmodule HadrianWeb.Router do
     resources "/users", UserController, only: [:index, :create]
     post "/token", TokenController, :create
     get "/token/new", TokenController, :redirect_to_fb
-    get "/token/new_callback", TokenController, :handle_fb_login_resp
+    get "/token/new_callback", TokenController, :handle_fb_sign_in_resp
 
   end
 end

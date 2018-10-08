@@ -17,7 +17,7 @@ host = "thawing-crag-67620.herokuapp.com"
 # which you typically run after static files are built.
 config :hadrian, HadrianWeb.Endpoint,
   load_from_system_env: true,
-  url: [scheme: "https", host: @host, port: 443],
+  url: [scheme: "https", host: host, port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   secret_key_base: System.get_env("SECRET_KEY_BASE")
 
@@ -71,6 +71,6 @@ config :hadrian, Hadrian.Repo,
 # Configure access token module for Facebook
 config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.HTTP
 
-# Configure Facebook redirect uri
-config :hadrian, :fb_redirect_uri, "https://" <> host <> "/api/token/new_callback"
+# Configure client url
+config :hadrian, :client_url, "https://vinci-11235813.herokuapp.com"
   

@@ -15,9 +15,9 @@ defmodule Hadrian.Facebook do
     end
   end
 
-  def exchange_code_for_access_token(code) do
+  def exchange_code_for_access_token(code, redirect_endpoint) do
     exchange_url = generate_exchange_url(System.get_env("FACEBOOK_APP_ID"), 
-                                         Application.get_env(:hadrian, :fb_redirect_uri), 
+                                         redirect_endpoint, 
                                          System.get_env("FACEBOOK_APP_SECRET"), code)
     
     

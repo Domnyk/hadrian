@@ -66,5 +66,6 @@ config :hadrian, Hadrian.Repo,
 # Configure access token module for Facebook
 config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.HTTP
 
-# Configure Facebook redirect host
-config :hadrian, :fb_redirect_uri, "https://" <> host <> ":4000/api/token/new_callback"
+# Configure client url
+config :hadrian, :client_url, "https://localhost:8080"
+

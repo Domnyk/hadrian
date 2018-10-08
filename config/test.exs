@@ -24,3 +24,6 @@ config :phoenix_integration,
 
 # Configure access token module for Facebook
 config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.InMemory
+
+# Configure client url
+config :hadrian, :client_url, "https://domain.test.com"
