@@ -1,11 +1,11 @@
 defmodule HadrianWeb.SportObjectControllerTest do
   use HadrianWeb.ConnCase
 
+  alias Hadrian.Owners.SportObject
+
   @status_code_to_assert 200
 
   describe "index" do
-    alias Hadrian.Owners.SportObject
-    
     # TODO: This is verbose
     test "returns all sport objects", %{conn: conn} do
       sport_complex = insert(:sport_complex)
