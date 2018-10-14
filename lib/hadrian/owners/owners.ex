@@ -146,6 +146,23 @@ defmodule Hadrian.Owners do
   end
 
   @doc """
+  Returns the list of sport objects in sport complex
+
+  Raises `Ecto.NoResultsError` if the sport complex with such ID does not exist.
+
+  ## Examples
+
+      iex> list_sport_objects(1)
+      [%SportObject{}, ...]
+
+  """
+  def list_sport_objects!(sport_complex_id) do
+    get_sport_complex!(sport_complex_id)
+    |> Repo.preload(:sport_objects)
+    |> Map.get(:sport_objects)
+  end
+
+  @doc """
   Gets a single sport_object.
 
   Raises `Ecto.NoResultsError` if the Sport object does not exist.

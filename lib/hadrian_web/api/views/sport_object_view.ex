@@ -19,6 +19,20 @@ defmodule HadrianWeb.Api.SportObjectView do
       booking_margin: sport_object.booking_margin}
   end
 
+  def render("index.basic.json", %{sport_objects: sport_objects}) do
+    %{
+      status: :ok,
+      data: %{
+        sport_objects: render_many(sport_objects, SportObjectView, "sport_object.basic.json")
+      }
+    }
+  end
+
+  def render("sport_object.basic.json", %{sport_object: sport_object}) do
+    %{id: sport_object.id, 
+      name: sport_object.name}
+  end
+
   def render("ok.create.json", %{sport_object: sport_object}) do
     sport_object = %{
       id: sport_object.id, 
