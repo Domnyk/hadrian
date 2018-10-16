@@ -9,9 +9,9 @@ defmodule HadrianWeb.Router do
     pipe_through :api
 
     resources "/sport_complexes", SportComplexController, only: [:index, :create, :delete] do
-      get "/sport_objects", SportObjectController, :index
+      resources "/sport_objects", SportObjectController, only: [:index, :create] 
     end
-    resources "/sport_objects", SportObjectController, only: [:index, :create] 
+    
     resources "/users", UserController, only: [:index, :create]
     post "/token", TokenController, :create
     get "/token/new", TokenController, :redirect_to_fb

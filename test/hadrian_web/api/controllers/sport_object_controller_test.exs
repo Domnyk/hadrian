@@ -7,17 +7,17 @@ defmodule HadrianWeb.SportObjectControllerTest do
 
   describe "index" do
     # TODO: This is verbose
-    test "returns all sport objects", %{conn: conn} do
+    test "returns all sport objects in sport complex", %{conn: conn} do
       sport_complex = insert(:sport_complex)
       num_of_sport_objects_inserted = 2
       sport_object_1 = insert(:sport_object, sport_complex_id: sport_complex.id)
       sport_object_2 = insert(:sport_object, sport_complex_id: sport_complex.id)
 
-      conn = get conn, sport_object_path(conn, :index)
+      conn = get conn, sport_complex_sport_object_path(conn, :index, sport_complex.id)
       resp = json_response(conn, @status_code_to_assert)
       sport_objects_array = resp["data"]["sport_objects"]
-      sport_object_from_resp_1 = Enum.at(sport_objects_array, 0)
-      sport_object_from_resp_2 = Enum.at(sport_objects_array, 1)
+      sport_object_from_resp_1 = Enum.at(sport_objects_array, 1)
+      sport_object_from_resp_2 = Enum.at(sport_objects_array, 0)
 
       assert are_sport_objects_the_same(sport_object_1, sport_object_from_resp_1)
       assert are_sport_objects_the_same(sport_object_2, sport_object_from_resp_2)
@@ -35,33 +35,6 @@ defmodule HadrianWeb.SportObjectControllerTest do
     end
   end
 
-  describe "index with sport_complex_id in params" do
-    test "returns sport objects in sport complex", %{conn: conn} do
-      sport_complex = insert(:sport_complex)
-      sport_complex_wrong = insert(:sport_complex)
-      num_of_desired_sport_objects = 2
-      sport_object_1 = insert(:sport_object, sport_complex_id: sport_complex.id)
-      sport_object_2 = insert(:sport_object, sport_complex_id: sport_complex.id)
-      insert(:sport_object, sport_complex_id: sport_complex_wrong.id)
-
-
-      conn = get conn, sport_complex_sport_object_path(conn, :index, sport_complex.id)
-      resp = json_response(conn, @status_code_to_assert)
-      sport_objects_array = resp["data"]["sport_objects"]
-      sport_object_from_resp_2 = Enum.at(sport_objects_array, 0)
-      sport_object_from_resp_1 = Enum.at(sport_objects_array, 1)
-
-      assert are_sport_objects_the_same(sport_object_1, sport_object_from_resp_1, :simple)
-      assert are_sport_objects_the_same(sport_object_2, sport_object_from_resp_2, :simple)
-      assert length(sport_objects_array) == num_of_desired_sport_objects
-    end
-
-    defp are_sport_objects_the_same(%SportObject{} = sport_object, sport_object_in_json_format, :simple) do
-      assert sport_object_in_json_format["name"] == sport_object.name
-      assert sport_object_in_json_format["id"] == sport_object.id
-    end
-  end
-
   describe "create" do
     test "when data is valid it should create sport object", %{conn: conn} do
       sport_complex = insert(:sport_complex)
@@ -69,7 +42,7 @@ defmodule HadrianWeb.SportObjectControllerTest do
       |> Kernel.put_in(["data", "sport_object", "sport_complex_id"], sport_complex.id)
       sport_object_from_req = request_data["data"]["sport_object"]
 
-      conn = post conn, sport_object_path(conn, :create), request_data
+      conn = post conn, sport_complex_sport_object_path(conn, :create, sport_complex.id), request_data
       resp = json_response(conn, @status_code_to_assert)
       sport_object_from_res = resp["data"]["sport_object"]
 
@@ -86,7 +59,7 @@ defmodule HadrianWeb.SportObjectControllerTest do
       |> Kernel.put_in(["data", "sport_object", "sport_complex_id"], sport_complex.id)
       |> Kernel.put_in(["data", "sport_object", "geo_coordinates"], nil)
 
-      conn = post conn, sport_object_path(conn, :create), invalid_request_data
+      conn = post conn, sport_complex_sport_object_path(conn, :create, sport_complex.id), invalid_request_data
       resp = json_response(conn, @status_code_to_assert)
 
       assert resp["errors"]

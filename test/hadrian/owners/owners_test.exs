@@ -84,17 +84,21 @@ defmodule Hadrian.OwnersTest do
       assert Owners.list_sport_objects() == sport_object_list
     end
 
-    test "list_sport_objects!/1 returns all sport objects in sport complex" do
+    test "list_sport_objects/1 returns all sport objects in sport complex" do
       sport_complex = insert(:sport_complex)
       sport_object_1 = insert(:sport_object, sport_complex: sport_complex)
       sport_object_2 = insert(:sport_object, sport_complex: sport_complex)
 
-      sport_objects_array = Owners.list_sport_objects!(sport_complex.id)
+      sport_objects_array = Owners.list_sport_objects(sport_complex.id)
       sport_object_from_resp_1 = Enum.at(sport_objects_array, 1)
       sport_object_from_resp_2 = Enum.at(sport_objects_array, 0)
 
       assert are_sport_objects_the_same(sport_object_1 ,sport_object_from_resp_1)
       assert are_sport_objects_the_same(sport_object_2, sport_object_from_resp_2)
+    end
+
+    test "list_sport_objects/1 returns [] when no sport objects in sport complex" do
+      assert [] == Owners.list_sport_objects(0)
     end
 
     defp are_sport_objects_the_same(%SportObject{} = a, %SportObject{} = b) do
