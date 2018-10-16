@@ -32,6 +32,7 @@ defmodule HadrianWeb.SportObjectControllerTest do
       assert sport_object_in_json_format["booking_margin"]["months"] == sport_object.booking_margin.months
       assert sport_object_in_json_format["booking_margin"]["days"] == sport_object.booking_margin.days
       assert sport_object_in_json_format["booking_margin"]["secs"] == sport_object.booking_margin.secs
+      assert sport_object_in_json_format["sport_complex_id"] == sport_object.sport_complex_id
     end
   end
 
