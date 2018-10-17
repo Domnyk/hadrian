@@ -289,23 +289,20 @@ defmodule Hadrian.OwnersTest do
   describe "sport_arenas" do
     alias Hadrian.Owners.SportArena
 
-    @valid_attrs %{name: "some name", type: "some type"}
-    @update_attrs %{name: "some updated name", type: "some updated type"}
+    @valid_attrs %{name: "some name"}
+    @update_attrs %{name: "some updated name"}
     @invalid_attrs %{name: nil, type: nil}
 
-    def sport_arena_fixture(attrs \\ %{}) do
-      {:ok, sport_arena} =
-        attrs
-        |> Enum.into(@valid_attrs)
-        |> Owners.create_sport_arena()
-
-      sport_arena
-    end
-
-    test "list_sport_arenas/0 returns all sport_arenas" do
+    def sport_arena_fixture() do
       sport_complex = insert(:sport_complex)
       sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
       sport_arena = insert(:sport_arena, sport_object_id: sport_object.id)
+
+      {sport_complex, sport_object, sport_arena}
+    end
+
+    test "list_sport_arenas/0 returns all sport_arenas" do
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
       assert Owners.list_sport_arenas() == [sport_arena]
     end
 
@@ -330,9 +327,7 @@ defmodule Hadrian.OwnersTest do
     end
 
     test "get_sport_arena!/1 returns the sport_arena with given id" do
-      sport_complex = insert(:sport_complex)
-      sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
-      sport_arena = insert(:sport_arena, sport_object_id: sport_object.id)
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
       assert Owners.get_sport_arena!(sport_arena.id) == sport_arena
     end
 
@@ -351,34 +346,26 @@ defmodule Hadrian.OwnersTest do
     end
 
     test "update_sport_arena/2 with valid data updates the sport_arena" do
-      sport_complex = insert(:sport_complex)
-      sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
-      sport_arena = insert(:sport_arena, sport_object_id: sport_object.id)
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
       assert {:ok, sport_arena} = Owners.update_sport_arena(sport_arena, @update_attrs)
       assert %SportArena{} = sport_arena
       assert sport_arena.name == "some updated name"
     end
 
     test "update_sport_arena/2 with invalid data returns error changeset" do
-      sport_complex = insert(:sport_complex)
-      sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
-      sport_arena = insert(:sport_arena, sport_object_id: sport_object.id)
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
       assert {:error, %Ecto.Changeset{}} = Owners.update_sport_arena(sport_arena, @invalid_attrs)
       assert sport_arena == Owners.get_sport_arena!(sport_arena.id)
     end
 
     test "delete_sport_arena/1 deletes the sport_arena" do
-      sport_complex = insert(:sport_complex)
-      sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
-      sport_arena = insert(:sport_arena, sport_object_id: sport_object.id)
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
       assert {:ok, %SportArena{}} = Owners.delete_sport_arena(sport_arena)
       assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_arena!(sport_arena.id) end
     end
 
     test "change_sport_arena/1 returns a sport_arena changeset" do
-      sport_complex = insert(:sport_complex)
-      sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
-      sport_arena = insert(:sport_arena, sport_object_id: sport_object.id)
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
       assert %Ecto.Changeset{} = Owners.change_sport_arena(sport_arena)
     end
   end
