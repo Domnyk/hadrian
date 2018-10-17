@@ -13,8 +13,10 @@ defmodule HadrianWeb.Router do
     end
 
     resources "/sport_objects", SportObjectController, only: [:index, :create] do
-      resources "/sport_arenas", SportArenaController
+      resources "/sport_arenas", SportArenaController, only: [:index, :create]
     end
+
+    resources "/sport_arenas", SportArenaController, only: [:update, :delete]
     
     resources "/users", UserController, only: [:index, :create]
     post "/token", TokenController, :create

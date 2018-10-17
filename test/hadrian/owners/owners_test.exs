@@ -291,7 +291,7 @@ defmodule Hadrian.OwnersTest do
 
     @valid_attrs %{name: "some name"}
     @update_attrs %{name: "some updated name"}
-    @invalid_attrs %{name: nil, type: nil}
+    @invalid_attrs %{name: nil}
 
     def sport_arena_fixture() do
       sport_complex = insert(:sport_complex)
