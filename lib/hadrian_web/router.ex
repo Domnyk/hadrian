@@ -11,6 +11,10 @@ defmodule HadrianWeb.Router do
     resources "/sport_complexes", SportComplexController, only: [:index, :create, :delete] do
       resources "/sport_objects", SportObjectController, only: [:index, :create] 
     end
+
+    resources "/sport_objects", SportObjectController, only: [:index, :create] do
+      resources "/sport_arenas", SportArenaController
+    end
     
     resources "/users", UserController, only: [:index, :create]
     post "/token", TokenController, :create

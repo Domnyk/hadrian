@@ -13,7 +13,7 @@ config :hadrian,
 config :hadrian, HadrianWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "L0RSyHq4k0huwHEmCZnZWj011NNkWpyi995n7zdRCRYdxCb0yljAUR9j9v+apNXo",
-  render_errors: [view: HadrianWeb.ErrorView, accepts: ~w(html json)],
+  render_errors: [view: HadrianWeb.Api.ErrorView, accepts: ~w(html json)],
   pubsub: [name: Hadrian.PubSub,
            adapter: Phoenix.PubSub.PG2]
 

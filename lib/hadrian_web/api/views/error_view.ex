@@ -1,4 +1,4 @@
-defmodule HadrianWeb.ErrorView do
+defmodule HadrianWeb.Api.ErrorView do
   use HadrianWeb, :view
 
   # If you want to customize a particular status code

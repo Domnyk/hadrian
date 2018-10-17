@@ -2,7 +2,7 @@ defmodule HadrianWeb.Api.SportComplexView do
   use HadrianWeb, :view
   
   alias HadrianWeb.Api.SportComplexView
-  alias HadrianWeb.ErrorView
+  alias HadrianWeb.Api.ErrorView
 
   def render("index.json", %{sport_complexs: sport_complexs}) do
     %{
