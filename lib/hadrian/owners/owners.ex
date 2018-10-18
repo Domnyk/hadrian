@@ -235,6 +235,30 @@ defmodule Hadrian.Owners do
   end
 
   @doc """
+  Deletes a SportObject by id.
+
+  ## Examples
+
+      iex> delete_sport_object(1)
+      {:ok, %SportComplex{}}
+
+      iex> delete_sport_object(2)
+      {:error, %Ecto.Changeset{}}
+
+      iex> delete_sport_object(-1)
+      {:error, :not_found}
+
+  """
+  def delete_sport_object(id) do
+    with %SportObject{} = sport_object <- Repo.get(SportObject, id) do
+      change_sport_object(sport_object)
+      |> Repo.delete
+    else
+      nil -> {:error, :not_found}
+    end
+  end
+
+  @doc """
   Returns an `%Ecto.Changeset{}` for tracking sport_object changes.
 
   ## Examples

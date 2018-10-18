@@ -3,15 +3,21 @@ defmodule Hadrian.OwnersTest do
 
   alias Hadrian.Owners
 
+  setup do
+    sport_complex = insert(:sport_complex)
+    sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
+
+    {:ok, sport_complex: sport_complex, sport_object: sport_object}
+  end
+
   describe "sport_complexes" do
     alias Hadrian.Owners.SportComplex
 
     @update_attrs %{name: "some updated name"}
     @invalid_attrs %{name: nil}
 
-    test "list_sport_complexes/0 returns all sport_complexes" do
-      sport_complexes_list = insert_list(3, :sport_complex)
-      assert sport_complexes_list == Owners.list_sport_complexes()
+    test "list_sport_complexes/0 returns all sport_complexes", %{sport_complex: sport_complex} do
+      assert [sport_complex] == Owners.list_sport_complexes()
     end
 
     test "get_sport_complex!/1 returns the sport_complex with given id" do
@@ -79,9 +85,8 @@ defmodule Hadrian.OwnersTest do
                     booking_margin: build(:booking_margin)}
     @invalid_attrs %{latitude: nil, longitude: nil, name: nil, sport_complex_id: nil}
 
-    test "list_sport_objects/0 returns all sport_objects" do
-      sport_object_list = insert_list(3, :sport_object)
-      assert Owners.list_sport_objects() == sport_object_list
+    test "list_sport_objects/0 returns all sport_objects", %{sport_object: sport_object} do
+      assert [sport_object] == Owners.list_sport_objects()
     end
 
     test "list_sport_objects/1 returns all sport objects in sport complex" do
@@ -155,6 +160,22 @@ defmodule Hadrian.OwnersTest do
 
       assert {:ok, %SportObject{}} = Owners.delete_sport_object(sport_object)
       assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_object!(sport_object.id) end
+    end
+
+    test "when passed id of existing sport object delete_sport_object/1 deletes it", %{sport_object: sport_object} do
+      id = Integer.to_string(sport_object.id)
+      assert {:ok, %SportObject{}} = Owners.delete_sport_object(id)
+    end
+
+    test "when passed id of existing sport object but it cannot be deleted due to DB constraints delete_sport_object/1
+          returns :error", %{sport_object: sport_object} do
+      insert(:sport_arena, sport_object_id: sport_object.id)
+      id = Integer.to_string(sport_object.id)
+      assert {:error, %Ecto.Changeset{}} = Owners.delete_sport_object(id)
+    end
+
+    test "when passed id of non existing sport object delete_sport_object/1 returns :error" do
+      assert {:error, :not_found} = Owners.delete_sport_object("1")
     end
 
     test "change_sport_object/1 returns a sport_object changeset" do

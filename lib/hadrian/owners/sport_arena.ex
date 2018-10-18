@@ -13,6 +13,7 @@ defmodule Hadrian.Owners.SportArena do
   def changeset(sport_arena, attrs) do
     sport_arena
     |> cast(attrs, [:name, :sport_object_id])
+    |> foreign_key_constraint(:sport_object_id)
     |> validate_required([:name, :sport_object_id])
   end
 end

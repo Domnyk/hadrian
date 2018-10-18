@@ -12,6 +12,15 @@ defmodule HadrianWeb.Api.SportObjectView do
     }
   end
 
+  def render("show.json", %{sport_object: sport_object}) do
+    %{
+      status: :ok,
+      data: %{
+        sport_object: render_one(sport_object, SportObjectView, "sport_object.json")
+      }
+    }
+  end
+
   def render("sport_object.json", %{sport_object: sport_object}) do
     %{id: sport_object.id, 
       geo_coordinates: sport_object.geo_coordinates, 
@@ -33,29 +42,4 @@ defmodule HadrianWeb.Api.SportObjectView do
     %{id: sport_object.id, 
       name: sport_object.name}
   end
-
-  def render("ok.create.json", %{sport_object: sport_object}) do
-    sport_object = %{
-      id: sport_object.id, 
-      geo_coordinates: sport_object.geo_coordinates, 
-      name: sport_object.name,
-      booking_margin: sport_object.booking_margin,
-      sport_complex_id: sport_object.sport_complex_id
-    }
-
-    %{status: :ok,
-      data: %{
-        sport_object: sport_object
-      }
-    }
-  end
-
-  def render("error.create.json", %{changeset: changeset}) do
-    errors = ErrorView.parse_errors(changeset)
-
-    %{}
-    |> Map.put(:errors, errors)
-    |> Map.put(:status, :error)
-  end
-
 end
