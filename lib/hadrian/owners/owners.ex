@@ -106,12 +106,11 @@ defmodule Hadrian.Owners do
 
   """
   def delete_sport_complex(id) do
-    case Repo.get(SportComplex, id) do
-      %SportComplex{} = sport_complex ->
-        sport_complex
-        |> change_sport_complex
-        |> Repo.delete
-      nil -> {:error, :no_such_sport_complex}
+    with %SportComplex{} = sport_complex <- Repo.get(SportComplex, id) do
+      change_sport_complex(sport_complex)
+      |> Repo.delete
+    else
+      nil -> {:error, :not_found}
     end
   end
 

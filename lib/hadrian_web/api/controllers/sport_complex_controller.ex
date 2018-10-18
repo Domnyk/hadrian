@@ -5,6 +5,8 @@ defmodule HadrianWeb.Api.SportComplexController do
   alias Hadrian.Owners
   alias Hadrian.Owners.SportComplex
 
+  action_fallback HadrianWeb.Api.FallbackController
+
   def index(conn, _params) do
     sport_complexs = Owners.list_sport_complexes
 
@@ -12,17 +14,16 @@ defmodule HadrianWeb.Api.SportComplexController do
   end
 
   def create(conn, %{"data" => %{"sport_complex" => sport_complex_params}}) do
-    case Owners.create_sport_complex(sport_complex_params) do
-      {:ok, sport_complex} -> render(conn, "ok.create.json", sport_complex: sport_complex)
-      {:error, changeset} -> render(conn, "error.create.json", changeset: changeset)
+    with {:ok, %SportComplex{} = sport_complex} <- Owners.create_sport_complex(sport_complex_params) do
+      conn
+      |> put_status(:created)
+      |> render("show.json", sport_complex: sport_complex)
     end
   end
   
   def delete(conn, %{"id" => id}) do
-    case Owners.delete_sport_complex(id) do
-      {:ok, %SportComplex{} = sport_complex} -> render(conn, "ok.delete.json", sport_complex: sport_complex)
-      {:error, :no_such_sport_complex} -> render(conn, "error.delete.json", sport_complex_id: id)
-      {:error, %Changeset{} = changeset} -> render(conn, "error.delete.json", changeset: changeset)
+    with {:ok, %SportComplex{}} <- Owners.delete_sport_complex(id) do
+      send_resp(conn, :no_content, "")
     end
   end
 end

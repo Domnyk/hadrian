@@ -64,7 +64,7 @@ defmodule Hadrian.OwnersTest do
     end
 
     test "when passed id of non existing sport complex delete_sport_complex_1 returns :error" do
-      assert {:error, :no_such_sport_complex} = Owners.delete_sport_complex("1")
+      assert {:error, :not_found} = Owners.delete_sport_complex("1")
     end
 
     test "change_sport_complex/1 returns a sport_complex changeset" do

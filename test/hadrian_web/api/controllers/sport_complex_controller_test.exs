@@ -1,6 +1,10 @@
 defmodule HadrianWeb.Api.SportComplexControllerTest do
   use HadrianWeb.ConnCase
 
+  alias Hadrian.Repo
+  alias Hadrian.Owners
+  alias Hadrian.Owners.SportComplex
+
   describe "index" do
     test "when no params present returns all sport complexes", %{conn: conn} do
       sport_complex_1 = insert(:sport_complex)
@@ -19,14 +23,11 @@ defmodule HadrianWeb.Api.SportComplexControllerTest do
   end
 
   describe "create" do
-    alias Hadrian.Repo
-    alias Hadrian.Owners.SportComplex
-    
     test "when no errors occured inserts new sport complex into DB", %{conn: conn} do
       params = build(:sport_complex_params)
 
       conn = post conn, sport_complex_path(conn, :create), params
-      resp = json_response(conn, 200)
+      resp = json_response(conn, 201)
       sport_complex_from_db = Repo.get_by(SportComplex, name: params["data"]["sport_complex"]["name"])
       
       assert %SportComplex{} = sport_complex_from_db
@@ -37,11 +38,30 @@ defmodule HadrianWeb.Api.SportComplexControllerTest do
       params = build(:sport_complex_params)
 
       conn = post conn, sport_complex_path(conn, :create), params
-      resp = json_response(conn, 200)
+      resp = json_response(conn, 201)
 
       assert resp["status"] == "ok"
       assert Kernel.get_in(resp, ["data", "sport_complex", "id"]) 
       assert resp["data"]["sport_complex"]["name"] == params["data"]["sport_complex"]["name"]
+    end
+  end
+
+  describe "delete" do
+    test "deletes chosen sport complex", %{conn: conn} do
+      sport_complex = insert(:sport_complex)
+
+      conn = delete conn, sport_complex_path(conn, :delete, sport_complex.id)
+
+      assert response(conn, 204)
+      assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_complex!(sport_complex.id) end
+    end
+
+    test "returns error when such sport complex does not exist", %{conn: conn} do
+      non_existing_id_of_sport_complex = -1
+
+      conn = delete conn, sport_complex_path(conn, :delete, non_existing_id_of_sport_complex)
+
+      assert response(conn, 404)
     end
   end
 end
