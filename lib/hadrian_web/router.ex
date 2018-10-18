@@ -8,7 +8,7 @@ defmodule HadrianWeb.Router do
   scope "/api", HadrianWeb.Api do
     pipe_through :api
 
-    resources "/sport_complexes", SportComplexController, only: [:index, :create, :delete] do
+    resources "/sport_complexes", SportComplexController, only: [:index, :create, :update, :delete] do
       resources "/sport_objects", SportObjectController, only: [:index, :create] 
     end
 

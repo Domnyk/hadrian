@@ -20,6 +20,14 @@ defmodule HadrianWeb.Api.SportComplexController do
       |> render("show.json", sport_complex: sport_complex)
     end
   end
+
+  def update(conn, %{"data" => %{"sport_complex" => sport_complex_params}, "id" => id}) do
+    sport_complex = Owners.get_sport_complex!(id)
+
+    with {:ok, %SportComplex{} = sport_complex} <- Owners.update_sport_complex(sport_complex, sport_complex_params) do
+      render(conn, "show.json", sport_complex: sport_complex)
+    end
+  end
   
   def delete(conn, %{"id" => id}) do
     with {:ok, %SportComplex{}} <- Owners.delete_sport_complex(id) do

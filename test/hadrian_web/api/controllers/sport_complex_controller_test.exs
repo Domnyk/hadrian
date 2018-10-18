@@ -5,20 +5,19 @@ defmodule HadrianWeb.Api.SportComplexControllerTest do
   alias Hadrian.Owners
   alias Hadrian.Owners.SportComplex
 
+  setup %{conn: conn} do
+    sport_complex = insert(:sport_complex)
+
+    {:ok, conn: put_req_header(conn, "accept", "application/json"), sport_complex: sport_complex}
+  end
+
   describe "index" do
-    test "when no params present returns all sport complexes", %{conn: conn} do
-      sport_complex_1 = insert(:sport_complex)
-      sport_complex_2 = insert(:sport_complex)
-
+    test "returns all sport complexes", %{conn: conn, sport_complex: %SportComplex{id: id, name: name}} do
       conn = get conn, sport_complex_path(conn, :index)
-      resp = json_response(conn, 200)
-      [sport_complex_json_1 | [sport_complex_json_2 | _]] = resp["data"]["sport_complexes"]
 
+      resp = json_response(conn, 200)
       assert resp["status"] == "ok"
-      assert sport_complex_json_1["name"] == sport_complex_1.name
-      assert sport_complex_json_1["id"] == sport_complex_1.id
-      assert sport_complex_json_2["name"] == sport_complex_2.name
-      assert sport_complex_json_2["id"] == sport_complex_2.id
+      assert [%{"id" => ^id, "name" => ^name}] = resp["data"]["sport_complexes"]
     end
   end
 
@@ -43,6 +42,28 @@ defmodule HadrianWeb.Api.SportComplexControllerTest do
       assert resp["status"] == "ok"
       assert Kernel.get_in(resp, ["data", "sport_complex", "id"]) 
       assert resp["data"]["sport_complex"]["name"] == params["data"]["sport_complex"]["name"]
+    end
+  end
+
+  describe "update" do
+    test "renders sport complex when data is valid", %{conn: conn, sport_complex: sport_complex} do
+      params = build(:sport_complex_params)
+      conn = put conn, sport_complex_path(conn, :update, sport_complex.id), params
+      resp = json_response(conn, 200)["data"]["sport_complex"]
+
+      updated_sport_complex = Owners.get_sport_complex!(sport_complex.id)
+      assert updated_sport_complex.id == resp["id"]
+      assert updated_sport_complex.name == resp["name"]
+    end
+
+    test "renders errors when data is invalid", %{conn: conn, sport_complex: sport_complex} do
+      params = %{"data" => %{"sport_complex" => %{"name" => nil}}}
+
+      conn = put conn, sport_complex_path(conn, :update, sport_complex.id), params
+
+      resp = json_response(conn, 422)
+      assert resp["status"] == "error"
+      assert resp["errors"] != %{}
     end
   end
 
