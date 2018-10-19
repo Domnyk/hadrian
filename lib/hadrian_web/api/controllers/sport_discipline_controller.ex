@@ -4,8 +4,7 @@ defmodule HadrianWeb.Api.SportDisciplineController do
   alias Hadrian.Owners
   alias Hadrian.Owners.SportDiscipline
 
-  # TODO: Where fallback contoller can be used ?
-  # action_fallback HadrianWeb.FallbackController
+  action_fallback HadrianWeb.Api.FallbackController
 
   def index(conn, _params) do
     sport_disciplines = Owners.list_sport_disciplines()

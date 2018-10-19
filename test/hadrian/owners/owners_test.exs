@@ -360,6 +360,9 @@ defmodule Hadrian.OwnersTest do
     test "change_sport_discipline/1 returns a sport_discipline changeset" do
       sport_discipline = insert(:sport_discipline)
       assert %Ecto.Changeset{} = Owners.change_sport_discipline(sport_discipline)
+    end
+  end
+
   describe "sport_arenas" do
     alias Hadrian.Owners.SportArena
 
