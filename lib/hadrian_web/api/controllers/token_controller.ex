@@ -11,7 +11,6 @@ defmodule HadrianWeb.Api.TokenController do
 
 
   @failure_endpoint "#{Application.get_env(:hadrian, :client_url)}/sign_in?sign_in_status=error"
-  @success_endpoint "#{Application.get_env(:hadrian, :client_url)}/map?sign_in_status=success"
 
   def redirect_to_fb(conn, _params) do
     fb_login_endpoint = Facebook.get_login_endpoint(System.get_env("FACEBOOK_APP_ID"), 
@@ -34,10 +33,9 @@ defmodule HadrianWeb.Api.TokenController do
          {:ok, %User{} = user} <- Accounts.get_user_by_email(user_email),
          {:ok, token, _claims} <- Guardian.encode_and_sign(user)
     do
-      success_endpoint = "https://localhost:8080/map?sign_in_status=success"
-
       Logger.info("User exists in DB. Token has been generated")
-      redirect conn, external: (@success_endpoint <> "#token=#{token}")
+      success_endpoint = "#{Application.get_env(:hadrian, :client_url)}/map?sign_in_status=success"
+      redirect conn, external: (success_endpoint <> "#token=#{token}")
     else
       {:error, error_data} ->
         Logger.warn("Error during user token generation: #{inspect(error_data)}")
@@ -45,7 +43,7 @@ defmodule HadrianWeb.Api.TokenController do
     end
   end
 
-  def create(conn, %{"auth_method" => "in_app", "user" => user_params} = params) do
+  def create(conn, %{"auth_method" => "in_app", "user" => user_params}) do
     with {:ok, %User{} = user}  <- Accounts.get_user_by_email(user_params["email"]),
          {:ok, %User{}} <- Security.authenticate(user, user_params["password"]),
          {:ok, token, _claims} <- Guardian.encode_and_sign(user)
