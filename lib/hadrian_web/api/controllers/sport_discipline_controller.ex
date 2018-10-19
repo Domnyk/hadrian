@@ -2,7 +2,6 @@ defmodule HadrianWeb.Api.SportDisciplineController do
   use HadrianWeb, :controller
 
   alias Hadrian.Owners
-  alias Hadrian.Owners.SportDiscipline
 
   action_fallback HadrianWeb.Api.FallbackController
 

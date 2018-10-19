@@ -21,8 +21,6 @@ defmodule HadrianWeb.Api.UserView do
   end
 
   def render("error.create.json", %{changeset: changeset}) do
-    import Ecto.Changeset, only: [traverse_errors: 2]
-
     errors = ErrorView.parse_errors(changeset)
 
     %{}

@@ -2,7 +2,6 @@ defmodule Hadrian.Guardian do
   use Guardian, otp_app: :hadrian
 
   alias Hadrian.Repo
-  alias Hadrian.Accounts
   alias Hadrian.Accounts.User
 
   def subject_for_token(user = %User{}, _claims) do

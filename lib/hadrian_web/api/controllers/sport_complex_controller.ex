@@ -1,7 +1,6 @@
 defmodule HadrianWeb.Api.SportComplexController do
   use HadrianWeb, :controller
 
-  alias Ecto.Changeset
   alias Hadrian.Owners
   alias Hadrian.Owners.SportComplex
 

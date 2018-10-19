@@ -7,14 +7,14 @@ defmodule Types.GeoCoordinates.Ecto do
     :map
   end
 
-  def cast(%{latitude: latitude, longitude: longitude} = geo_coordinates) when is_number(latitude) 
+  def cast(%{latitude: latitude, longitude: longitude}) when is_number(latitude)
                                                                           and is_number(longitude) do
     struct = %GeoCoordinates{latitude: latitude, longitude: longitude}
     
     {:ok, struct}
   end
 
-  def cast(%{"latitude" => latitude, "longitude" => longitude} = geo_coordinates) do
+  def cast(%{"latitude" => latitude, "longitude" => longitude}) do
     cast(%{latitude: latitude, longitude: longitude}) 
   end
 

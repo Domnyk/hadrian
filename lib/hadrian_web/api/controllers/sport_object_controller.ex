@@ -3,7 +3,6 @@ defmodule HadrianWeb.Api.SportObjectController do
 
   alias Hadrian.Owners
   alias Hadrian.Owners.SportObject
-  alias Ecto.Changeset
 
   action_fallback HadrianWeb.Api.FallbackController
 
