@@ -89,8 +89,17 @@ defmodule Hadrian.DataFactory do
     alias Hadrian.Owners.SportArena
 
     %SportArena{
-      name: "Sport Arena of city Fake",
-      type: "Fake soccer field"
+      name: "Sport Arena of city Fake"
+    }
+  end
+
+  def sport_arena_params_factory do
+    %{
+      "data" => %{
+        "sport_arena" => %{
+          "name" => "Sport arena of city Fake"
+        }
+      }
     }
   end
 

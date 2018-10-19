@@ -1,7 +1,7 @@
 defmodule HadrianWeb.Api.UserView do
   use HadrianWeb, :view
   alias HadrianWeb.Api.UserView
-  alias HadrianWeb.ErrorView
+  alias HadrianWeb.Api.ErrorView
 
   def render("index.json", %{users: users}) do
     %{data: render_many(users, UserView, "user.json")}

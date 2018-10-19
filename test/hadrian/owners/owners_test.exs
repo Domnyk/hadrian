@@ -3,15 +3,21 @@ defmodule Hadrian.OwnersTest do
 
   alias Hadrian.Owners
 
+  setup do
+    sport_complex = insert(:sport_complex)
+    sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
+
+    {:ok, sport_complex: sport_complex, sport_object: sport_object}
+  end
+
   describe "sport_complexes" do
     alias Hadrian.Owners.SportComplex
 
     @update_attrs %{name: "some updated name"}
     @invalid_attrs %{name: nil}
 
-    test "list_sport_complexes/0 returns all sport_complexes" do
-      sport_complexes_list = insert_list(3, :sport_complex)
-      assert sport_complexes_list == Owners.list_sport_complexes()
+    test "list_sport_complexes/0 returns all sport_complexes", %{sport_complex: sport_complex} do
+      assert [sport_complex] == Owners.list_sport_complexes()
     end
 
     test "get_sport_complex!/1 returns the sport_complex with given id" do
@@ -64,7 +70,7 @@ defmodule Hadrian.OwnersTest do
     end
 
     test "when passed id of non existing sport complex delete_sport_complex_1 returns :error" do
-      assert {:error, :no_such_sport_complex} = Owners.delete_sport_complex("1")
+      assert {:error, :not_found} = Owners.delete_sport_complex("1")
     end
 
     test "change_sport_complex/1 returns a sport_complex changeset" do
@@ -79,9 +85,32 @@ defmodule Hadrian.OwnersTest do
                     booking_margin: build(:booking_margin)}
     @invalid_attrs %{latitude: nil, longitude: nil, name: nil, sport_complex_id: nil}
 
-    test "list_sport_objects/0 returns all sport_objects" do
-      sport_object_list = insert_list(3, :sport_object)
-      assert Owners.list_sport_objects() == sport_object_list
+    test "list_sport_objects/0 returns all sport_objects", %{sport_object: sport_object} do
+      assert [sport_object] == Owners.list_sport_objects()
+    end
+
+    test "list_sport_objects/1 returns all sport objects in sport complex" do
+      sport_complex = insert(:sport_complex)
+      sport_object_1 = insert(:sport_object, sport_complex: sport_complex)
+      sport_object_2 = insert(:sport_object, sport_complex: sport_complex)
+
+      sport_objects_array = Owners.list_sport_objects(sport_complex.id)
+      sport_object_from_resp_1 = Enum.at(sport_objects_array, 1)
+      sport_object_from_resp_2 = Enum.at(sport_objects_array, 0)
+
+      assert are_sport_objects_the_same(sport_object_1 ,sport_object_from_resp_1)
+      assert are_sport_objects_the_same(sport_object_2, sport_object_from_resp_2)
+    end
+
+    test "list_sport_objects/1 returns [] when no sport objects in sport complex" do
+      assert [] == Owners.list_sport_objects(0)
+    end
+
+    defp are_sport_objects_the_same(%SportObject{} = a, %SportObject{} = b) do
+      assert a.id == b.id
+      assert a.name == b.name
+      assert a.booking_margin == b.booking_margin
+      assert a.geo_coordinates == b.geo_coordinates
     end
 
     test "get_sport_object!/1 returns the sport_object with given id" do
@@ -131,6 +160,22 @@ defmodule Hadrian.OwnersTest do
 
       assert {:ok, %SportObject{}} = Owners.delete_sport_object(sport_object)
       assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_object!(sport_object.id) end
+    end
+
+    test "when passed id of existing sport object delete_sport_object/1 deletes it", %{sport_object: sport_object} do
+      id = Integer.to_string(sport_object.id)
+      assert {:ok, %SportObject{}} = Owners.delete_sport_object(id)
+    end
+
+    test "when passed id of existing sport object but it cannot be deleted due to DB constraints delete_sport_object/1
+          returns :error", %{sport_object: sport_object} do
+      insert(:sport_arena, sport_object_id: sport_object.id)
+      id = Integer.to_string(sport_object.id)
+      assert {:error, %Ecto.Changeset{}} = Owners.delete_sport_object(id)
+    end
+
+    test "when passed id of non existing sport object delete_sport_object/1 returns :error" do
+      assert {:error, :not_found} = Owners.delete_sport_object("1")
     end
 
     test "change_sport_object/1 returns a sport_object changeset" do
@@ -315,6 +360,87 @@ defmodule Hadrian.OwnersTest do
     test "change_sport_discipline/1 returns a sport_discipline changeset" do
       sport_discipline = insert(:sport_discipline)
       assert %Ecto.Changeset{} = Owners.change_sport_discipline(sport_discipline)
+  describe "sport_arenas" do
+    alias Hadrian.Owners.SportArena
+
+    @valid_attrs %{name: "some name"}
+    @update_attrs %{name: "some updated name"}
+    @invalid_attrs %{name: nil}
+
+    def sport_arena_fixture() do
+      sport_complex = insert(:sport_complex)
+      sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
+      sport_arena = insert(:sport_arena, sport_object_id: sport_object.id)
+
+      {sport_complex, sport_object, sport_arena}
+    end
+
+    test "list_sport_arenas/0 returns all sport_arenas" do
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      assert Owners.list_sport_arenas() == [sport_arena]
+    end
+
+    test "list_sport_arenas/1 returns all sport arenas in sport object" do
+      sport_complex = insert(:sport_complex)
+      sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
+      sport_arena_1 = insert(:sport_arena, sport_object_id: sport_object.id)
+      sport_arena_2 = insert(:sport_arena, sport_object_id: sport_object.id)
+
+      sport_arenas_array = Owners.list_sport_arenas(sport_object.id)
+      sport_arena_from_resp_1 = Enum.at(sport_arenas_array, 1)
+      sport_arena_from_resp_2 = Enum.at(sport_arenas_array, 0)
+
+      assert are_sport_arenas_the_same(sport_arena_1 ,sport_arena_from_resp_1)
+      assert are_sport_arenas_the_same(sport_arena_2, sport_arena_from_resp_2)
+    end
+
+    defp are_sport_arenas_the_same(%SportArena{} = a, %SportArena{} = b) do
+      assert a.id == b.id
+      assert a.name == b.name
+      assert a.sport_object_id == b.sport_object_id
+    end
+
+    test "get_sport_arena!/1 returns the sport_arena with given id" do
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      assert Owners.get_sport_arena!(sport_arena.id) == sport_arena
+    end
+
+    test "create_sport_arena/1 with valid data creates a sport_arena" do
+      sport_complex = insert(:sport_complex)
+      sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
+      params = @valid_attrs
+               |> Map.put(:sport_object_id, sport_object.id)
+
+      assert {:ok, %SportArena{} = sport_arena} = Owners.create_sport_arena(params)
+      assert sport_arena.name == "some name"
+    end
+
+    test "create_sport_arena/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Owners.create_sport_arena(@invalid_attrs)
+    end
+
+    test "update_sport_arena/2 with valid data updates the sport_arena" do
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      assert {:ok, sport_arena} = Owners.update_sport_arena(sport_arena, @update_attrs)
+      assert %SportArena{} = sport_arena
+      assert sport_arena.name == "some updated name"
+    end
+
+    test "update_sport_arena/2 with invalid data returns error changeset" do
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      assert {:error, %Ecto.Changeset{}} = Owners.update_sport_arena(sport_arena, @invalid_attrs)
+      assert sport_arena == Owners.get_sport_arena!(sport_arena.id)
+    end
+
+    test "delete_sport_arena/1 deletes the sport_arena" do
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      assert {:ok, %SportArena{}} = Owners.delete_sport_arena(sport_arena)
+      assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_arena!(sport_arena.id) end
+    end
+
+    test "change_sport_arena/1 returns a sport_arena changeset" do
+      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      assert %Ecto.Changeset{} = Owners.change_sport_arena(sport_arena)
     end
   end
 end

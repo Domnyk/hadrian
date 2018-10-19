@@ -1,7 +1,7 @@
 defmodule HadrianWeb.ErrorViewTest do
   use HadrianWeb.ConnCase, async: true
 
-  alias HadrianWeb.ErrorView
+  alias HadrianWeb.Api.ErrorView
 
   # Bring render/3 and render_to_string/3 for testing custom views
   import Phoenix.View

@@ -1,5 +1,7 @@
 use Mix.Config
 
+host = "thawing-crag-67620.herokuapp.com"
+
 # For production, we often load configuration from external
 # sources, such as your system environment. For this reason,
 # you won't find the :http configuration below, but set inside
@@ -15,7 +17,7 @@ use Mix.Config
 # which you typically run after static files are built.
 config :hadrian, HadrianWeb.Endpoint,
   load_from_system_env: true,
-  url: [scheme: "https", host: "thawing-crag-67620.herokuapp.com", port: 443],
+  url: [scheme: "https", host: host, port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   secret_key_base: System.get_env("SECRET_KEY_BASE")
 
@@ -68,4 +70,7 @@ config :hadrian, Hadrian.Repo,
 
 # Configure access token module for Facebook
 config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.HTTP
+
+# Configure client url
+config :hadrian, :client_url, "https://vinci-11235813.herokuapp.com"
   

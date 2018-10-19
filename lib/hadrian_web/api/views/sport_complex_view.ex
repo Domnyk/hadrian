@@ -2,7 +2,7 @@ defmodule HadrianWeb.Api.SportComplexView do
   use HadrianWeb, :view
   
   alias HadrianWeb.Api.SportComplexView
-  alias HadrianWeb.ErrorView
+  alias HadrianWeb.Api.ErrorView
 
   def render("index.json", %{sport_complexs: sport_complexs}) do
     %{
@@ -13,26 +13,18 @@ defmodule HadrianWeb.Api.SportComplexView do
     }
   end
 
-  def render("sport_complex.json", %{sport_complex: sport_complex}) do
-    %{id: sport_complex.id, 
-      name: sport_complex.name}
-  end
-
-  def render("ok.create.json", %{sport_complex: sport_complex}) do
+  def render("show.json", %{sport_complex: sport_complex}) do
     %{
       status: :ok,
       data: %{
-        sport_complex: render("sport_complex.json", sport_complex: sport_complex)
+        sport_complex: render_one(sport_complex, SportComplexView, "sport_complex.json")
       }
     }
   end
 
-  def render("error.create.json", %{changeset: changeset}) do
-    errors = ErrorView.parse_errors(changeset)
-
-    %{}
-    |> Map.put(:errors, errors)
-    |> Map.put(:status, :error)
+  def render("sport_complex.json", %{sport_complex: sport_complex}) do
+    %{id: sport_complex.id, 
+      name: sport_complex.name}
   end
 
   def render("ok.delete.json", %{sport_complex: sport_complex}) do

@@ -1,5 +1,7 @@
 use Mix.Config
 
+host = "localhost"
+
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
@@ -58,8 +60,12 @@ config :hadrian, Hadrian.Repo,
   username: System.get_env("POSTGRES_USER") || "dominiktrusinski",
   password: System.get_env("POSTGRES_PASSWORD") || "dominiktrusinski",
   database: System.get_env("POSTGRES_DB") || "migrations",
-  hostname: System.get_env("POSTGRES_HOST") || "localhost",
+  hostname: System.get_env("POSTGRES_HOST") || host,
   pool_size: 10
 
 # Configure access token module for Facebook
 config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.HTTP
+
+# Configure client url
+config :hadrian, :client_url, "https://localhost:8080"
+

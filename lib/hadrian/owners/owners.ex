@@ -106,12 +106,11 @@ defmodule Hadrian.Owners do
 
   """
   def delete_sport_complex(id) do
-    case Repo.get(SportComplex, id) do
-      %SportComplex{} = sport_complex ->
-        sport_complex
-        |> change_sport_complex
-        |> Repo.delete
-      nil -> {:error, :no_such_sport_complex}
+    with %SportComplex{} = sport_complex <- Repo.get(SportComplex, id) do
+      change_sport_complex(sport_complex)
+      |> Repo.delete
+    else
+      nil -> {:error, :not_found}
     end
   end
 
@@ -143,6 +142,28 @@ defmodule Hadrian.Owners do
   """
   def list_sport_objects do
     Repo.all(SportObject)
+  end
+
+  @doc """
+  Returns sport objects in sport complex
+
+  ## Examples
+
+      iex> list_sport_objects(1)
+      [%SportObject{}, ...]
+
+      iex> list_sport_objects(-1)
+      []
+  """
+
+  def list_sport_objects(sport_complex_id) do
+    with %SportComplex{} = sport_complex <- Repo.get(SportComplex, sport_complex_id) do
+      sport_complex
+      |> Repo.preload(:sport_objects)
+      |> Map.get(:sport_objects)
+    else
+      nil -> []
+    end
   end
 
   @doc """
@@ -211,6 +232,30 @@ defmodule Hadrian.Owners do
   """
   def delete_sport_object(%SportObject{} = sport_object) do
     Repo.delete(sport_object)
+  end
+
+  @doc """
+  Deletes a SportObject by id.
+
+  ## Examples
+
+      iex> delete_sport_object(1)
+      {:ok, %SportComplex{}}
+
+      iex> delete_sport_object(2)
+      {:error, %Ecto.Changeset{}}
+
+      iex> delete_sport_object(-1)
+      {:error, :not_found}
+
+  """
+  def delete_sport_object(id) do
+    with %SportObject{} = sport_object <- Repo.get(SportObject, id) do
+      change_sport_object(sport_object)
+      |> Repo.delete
+    else
+      nil -> {:error, :not_found}
+    end
   end
 
   @doc """
@@ -431,6 +476,27 @@ defmodule Hadrian.Owners do
   """
   def list_sport_arenas do
     Repo.all(SportArena)
+  end
+
+  @doc """
+  Returns sport objects in sport complex
+
+  ## Examples
+
+      iex> list_sport_objects(1)
+      [%SportObject{}, ...]
+
+      iex> list_sport_objects(-1)
+      []
+  """
+  def list_sport_arenas(sport_object_id) do
+    with %SportObject{} = sport_object <- Repo.get(SportObject, sport_object_id) do
+      sport_object
+      |> Repo.preload(:sport_arenas)
+      |> Map.get(:sport_arenas)
+    else
+      nil -> []
+    end
   end
 
   @doc """

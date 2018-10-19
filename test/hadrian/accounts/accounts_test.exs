@@ -33,6 +33,21 @@ defmodule Hadrian.AccountsTest do
       assert user_from_db.password_hash != nil
     end
 
+    test "get_user_by_email/1 retuns the user with given email" do
+      user = insert_with_hashed_password(:user)
+
+      {:ok, %User{} = user_from_db} = Accounts.get_user_by_email(user.email)
+
+      assert_that_users_are_equal(user, user_from_db)
+      assert user_from_db.password_hash != nil
+    end
+
+    test "get_user_by_email/1 returns {:error, email} when user does not exist" do
+      email = "bob@test.com"
+
+      {:error, email: ^email} = Accounts.get_user_by_email(email)
+    end
+
     test "create_user/1 with valid data creates a user" do
       valid_attrs = build(:user_attrs)
 

@@ -8,7 +8,6 @@ defmodule Hadrian.Accounts do
   alias Hadrian.Repo
   alias Hadrian.Accounts.User
   alias Hadrian.Accounts.Registration
-  alias Hadrian.Accounts.Session
 
   @doc """
   Returns the list of users.
@@ -39,6 +38,13 @@ defmodule Hadrian.Accounts do
   """
   def get_user!(id) do 
     Repo.get!(User, id)
+  end
+
+  def get_user_by_email(email) do
+    case Repo.get_by(User, email: email) do
+      %User{} = user -> {:ok, user}
+      _ -> {:error, email: email}
+    end
   end
 
   @doc """
