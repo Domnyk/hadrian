@@ -6,7 +6,7 @@ defmodule Hadrian.Owners.TimeBlock do
     field :end_hour, :time
     field :start_hour, :time
 
-    belongs_to :daily_schedule, Hadrian.Owners.DailySchedule, references: :daily_schedule_id
+    belongs_to :daily_schedule, Hadrian.Owners.DailySchedule, references: :id
     has_one :event, Hadrian.Activities.Event, foreign_key: :time_block_id
   end
 
