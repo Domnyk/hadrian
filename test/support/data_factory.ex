@@ -34,6 +34,7 @@ defmodule Hadrian.DataFactory do
     %SportObject{
       name: sequence(:name, name_val),
       geo_coordinates: sequence(:geo_coordinates, gen_geo_coordinates_val()),
+      address: sequence(:address, gen_address_val()),
       booking_margin: %{"months" => 1, "days" => 2, "secs" => 3}
     }
   end
@@ -52,10 +53,37 @@ defmodule Hadrian.DataFactory do
             "days" => 1,
             "secs" => 1
           },
+          "address" => %{
+            "street" => sequence(:street, &"Ulica #{&1}"),
+            "building_number" => sequence(:building_number, &"#{&1}"),
+            "postal_code" => sequence(:postal_code, gen_postal_code()),
+            "city" => sequence(:city, &"Miasto #{&1}")
+          },
           "sport_complex_id" => 1
         }
       }
     }
+  end
+
+  defp gen_address_val do
+    alias Types.Address
+
+    address = %Address{
+      street: sequence(:street, &"Ulica #{&1}"),
+      building_number: sequence(:building_number, &"#{&1}"),
+      postal_code: sequence(:postal_code, gen_postal_code()),
+      city: sequence(:city, &"Miasto #{&1}")
+    }
+
+    fn _ -> address end
+  end
+
+  defp gen_postal_code do
+    first_part = Enum.random(10..99) |> Integer.to_string
+    second_part = Enum.random(100..999) |> Integer.to_string
+    postal_code = first_part <> "-" <> second_part
+
+    fn _ -> postal_code end
   end
 
   defp gen_geo_coordinates_val do

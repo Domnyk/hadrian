@@ -121,8 +121,9 @@ defmodule Hadrian.OwnersTest do
     test "create_sport_object/1 with valid data creates a sport_object" do
       sport_complex = insert(:sport_complex)
       booking_margin_val = %{"months" => 1, "days" => 2, "secs" => 3}
+      address_val = %{"street" => "Szkolna", "building_number" => "7", "city" => "Marki", "postal_code" => "05-270"}
       valid_attrs = %{geo_coordinates: %{latitude: 89.5, longitude: 120.5}, name: "some name", 
-                      sport_complex_id: sport_complex.id, booking_margin: booking_margin_val}
+                      sport_complex_id: sport_complex.id, booking_margin: booking_margin_val, address: address_val}
 
       assert {:ok, %SportObject{} = sport_object} = Owners.create_sport_object(valid_attrs)
       assert sport_object.geo_coordinates.latitude == valid_attrs.geo_coordinates.latitude
@@ -131,6 +132,11 @@ defmodule Hadrian.OwnersTest do
       assert sport_object.booking_margin.months == valid_attrs.booking_margin["months"]
       assert sport_object.booking_margin.days == valid_attrs.booking_margin["days"]
       assert sport_object.booking_margin.secs == valid_attrs.booking_margin["secs"]
+      assert sport_object.address.street == valid_attrs.address["street"]
+      assert sport_object.address.building_number == valid_attrs.address["building_number"]
+      assert sport_object.address.city == valid_attrs.address["city"]
+      assert sport_object.address.postal_code == valid_attrs.address["postal_code"]
+
     end
 
     test "create_sport_object/1 with invalid data returns error changeset" do
