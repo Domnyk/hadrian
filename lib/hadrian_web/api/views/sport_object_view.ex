@@ -22,7 +22,8 @@ defmodule HadrianWeb.Api.SportObjectView do
 
   def render("sport_object.json", %{sport_object: sport_object}) do
     %{id: sport_object.id, 
-      geo_coordinates: sport_object.geo_coordinates, 
+      geo_coordinates: sport_object.geo_coordinates,
+      address: sport_object.address,
       name: sport_object.name,
       booking_margin: sport_object.booking_margin,
       sport_complex_id: sport_object.sport_complex_id}
