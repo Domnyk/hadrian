@@ -19,7 +19,7 @@ defmodule Hadrian.Owners.SportObject do
     |> cast(attrs, [:name, :geo_coordinates, :address, :sport_complex_id, :booking_margin])
     |> foreign_key_constraint(:sport_complex_id)
     |> no_assoc_constraint(:sport_arenas)
-    |> unique_constraint(:name)
+    |> unique_constraint(:name, [name: "sport_object_name_idx"])
     |> validate_required([:name, :geo_coordinates, :address, :sport_complex_id, :booking_margin])
   end
 end
