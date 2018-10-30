@@ -399,8 +399,21 @@ defmodule Hadrian.OwnersTest do
       sport_arena_from_resp_1 = Enum.at(sport_arenas_array, 1)
       sport_arena_from_resp_2 = Enum.at(sport_arenas_array, 0)
 
-      assert are_sport_arenas_the_same(sport_arena_1 ,sport_arena_from_resp_1)
+      assert are_sport_arenas_the_same(sport_arena_1, sport_arena_from_resp_1)
       assert are_sport_arenas_the_same(sport_arena_2, sport_arena_from_resp_2)
+    end
+
+    # TODO: Refactor code
+    test "list_sport_arenas/2 returns all sport_arenas in sport_object with preloaded sport disciplines" do
+      {_sport_complex, sport_object, sport_arena} = sport_arena_fixture()
+      football = insert(:sport_discipline, name: "Football")
+      sport_arena_from_db = Repo.get!(SportArena, sport_arena.id) |> Repo.preload(:sport_disciplines)
+      sport_arena_with_sport_discipline = Ecto.Changeset.put_assoc(Owners.change_sport_arena(sport_arena_from_db), :sport_disciplines, [football])
+      Hadrian.Repo.update!(sport_arena_with_sport_discipline)
+
+      [sport_arena | _] = Owners.list_sport_arenas(sport_object.id, :with_available_sport_disciplines)
+
+      assert Enum.at(sport_arena.sport_disciplines, 0).name === football.name
     end
 
     defp are_sport_arenas_the_same(%SportArena{} = a, %SportArena{} = b) do

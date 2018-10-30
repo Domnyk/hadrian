@@ -479,7 +479,27 @@ defmodule Hadrian.Owners do
   end
 
   @doc """
-  Returns sport objects in sport complex
+  Returns sport arenas in sport object with available sport disciplines
+
+  ## Examples
+
+      iex> list_sport_objects(1)
+      [%SportObject{}, ...]
+
+      iex> list_sport_objects(-1)
+      []
+  """
+  def list_sport_arenas(sport_object_id, :with_available_sport_disciplines) do
+    sport_arenas_in_sport_object = from a in SportArena,
+                                        where: a.sport_object_id == ^sport_object_id,
+                                        select: a
+
+    Repo.all(sport_arenas_in_sport_object)
+    |> Repo.preload(:sport_disciplines)
+  end
+
+  @doc """
+  Returns sport arenas in sport object
 
   ## Examples
 
