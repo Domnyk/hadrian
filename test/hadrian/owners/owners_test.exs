@@ -371,6 +371,7 @@ defmodule Hadrian.OwnersTest do
 
   describe "sport_arenas" do
     alias Hadrian.Owners.SportArena
+    alias Hadrian.Owners.SportDiscipline
 
     @valid_attrs %{name: "some name"}
     @update_attrs %{name: "some updated name"}
@@ -380,12 +381,13 @@ defmodule Hadrian.OwnersTest do
       sport_complex = insert(:sport_complex)
       sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
       sport_arena = insert(:sport_arena, sport_object_id: sport_object.id)
+      football = insert(:sport_discipline, name: "Football")
 
-      {sport_complex, sport_object, sport_arena}
+      {sport_complex, sport_object, sport_arena, football}
     end
 
     test "list_sport_arenas/0 returns all sport_arenas" do
-      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      {_sport_complex, _sport_object, sport_arena, _football} = sport_arena_fixture()
       assert Owners.list_sport_arenas() == [sport_arena]
     end
 
@@ -403,27 +405,32 @@ defmodule Hadrian.OwnersTest do
       assert are_sport_arenas_the_same(sport_arena_2, sport_arena_from_resp_2)
     end
 
-    # TODO: Refactor code
-    test "list_sport_arenas/2 returns all sport_arenas in sport_object with preloaded sport disciplines" do
-      {_sport_complex, sport_object, sport_arena} = sport_arena_fixture()
-      football = insert(:sport_discipline, name: "Football")
-      sport_arena_from_db = Repo.get!(SportArena, sport_arena.id) |> Repo.preload(:sport_disciplines)
-      sport_arena_with_sport_discipline = Ecto.Changeset.put_assoc(Owners.change_sport_arena(sport_arena_from_db), :sport_disciplines, [football])
-      Hadrian.Repo.update!(sport_arena_with_sport_discipline)
-
-      [sport_arena | _] = Owners.list_sport_arenas(sport_object.id, :with_available_sport_disciplines)
-
-      assert Enum.at(sport_arena.sport_disciplines, 0).name === football.name
-    end
-
     defp are_sport_arenas_the_same(%SportArena{} = a, %SportArena{} = b) do
       assert a.id == b.id
       assert a.name == b.name
       assert a.sport_object_id == b.sport_object_id
     end
 
+    test "list_sport_arenas/2 returns all sport_arenas in sport_object with preloaded sport disciplines" do
+      {_sport_complex, sport_object, sport_arena, football} = sport_arena_fixture()
+      insert_sport_discipline_in_sport_arena(sport_arena.id, football)
+
+      [sport_arena] = Owners.list_sport_arenas(sport_object.id, :with_available_sport_disciplines)
+
+      assert sport_arena.sport_disciplines == [football]
+    end
+
+    defp insert_sport_discipline_in_sport_arena(sport_arena_id, %SportDiscipline{} = sport_discipline) do
+      sport_arena_from_db =
+        Repo.get!(SportArena, sport_arena_id)
+        |> Repo.preload(:sport_disciplines)
+
+      Ecto.Changeset.put_assoc(Owners.change_sport_arena(sport_arena_from_db), :sport_disciplines, [sport_discipline])
+      |> Hadrian.Repo.update!
+    end
+
     test "get_sport_arena!/1 returns the sport_arena with given id" do
-      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      {_sport_complex, _sport_object, sport_arena, _football} = sport_arena_fixture()
       assert Owners.get_sport_arena!(sport_arena.id) == sport_arena
     end
 
@@ -442,26 +449,26 @@ defmodule Hadrian.OwnersTest do
     end
 
     test "update_sport_arena/2 with valid data updates the sport_arena" do
-      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      {_sport_complex, _sport_object, sport_arena, _football} = sport_arena_fixture()
       assert {:ok, sport_arena} = Owners.update_sport_arena(sport_arena, @update_attrs)
       assert %SportArena{} = sport_arena
       assert sport_arena.name == "some updated name"
     end
 
     test "update_sport_arena/2 with invalid data returns error changeset" do
-      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      {_sport_complex, _sport_object, sport_arena, _football} = sport_arena_fixture()
       assert {:error, %Ecto.Changeset{}} = Owners.update_sport_arena(sport_arena, @invalid_attrs)
       assert sport_arena == Owners.get_sport_arena!(sport_arena.id)
     end
 
     test "delete_sport_arena/1 deletes the sport_arena" do
-      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      {_sport_complex, _sport_object, sport_arena, _football} = sport_arena_fixture()
       assert {:ok, %SportArena{}} = Owners.delete_sport_arena(sport_arena)
       assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_arena!(sport_arena.id) end
     end
 
     test "change_sport_arena/1 returns a sport_arena changeset" do
-      {_sport_complex, _sport_object, sport_arena } = sport_arena_fixture()
+      {_sport_complex, _sport_object, sport_arena, _football} = sport_arena_fixture()
       assert %Ecto.Changeset{} = Owners.change_sport_arena(sport_arena)
     end
   end
