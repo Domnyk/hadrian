@@ -125,7 +125,11 @@ defmodule Hadrian.DataFactory do
     %{
       "data" => %{
         "sport_arena" => %{
-          "name" => "Sport arena of city Fake"
+          "name" => "Sport arena of city Fake",
+          "sport_disciplines" => [
+            %{"id" => 1, "name" => "Football"},
+            %{"id" => 2, "name" => "Basketball"}
+          ]
         }
       }
     }

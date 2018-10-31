@@ -415,7 +415,7 @@ defmodule Hadrian.OwnersTest do
       {_sport_complex, sport_object, sport_arena, football} = sport_arena_fixture()
       insert_sport_discipline_in_sport_arena(sport_arena.id, football)
 
-      [sport_arena] = Owners.list_sport_arenas(sport_object.id, :with_available_sport_disciplines)
+      [sport_arena] = Owners.list_sport_arenas(sport_object.id, :with_sport_disciplines)
 
       assert sport_arena.sport_disciplines == [football]
     end

@@ -489,7 +489,7 @@ defmodule Hadrian.Owners do
       iex> list_sport_objects(-1)
       []
   """
-  def list_sport_arenas(sport_object_id, :with_available_sport_disciplines) do
+  def list_sport_arenas(sport_object_id, :with_sport_disciplines) do
     sport_arenas_in_sport_object = from a in SportArena,
                                         where: a.sport_object_id == ^sport_object_id,
                                         select: a

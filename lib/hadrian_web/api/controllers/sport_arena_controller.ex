@@ -7,7 +7,7 @@ defmodule HadrianWeb.Api.SportArenaController do
   action_fallback HadrianWeb.Api.FallbackController
 
   def index(conn, %{"sport_object_id" => sport_object_id}) do
-    sport_arenas = Owners.list_sport_arenas(sport_object_id)
+    sport_arenas = Owners.list_sport_arenas(sport_object_id, :with_sport_disciplines)
     render(conn, "index.json", sport_arenas: sport_arenas)
   end
 
@@ -21,7 +21,7 @@ defmodule HadrianWeb.Api.SportArenaController do
    end
   end
   
-  def update(conn, %{"id" => id, "sport_arena" => sport_arena_params}) do
+  def update(conn, %{"data" => %{"sport_arena" => sport_arena_params}, "id" => id}) do
     sport_arena = Owners.get_sport_arena!(id)
 
     with {:ok, %SportArena{} = sport_arena} <- Owners.update_sport_arena(sport_arena, sport_arena_params) do
