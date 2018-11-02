@@ -9,7 +9,8 @@ defmodule Hadrian.Owners.SportArena do
 
 		belongs_to :sport_object, Hadrian.Owners.SportObject, references: :id
 		has_many :daily_schedules, Hadrian.Owners.DailySchedule, foreign_key: :sport_arena_id 
-		many_to_many :sport_disciplines, SportDiscipline, join_through: "sport_disciplines_in_sport_arenas"
+		many_to_many :sport_disciplines, SportDiscipline, join_through: "sport_disciplines_in_sport_arenas",
+                                                      on_replace: :delete
 	end
 
   @doc false
@@ -24,6 +25,6 @@ defmodule Hadrian.Owners.SportArena do
 
   defp parse_sport_disciplines(attrs) do
     (attrs["sport_disciplines"] || [])
-    |> Enum.map(& Repo.get(SportDiscipline, &1["id"]))
+    |> Enum.map(& Repo.get(SportDiscipline, &1))
   end
 end

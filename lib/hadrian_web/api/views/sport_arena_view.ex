@@ -27,7 +27,8 @@ defmodule HadrianWeb.Api.SportArenaView do
     %{
       id: sport_arena.id,
       name: sport_arena.name,
-      sport_disciplines: render_many(sport_disciplines, SportDisciplineView, "sport_discipline.json")
+      sport_disciplines: render_many(sport_disciplines, SportDisciplineView, "sport_discipline.json"),
+      sport_object_id: sport_arena.sport_object_id
     }
   end
 end
