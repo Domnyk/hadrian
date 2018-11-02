@@ -12,25 +12,31 @@ defmodule HadrianWeb.SportObjectControllerTest do
      sport_object: sport_object}
   end
 
-  describe "index" do
+  describe "index/0" do
+    setup %{conn: conn, sport_complex: sport_complex, sport_object: sport_object} do
+      other_sport_complex = insert(:sport_complex)
+      other_sport_object = insert(:sport_object, sport_complex_id: other_sport_complex.id)
+
+      {:ok, conn: conn, sport_complex: sport_complex, sport_object: sport_object, other_sport_object: other_sport_object}
+    end
+
+    test "returns all sport objects", %{conn: conn, sport_object: sport_object, other_sport_object: other_sport_object} do
+      conn = get conn, sport_object_path(conn, :index)
+
+      resp = json_response(conn, 200)
+      [sport_object_1_from_resp | [sport_object_2_from_resp]] = resp["data"]["sport_objects"]
+      assert are_sport_objects_the_same(sport_object, sport_object_1_from_resp)
+      assert are_sport_objects_the_same(other_sport_object, sport_object_2_from_resp)
+    end
+  end
+
+  describe "index/1" do
     test "returns all sport objects in sport complex", %{conn: conn, sport_complex: sport_complex, sport_object: sport_object} do
       conn = get conn, sport_complex_sport_object_path(conn, :index, sport_complex.id)
 
       resp = json_response(conn, 200)
       [sport_object_from_resp | _] = resp["data"]["sport_objects"]
       assert are_sport_objects_the_same(sport_object, sport_object_from_resp)
-    end
-
-    # TODO: This is verbose
-    defp are_sport_objects_the_same(%SportObject{} = sport_object, sport_object_in_json_format) do
-      assert sport_object_in_json_format["id"] == sport_object.id
-      assert sport_object_in_json_format["name"] == sport_object.name
-      assert sport_object_in_json_format["geo_coordinates"]["latitude"] == sport_object.geo_coordinates.latitude
-      assert sport_object_in_json_format["geo_coordinates"]["longitude"] == sport_object.geo_coordinates.longitude
-      assert sport_object_in_json_format["booking_margin"]["months"] == sport_object.booking_margin.months
-      assert sport_object_in_json_format["booking_margin"]["days"] == sport_object.booking_margin.days
-      assert sport_object_in_json_format["booking_margin"]["secs"] == sport_object.booking_margin.secs
-      assert sport_object_in_json_format["sport_complex_id"] == sport_object.sport_complex_id
     end
   end
 
@@ -108,5 +114,17 @@ defmodule HadrianWeb.SportObjectControllerTest do
 
       assert response(conn, 404)
     end
+  end
+
+  # TODO: This is verbose
+  defp are_sport_objects_the_same(%SportObject{} = sport_object, sport_object_in_json_format) do
+    assert sport_object_in_json_format["id"] == sport_object.id
+    assert sport_object_in_json_format["name"] == sport_object.name
+    assert sport_object_in_json_format["geo_coordinates"]["latitude"] == sport_object.geo_coordinates.latitude
+    assert sport_object_in_json_format["geo_coordinates"]["longitude"] == sport_object.geo_coordinates.longitude
+    assert sport_object_in_json_format["booking_margin"]["months"] == sport_object.booking_margin.months
+    assert sport_object_in_json_format["booking_margin"]["days"] == sport_object.booking_margin.days
+    assert sport_object_in_json_format["booking_margin"]["secs"] == sport_object.booking_margin.secs
+    assert sport_object_in_json_format["sport_complex_id"] == sport_object.sport_complex_id
   end
 end

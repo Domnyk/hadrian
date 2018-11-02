@@ -6,6 +6,12 @@ defmodule HadrianWeb.Api.SportObjectController do
 
   action_fallback HadrianWeb.Api.FallbackController
 
+  def index(conn, _params) do
+    sport_objects = Owners.list_sport_objects()
+
+    render(conn, "index.json", sport_objects: sport_objects)
+  end
+
   def index(conn, %{"sport_complex_id" => sport_complex_id}) do
     sport_objects = Owners.list_sport_objects(sport_complex_id)
 
