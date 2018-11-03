@@ -183,6 +183,25 @@ defmodule Hadrian.Owners do
   def get_sport_object!(id), do: Repo.get!(SportObject, id)
 
   @doc """
+  Gets a single sport object with loaded sport arenas and disciplines
+
+  Raises `Ecto.NoResultsError` if the Sport object does not exist.
+
+  ## Examples
+
+      iex> get_sport_object!(123)
+      %SportObject{}
+
+      iex> get_sport_object!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_sport_object!(id, :with_sport_arenas_and_disciplines) do
+    Repo.get!(SportObject, id)
+    |> Repo.preload(sport_arenas: [:sport_disciplines])
+  end
+
+  @doc """
   Creates a sport_object.
 
   ## Examples

@@ -1,6 +1,7 @@
 defmodule HadrianWeb.Api.SportObjectView do
   use HadrianWeb, :view
   alias HadrianWeb.Api.SportObjectView
+  alias HadrianWeb.Api.SportArenaView
 
   def render("index.json", %{sport_objects: sport_objects}) do
     %{
@@ -21,12 +22,20 @@ defmodule HadrianWeb.Api.SportObjectView do
   end
 
   def render("sport_object.json", %{sport_object: sport_object}) do
-    %{id: sport_object.id, 
+    resp = %{
+      id: sport_object.id,
       geo_coordinates: sport_object.geo_coordinates,
       address: sport_object.address,
       name: sport_object.name,
       booking_margin: sport_object.booking_margin,
-      sport_complex_id: sport_object.sport_complex_id}
+      sport_complex_id: sport_object.sport_complex_id
+    }
+
+    case Ecto.assoc_loaded?(sport_object.sport_arenas) do
+      true ->
+        Map.put(resp, :sport_arenas, render_many(sport_object.sport_arenas, SportArenaView, "sport_arena.json"))
+      false -> resp
+    end
   end
 
   def render("index.basic.json", %{sport_objects: sport_objects}) do

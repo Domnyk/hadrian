@@ -2,18 +2,13 @@ defmodule HadrianWeb.ErrorViewTest do
   use HadrianWeb.ConnCase, async: true
 
   alias HadrianWeb.Api.ErrorView
-
-  # Bring render/3 and render_to_string/3 for testing custom views
-  import Phoenix.View
   
   test "renders 404.html" do
-    assert render_to_string(ErrorView, "404.html", []) ==
-           "Not Found"
+    assert ErrorView.template_not_found("404", []) == %{status: :error, reason: "Not Found"}
   end
 
   test "renders 500.html" do
-    assert render_to_string(ErrorView, "500.html", []) ==
-           "Internal Server Error"
+    assert ErrorView.template_not_found("500", []) == %{status: :error, reason: "Internal Server Error"}
   end
 
   describe "parse_errors" do

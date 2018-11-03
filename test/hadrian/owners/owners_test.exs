@@ -118,6 +118,25 @@ defmodule Hadrian.OwnersTest do
       assert Owners.get_sport_object!(sport_object.id) == sport_object
     end
 
+    test "get_sport_object!/2 returns the sport object with given id and loaded sport arenas and disciplines",
+         %{sport_object: sport_object} do
+      %{sport_object_with_arenas_and_disciplines: so} = fixture(sport_object)
+
+      assert Owners.get_sport_object!(sport_object.id, :with_sport_arenas_and_disciplines) == so
+    end
+
+    defp fixture(%SportObject{id: id}) do
+      football = insert(:sport_discipline, name: "Football")
+      basketball = insert(:sport_discipline, name: "Basketball")
+      insert(:sport_arena, sport_object_id: id, sport_disciplines: [football])
+      insert(:sport_arena, sport_object_id: id, sport_disciplines: [basketball])
+
+      sport_object = Repo.get!(SportObject, id)
+      |> Hadrian.Repo.preload(sport_arenas: [:sport_disciplines])
+
+      %{sport_object_with_arenas_and_disciplines: sport_object}
+    end
+
     test "create_sport_object/1 with valid data creates a sport_object" do
       sport_complex = insert(:sport_complex)
       booking_margin_val = %{"months" => 1, "days" => 2, "secs" => 3}

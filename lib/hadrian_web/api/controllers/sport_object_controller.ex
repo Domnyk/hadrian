@@ -6,16 +6,26 @@ defmodule HadrianWeb.Api.SportObjectController do
 
   action_fallback HadrianWeb.Api.FallbackController
 
+  def index(conn, %{"sport_complex_id" => sport_complex_id}) do
+    sport_objects = Owners.list_sport_objects(sport_complex_id)
+
+    render(conn, "index.json", sport_objects: sport_objects)
+  end
+
   def index(conn, _params) do
     sport_objects = Owners.list_sport_objects()
 
     render(conn, "index.json", sport_objects: sport_objects)
   end
 
-  def index(conn, %{"sport_complex_id" => sport_complex_id}) do
-    sport_objects = Owners.list_sport_objects(sport_complex_id)
+  def show(conn, %{"id" => id}) do
+    try do
+      sport_object = Owners.get_sport_object!(id, :with_sport_arenas_and_disciplines)
 
-    render(conn, "index.json", sport_objects: sport_objects)
+      render(conn, "show.json", sport_object: sport_object)
+    rescue
+      Ecto.NoResultsError -> HadrianWeb.Api.FallbackController.call(conn, {:error, :not_found})
+    end
   end
 
   def create(conn, %{"data" => %{"sport_object" => sport_object_params}}) do
