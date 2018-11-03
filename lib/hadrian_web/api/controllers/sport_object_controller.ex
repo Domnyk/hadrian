@@ -13,7 +13,7 @@ defmodule HadrianWeb.Api.SportObjectController do
   end
 
   def index(conn, _params) do
-    sport_objects = Owners.list_sport_objects()
+    sport_objects = Owners.list_sport_objects(:with_arenas)
 
     render(conn, "index.json", sport_objects: sport_objects)
   end

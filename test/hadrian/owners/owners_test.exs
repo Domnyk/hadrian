@@ -89,6 +89,13 @@ defmodule Hadrian.OwnersTest do
       assert [sport_object] == Owners.list_sport_objects()
     end
 
+    test "list_sport_objects/1 returns all objects with arenas", %{sport_object: sport_object} do
+      sport_arena = insert(:sport_arena, sport_object_id: sport_object.id, sport_disciplines: [])
+      sport_object = Map.put(sport_object, :sport_arenas, [sport_arena])
+
+      assert [sport_object] == Owners.list_sport_objects(:with_arenas)
+    end
+
     test "list_sport_objects/1 returns all sport objects in sport complex" do
       sport_complex = insert(:sport_complex)
       sport_object_1 = insert(:sport_object, sport_complex: sport_complex)
