@@ -145,6 +145,20 @@ defmodule Hadrian.Owners do
   end
 
   @doc """
+  Returns the list of objects with arenas.
+
+  ## Examples
+
+      iex> list_sport_objects(:with_arenas)
+      [%SportObject{}, ...]
+
+  """
+  def list_sport_objects(:with_arenas) do
+    Repo.all(SportObject)
+    |> Enum.map(&Repo.preload(&1, sport_arenas: [:sport_disciplines]))
+  end
+
+  @doc """
   Returns sport objects in sport complex
 
   ## Examples
@@ -155,7 +169,6 @@ defmodule Hadrian.Owners do
       iex> list_sport_objects(-1)
       []
   """
-
   def list_sport_objects(sport_complex_id) do
     with %SportComplex{} = sport_complex <- Repo.get(SportComplex, sport_complex_id) do
       sport_complex

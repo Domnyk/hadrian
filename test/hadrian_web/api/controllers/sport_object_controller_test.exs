@@ -14,24 +14,22 @@ defmodule HadrianWeb.SportObjectControllerTest do
   end
 
   describe "index/0" do
-    setup %{conn: conn, sport_complex: sport_complex, sport_object: sport_object} do
-      other_sport_complex = insert(:sport_complex)
-      other_sport_object = insert(:sport_object, sport_complex_id: other_sport_complex.id)
+    setup %{conn: conn, sport_object: so} do
+      sa = insert(:sport_arena, sport_object_id: so.id)
 
-      {:ok, conn: conn, sport_complex: sport_complex, sport_object: sport_object, other_sport_object: other_sport_object}
+      {:ok, conn: conn, sport_object: so, sport_arena: sa}
     end
 
-    test "returns all sport objects", %{conn: conn, sport_object: sport_object, other_sport_object: other_sport_object} do
+    test "returns all objects with their arenas", %{conn: conn, sport_object: so, sport_arena: %SportArena{id: id}} do
       conn = get conn, sport_object_path(conn, :index)
 
       resp = json_response(conn, 200)
-      [sport_object_1_from_resp | [sport_object_2_from_resp]] = resp["data"]["sport_objects"]
-      assert are_sport_objects_the_same(sport_object, sport_object_1_from_resp)
-      assert are_sport_objects_the_same(other_sport_object, sport_object_2_from_resp)
+      [%{"sport_arenas" => [%{"id" => ^id}]}  = sport_object_from_resp] = resp["data"]["sport_objects"]
+      assert are_sport_objects_the_same(so, sport_object_from_resp)
     end
   end
 
-  describe "index/1" do
+  describe "index/1 where argument is sport complex id" do
     test "returns all sport objects in sport complex", %{conn: conn, sport_complex: sport_complex, sport_object: sport_object} do
       conn = get conn, sport_complex_sport_object_path(conn, :index, sport_complex.id)
 
