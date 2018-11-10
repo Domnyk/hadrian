@@ -59,7 +59,7 @@ config :hadrian, Hadrian.Repo,
   adapter: Ecto.Adapters.Postgres,
   username: System.get_env("POSTGRES_USER") || "dominiktrusinski",
   password: System.get_env("POSTGRES_PASSWORD") || "dominiktrusinski",
-  database: System.get_env("POSTGRES_DB") || "migrations",
+  database: System.get_env("POSTGRES_DB") || "dev",
   hostname: System.get_env("POSTGRES_HOST") || host,
   pool_size: 10
 
