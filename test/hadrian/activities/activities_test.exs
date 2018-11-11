@@ -26,10 +26,11 @@ defmodule Hadrian.ActivitiesTest do
     end
 
     test "create_event/1 with valid data creates an event" do
-      time_block = insert(:time_block)
-      valid_attrs = %{max_num_of_participants: 100, min_num_of_participants: 42, 
+      daily_schedule = insert(:daily_schedule)
+      valid_attrs = %{max_num_of_participants: 100, min_num_of_participants: 42,
+                    start_time: ~T[13:00:00.000000], end_time: ~T[15:00:00.000000],
                     duration_of_joining_phase: %{"months" => 0, "days" => 7, "secs" => 0},
-                    duration_of_paying_phase: %{"months" => 0, "days" => 7, "secs" => 0}, time_block_id: time_block.id}
+                    duration_of_paying_phase: %{"months" => 0, "days" => 7, "secs" => 0}, daily_schedule_id: daily_schedule.id}
       
       assert {:ok, %Event{} = event} = Activities.create_event(valid_attrs)
       assert event.duration_of_joining_phase == %Postgrex.Interval{months: 0, days: 7, secs: 0}
@@ -43,8 +44,8 @@ defmodule Hadrian.ActivitiesTest do
     end
 
     test "update_event/2 with valid data updates the event" do
-      time_block = insert(:time_block)
-      event = insert(:event, time_block_id: time_block.id)
+      daily_schedule = insert(:daily_schedule)
+      event = insert(:event, daily_schedule_id: daily_schedule.id)
 
       assert {:ok, updated_event} = Activities.update_event(event, @update_attrs)
       assert %Event{} = updated_event

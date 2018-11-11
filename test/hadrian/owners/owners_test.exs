@@ -237,10 +237,11 @@ defmodule Hadrian.OwnersTest do
 
     test "create_daily_schedule/1 with valid data creates a daily_schedule" do
       sport_arena = insert(:sport_arena)
-      valid_attrs = %{schedule_day: ~D[2010-04-17], sport_arena_id: sport_arena.id}
+      valid_attrs = %{schedule_day: ~D[2010-04-17], is_day_off: true, sport_arena_id: sport_arena.id}
 
       assert {:ok, %DailySchedule{} = daily_schedule} = Owners.create_daily_schedule(valid_attrs)
       assert daily_schedule.schedule_day == valid_attrs.schedule_day
+      assert daily_schedule.is_day_off == valid_attrs.is_day_off
     end
 
     test "create_daily_schedule/1 with invalid data returns error changeset" do
@@ -273,69 +274,6 @@ defmodule Hadrian.OwnersTest do
       daily_schedule = insert(:daily_schedule)
 
       assert %Ecto.Changeset{} = Owners.change_daily_schedule(daily_schedule)
-    end
-  end
-
-  describe "time_blocks" do
-    alias Hadrian.Owners.TimeBlock
-
-    @update_attrs %{end_hour: ~T[15:01:01.000000], start_hour: ~T[14:01:01.000000]}
-    @invalid_attrs %{end_hour: nil, start_hour: nil, daily_schedule_id: nil}
-
-    test "list_time_blocks/0 returns all time_blocks" do
-      time_blocks_list = insert_list(3, :time_block)
-
-      assert Owners.list_time_blocks() == time_blocks_list
-    end
-
-    test "get_time_block!/1 returns the time_block with given id" do
-      time_block = insert(:time_block)
-
-      assert Owners.get_time_block!(time_block.id) == time_block
-    end
-
-    test "create_time_block/1 with valid data creates a time_block" do
-      daily_schedule = insert(:daily_schedule)
-      valid_attrs = %{end_hour: ~T[15:00:00.000000], start_hour: ~T[14:00:00.000000], 
-                      daily_schedule_id: daily_schedule.id}
-      
-      assert {:ok, %TimeBlock{} = time_block} = Owners.create_time_block(valid_attrs)
-      assert time_block.end_hour == valid_attrs.end_hour
-      assert time_block.start_hour == valid_attrs.start_hour
-    end
-
-    test "create_time_block/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Owners.create_time_block(@invalid_attrs)
-    end
-
-    test "update_time_block/2 with valid data updates the time_block" do
-      daily_schedule = insert(:daily_schedule)
-      time_block = insert(:time_block, daily_schedule_id: daily_schedule.id)
-
-      assert {:ok, time_block} = Owners.update_time_block(time_block, @update_attrs)
-      assert %TimeBlock{} = time_block
-      assert time_block.end_hour == @update_attrs.end_hour
-      assert time_block.start_hour == @update_attrs.start_hour
-    end
-
-    test "update_time_block/2 with invalid data returns error changeset" do
-      time_block = insert(:time_block)
-
-      assert {:error, %Ecto.Changeset{}} = Owners.update_time_block(time_block, @invalid_attrs)
-      assert time_block == Owners.get_time_block!(time_block.id)
-    end
-
-    test "delete_time_block/1 deletes the time_block" do
-      time_block = insert(:time_block)
-
-      assert {:ok, %TimeBlock{}} = Owners.delete_time_block(time_block)
-      assert_raise Ecto.NoResultsError, fn -> Owners.get_time_block!(time_block.id) end
-    end
-
-    test "change_time_block/1 returns a time_block changeset" do
-      time_block = insert(:time_block)
-      
-      assert %Ecto.Changeset{} = Owners.change_time_block(time_block)
     end
   end
 
@@ -420,15 +358,11 @@ defmodule Hadrian.OwnersTest do
     test "list_sport_arenas/1 returns all sport arenas in sport object" do
       sport_complex = insert(:sport_complex)
       sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
-      sport_arena_1 = insert(:sport_arena, sport_object_id: sport_object.id)
-      sport_arena_2 = insert(:sport_arena, sport_object_id: sport_object.id)
+      sport_arena = insert(:sport_arena, sport_object_id: sport_object.id)
 
-      sport_arenas_array = Owners.list_sport_arenas(sport_object.id)
-      sport_arena_from_resp_1 = Enum.at(sport_arenas_array, 1)
-      sport_arena_from_resp_2 = Enum.at(sport_arenas_array, 0)
+      [sport_arena_from_resp | _] = Owners.list_sport_arenas(sport_object.id)
 
-      assert are_sport_arenas_the_same(sport_arena_1, sport_arena_from_resp_1)
-      assert are_sport_arenas_the_same(sport_arena_2, sport_arena_from_resp_2)
+      assert are_sport_arenas_the_same(sport_arena, sport_arena_from_resp)
     end
 
     defp are_sport_arenas_the_same(%SportArena{} = a, %SportArena{} = b) do

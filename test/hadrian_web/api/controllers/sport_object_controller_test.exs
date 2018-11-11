@@ -42,22 +42,18 @@ defmodule HadrianWeb.SportObjectControllerTest do
   describe "show" do
     setup %{conn: conn, sport_complex: sport_complex, sport_object: sport_object} do
       football = insert(:sport_discipline, name: "Football")
-      basketball = insert(:sport_discipline, name: "Basketball")
-      sport_arena_1 = insert(:sport_arena, sport_object_id: sport_object.id, sport_disciplines: [football])
-      sport_arena_2 = insert(:sport_arena, sport_object_id: sport_object.id, sport_disciplines: [basketball])
+      sport_arena = insert(:sport_arena, sport_object_id: sport_object.id, sport_disciplines: [football])
 
-      {:ok, conn: conn, sport_complex: sport_complex, sport_object: sport_object, sport_arena_1: sport_arena_1,
-        sport_arena_2: sport_arena_2}
+      {:ok, conn: conn, sport_complex: sport_complex, sport_object: sport_object, sport_arena: sport_arena}
     end
 
     test "returns sport object with given id", %{conn: conn, sport_object: sport_object,
-                                                 sport_arena_1: %SportArena{id: id_1},
-                                                 sport_arena_2: %SportArena{id: id_2}} do
+                                                 sport_arena: %SportArena{id: id}} do
       conn = get conn, sport_object_path(conn, :show, sport_object.id)
 
       resp = json_response(conn, 200)
       assert are_sport_objects_the_same(sport_object, resp["data"]["sport_object"])
-      assert [%{"id" => ^id_2}, %{"id" => ^id_1}] = resp["data"]["sport_object"]["sport_arenas"]
+      assert [%{"id" => ^id}] = resp["data"]["sport_object"]["sport_arenas"]
     end
   end
 

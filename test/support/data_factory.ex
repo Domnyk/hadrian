@@ -147,16 +147,8 @@ defmodule Hadrian.DataFactory do
     alias Hadrian.Owners.DailySchedule
 
     %DailySchedule{
-      schedule_day: ~D[2018-07-14]
-    }
-  end
-
-  def time_block_factory do
-    alias Hadrian.Owners.TimeBlock
-
-    %TimeBlock{
-      start_hour: ~T[14:00:00.000000],
-      end_hour: ~T[15:00:00.000000]
+      schedule_day: ~D[2018-07-14],
+      is_day_off: false
     }
   end
 
@@ -183,7 +175,9 @@ defmodule Hadrian.DataFactory do
       min_num_of_participants: 2,
       max_num_of_participants: 10,
       duration_of_joining_phase: %{"months" => 0, "days" => 5, "secs" => 0},
-      duration_of_paying_phase: %{"months" => 1, "days" => 7, "secs" => 0}
+      duration_of_paying_phase: %{"months" => 1, "days" => 7, "secs" => 0},
+      start_time: ~T[13:00:00.000000],
+      end_time: ~T[15:00:00.000000]
     }
   end
 end
