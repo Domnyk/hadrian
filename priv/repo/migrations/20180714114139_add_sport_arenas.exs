@@ -4,7 +4,6 @@ defmodule Hadrian.Repo.Migrations.AddSportArenas do
   def up do
     create table("sport_arenas") do
       add :name,            :varchar, size: 100
-      add :type,            :varchar, size: 100
       add :sport_object_id, references("sport_objects")
     end
 

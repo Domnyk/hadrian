@@ -4,6 +4,7 @@ defmodule Hadrian.Repo.Migrations.AddDailySchedules do
   def up do
     create table("daily_schedules") do
       add :schedule_day,    :date
+      add :is_day_off,      :boolean
       add :sport_arena_id,  references("sport_arenas")
     end
 
