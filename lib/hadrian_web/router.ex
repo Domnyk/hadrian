@@ -25,5 +25,7 @@ defmodule HadrianWeb.Router do
     get "/token/new", TokenController, :redirect_to_fb
     get "/token/new_callback", TokenController, :handle_fb_sign_in_resp
 
+    resources "/session", SessionController, only: [:new, :create]
+    delete "/session", SessionController, :delete
   end
 end

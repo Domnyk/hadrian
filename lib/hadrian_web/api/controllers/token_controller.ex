@@ -45,7 +45,7 @@ defmodule HadrianWeb.Api.TokenController do
 
   def create(conn, %{"auth_method" => "in_app", "user" => user_params}) do
     with {:ok, %User{} = user}  <- Accounts.get_user_by_email(user_params["email"]),
-         {:ok, %User{}} <- Security.authenticate(user, user_params["password"]),
+         :match <- Security.authenticate(user.password_hash, user_params["password"]),
          {:ok, token, _claims} <- Guardian.encode_and_sign(user)
     do
       Logger.info("User exists in DB. Token has been generated")
