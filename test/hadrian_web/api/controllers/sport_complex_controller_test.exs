@@ -23,32 +23,38 @@ defmodule HadrianWeb.Api.SportComplexControllerTest do
 
   describe "create" do
     test "when no errors occured inserts new sport complex into DB", %{conn: conn} do
-      params = build(:sport_complex_params)
+      complexes_owner = insert(:complexes_owner)
+      attrs = build(:sport_complex_attrs)
+              |> Kernel.put_in(["data", "sport_complex", "complexes_owner_id"], complexes_owner.id)
 
-      conn = post conn, sport_complex_path(conn, :create), params
+      conn = post conn, sport_complex_path(conn, :create), attrs
       resp = json_response(conn, 201)
-      sport_complex_from_db = Repo.get_by(SportComplex, name: params["data"]["sport_complex"]["name"])
+      sport_complex_from_db = Repo.get_by(SportComplex, name: attrs["data"]["sport_complex"]["name"])
       
       assert %SportComplex{} = sport_complex_from_db
       assert resp["data"]["sport_complex"]["name"] == sport_complex_from_db.name
     end
 
     test "when no errors occured returns response with status \"ok\" and sport complex data", %{conn: conn} do
-      params = build(:sport_complex_params)
+      complexes_owner = insert(:complexes_owner)
+      attrs = build(:sport_complex_attrs)
+              |> Kernel.put_in(["data", "sport_complex", "complexes_owner_id"], complexes_owner.id)
 
-      conn = post conn, sport_complex_path(conn, :create), params
+      conn = post conn, sport_complex_path(conn, :create), attrs
       resp = json_response(conn, 201)
 
       assert resp["status"] == "ok"
       assert Kernel.get_in(resp, ["data", "sport_complex", "id"]) 
-      assert resp["data"]["sport_complex"]["name"] == params["data"]["sport_complex"]["name"]
+      assert resp["data"]["sport_complex"]["name"] == attrs["data"]["sport_complex"]["name"]
     end
   end
 
   describe "update" do
     test "renders sport complex when data is valid", %{conn: conn, sport_complex: sport_complex} do
-      params = build(:sport_complex_params)
-      conn = put conn, sport_complex_path(conn, :update, sport_complex.id), params
+      complexes_owner = insert(:complexes_owner)
+      attrs = build(:sport_complex_attrs)
+              |> Kernel.put_in(["data", "sport_complex", "complexes_owner_id"], complexes_owner.id)
+      conn = put conn, sport_complex_path(conn, :update, sport_complex.id), attrs
       resp = json_response(conn, 200)["data"]["sport_complex"]
 
       updated_sport_complex = Owners.get_sport_complex!(sport_complex.id)
@@ -69,7 +75,8 @@ defmodule HadrianWeb.Api.SportComplexControllerTest do
 
   describe "delete" do
     test "deletes chosen sport complex", %{conn: conn} do
-      sport_complex = insert(:sport_complex)
+      complexes_owner = insert(:complexes_owner)
+      sport_complex = insert(:sport_complex, complexes_owner_id: complexes_owner.id)
 
       conn = delete conn, sport_complex_path(conn, :delete, sport_complex.id)
 

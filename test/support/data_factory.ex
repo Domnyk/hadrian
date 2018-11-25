@@ -7,6 +7,22 @@ defmodule Hadrian.DataFactory do
     %{"months" => num_of_months, "days" => 2, "secs" => 10}
   end
 
+  def complexes_owner_factory do
+    alias Hadrian.Accounts.ComplexesOwner
+
+    %ComplexesOwner{
+      password: "Very secret password",
+      email: sequence(:email, &"test#{&1}@domain.com")
+    }
+  end
+
+  def complexes_owner_attrs_factory do
+    %{
+      "email" => sequence(:email, &"test#{&1}@domain.com"),
+      "password" => "Very secret password"
+    }
+  end
+
   def sport_complex_factory do
     alias Hadrian.Owners.SportComplex
 
@@ -15,7 +31,7 @@ defmodule Hadrian.DataFactory do
     }
   end
 
-  def sport_complex_params_factory do
+  def sport_complex_attrs_factory do
     %{
       "data" => %{
         "sport_complex" => %{
@@ -156,14 +172,14 @@ defmodule Hadrian.DataFactory do
     alias Hadrian.Accounts.User
 
     %User{
-      password: "Very strong password",
+      display_name: sequence(:display_name, &"Display name #{&1}"),
       email: sequence(:email, &"test#{&1}@domain.com")
     }
   end
 
   def user_attrs_factory do
     %{
-      "password" => "Very strong password",
+      "display_name" => sequence(:display_name, &"Display name #{&1}"),
       "email" => sequence(:email, &"test#{&1}@domain.com")
     }
   end

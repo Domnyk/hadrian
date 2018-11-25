@@ -15,17 +15,17 @@ defmodule HadrianWeb.ErrorViewTest do
     alias Hadrian.Accounts.User
 
     test "when invalid changeset returns map with fields which did not pass validation" do
-      user_params = %{"email" => "this email has wrong format"}
-      expected_map = %{email: ["has invalid format"], password: ["can't be blank"]}
-      changeset = User.changeset(%User{}, user_params)
+      user_attrs = %{"email" => "this email has wrong format"}
+      expected_map = %{email: ["has invalid format"], display_name: ["can't be blank"]}
+      changeset = User.changeset(%User{}, user_attrs)
 
       assert expected_map == ErrorView.parse_errors(changeset)
     end
 
-    test "when valid changset returns empty map" do
-      user_params = %{"email" => "proper@email.com", "password" => "Very good password"}
+    test "when valid changeset returns empty map" do
+      user_attrs = build(:user_attrs)
       expected_map = %{}
-      changeset = User.changeset(%User{}, user_params)
+      changeset = User.changeset(%User{}, user_attrs)
 
       assert expected_map == ErrorView.parse_errors(changeset)
     end

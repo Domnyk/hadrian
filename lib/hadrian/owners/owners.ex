@@ -263,7 +263,9 @@ defmodule Hadrian.Owners do
 
   """
   def delete_sport_object(%SportObject{} = sport_object) do
-    Repo.delete(sport_object)
+    sport_object
+    |> Ecto.Changeset.change()
+    |> Repo.delete()
   end
 
   @doc """
@@ -284,7 +286,7 @@ defmodule Hadrian.Owners do
   def delete_sport_object(id) do
     with %SportObject{} = sport_object <- Repo.get(SportObject, id) do
       change_sport_object(sport_object)
-      |> Repo.delete
+      |> Repo.delete()
     else
       nil -> {:error, :not_found}
     end

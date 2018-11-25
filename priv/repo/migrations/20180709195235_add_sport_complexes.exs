@@ -4,6 +4,7 @@ defmodule Hadrian.Repo.Migrations.AddSportComplexes do
   def up do
     create table("sport_complexes") do
       add :name, :string, size: 100
+      add :complexes_owner_id, references(:complexes_owners)
     end
 
     create unique_index("sport_complexes", [:name], name: "sport_complex_name_idx")
@@ -11,7 +12,6 @@ defmodule Hadrian.Repo.Migrations.AddSportComplexes do
 
   def down do
     drop index("sport_complexes", [:name], name: "sport_complex_name_idx")
-
     drop table("sport_complexes")
   end
 end

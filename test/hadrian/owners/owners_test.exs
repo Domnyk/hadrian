@@ -21,12 +21,14 @@ defmodule Hadrian.OwnersTest do
     end
 
     test "get_sport_complex!/1 returns the sport_complex with given id" do
-      sport_complex = insert(:sport_complex)
+      complexes_owner = insert(:complexes_owner)
+      sport_complex = insert(:sport_complex, complexes_owner_id: complexes_owner.id)
       assert Owners.get_sport_complex!(sport_complex.id) == sport_complex
     end
 
     test "create_sport_complex/1 with valid data creates a sport_complex" do
-      valid_attrs = %{name: "some name"}
+      complexes_owner = insert(:complexes_owner)
+      valid_attrs = %{name: "some name", complexes_owner_id: complexes_owner.id}
 
       assert {:ok, %SportComplex{} = sport_complex} = Owners.create_sport_complex(valid_attrs)
       assert sport_complex.name == "some name"
@@ -37,7 +39,8 @@ defmodule Hadrian.OwnersTest do
     end
 
     test "update_sport_complex/2 with valid data updates the sport_complex" do
-      sport_complex = insert(:sport_complex)
+      complexes_owner = insert(:complexes_owner)
+      sport_complex = insert(:sport_complex, complexes_owner_id: complexes_owner.id)
       assert {:ok, sport_complex} = Owners.update_sport_complex(sport_complex, @update_attrs)
       assert %SportComplex{} = sport_complex
       assert sport_complex.name == "some updated name"
@@ -50,15 +53,18 @@ defmodule Hadrian.OwnersTest do
     end
 
     test "when passed %SportComplex{} struct delete_sport_complex/1 deletes the sport_complex" do
-      sport_complex = insert(:sport_complex)
+      complexes_owner = insert(:complexes_owner)
+      sport_complex = insert(:sport_complex, complexes_owner_id: complexes_owner.id)
       assert {:ok, %SportComplex{}} = Owners.delete_sport_complex(sport_complex)
       assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_complex!(sport_complex.id) end
     end
 
     test "when passed id of existing sport complex delete_sport_complex_1 deletes it" do
-      sport_complex = insert(:sport_complex)
+      complexes_owner = insert(:complexes_owner)
+      sport_complex = insert(:sport_complex, complexes_owner_id: complexes_owner.id)
       id = Integer.to_string(sport_complex.id)
       assert {:ok, %SportComplex{}} = Owners.delete_sport_complex(id)
+      assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_complex!(sport_complex.id) end
     end
 
     test "when passed id of existing sport complex but it cannot be deleted due to DB constraints delete_sport_comlex 

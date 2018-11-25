@@ -6,6 +6,7 @@ defmodule HadrianWeb.Api.SessionController do
   alias Hadrian.Authentication
   alias Hadrian.Accounts
   alias Hadrian.Accounts.User
+  alias Hadrian.Accounts.ComplexesOwner
 
   def new(conn, %{"redirect_url" => redirect_url}) do
     check_sign_in_status(conn)
@@ -22,6 +23,7 @@ defmodule HadrianWeb.Api.SessionController do
       %{"email" => email, "password" => password} -> handle_session_creation_with_password(conn, email, password)
       %{"code" => code} -> handle_fb_resp(conn, code)
       %{"error" => error, "error_reason" => error_reason} -> handle_error_from_fb(conn, error, error_reason)
+      _ -> Logger.error("Params don't match any clause")
     end
   end
 
@@ -43,8 +45,8 @@ defmodule HadrianWeb.Api.SessionController do
   defp handle_session_creation_with_password(conn, email, password) do
     check_sign_in_status(conn)
     |> case do
-         :not_signed_in -> handle_not_signed_in_user(conn, %{email: email, password: password})
-         :signed_in -> render(conn, "warning.create.json", message: "User has already signed in")
+         :not_signed_in -> handle_not_signed_in(conn, %{email: email, password: password})
+         :signed_in -> render(conn, "warning.create.json", message: "Complexes owner has already signed in")
        end
   end
 
@@ -58,12 +60,12 @@ defmodule HadrianWeb.Api.SessionController do
        end
   end
 
-  defp handle_not_signed_in_user(conn_with_fetched_session, %{email: email, password: password}) do
-    with {:ok, %User{} = user} = Accounts.get_user_by_email(email),
-         :match = Authentication.verify_password(password, user.password_hash)
+  defp handle_not_signed_in(conn_with_fetched_session, %{email: email, password: password}) do
+    with {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.get_complexes_owner_by_email(email),
+         :match = Authentication.verify_password(password, complexes_owner.password_hash)
     do
        conn_with_fetched_session
-       |> put_session(:current_user_id, user.id)
+       |> put_session(:current_user_id, complexes_owner.id)
        |> render("ok.create.json")
     end
   end
@@ -85,7 +87,7 @@ defmodule HadrianWeb.Api.SessionController do
     {:no_such_user, email: email} ->
       Logger.info("No user in database with such email: #{inspect(email)}. Creating user")
       Logger.info("Email: " <> email)
-      {:ok, %User{} = user} = Accounts.create_user(%{email: email}, false)
+      {:ok, %User{} = user} = Accounts.create_user(%{email: email})
       conn
       |> fetch_session()
       |> put_session(:current_user_id, user.id)

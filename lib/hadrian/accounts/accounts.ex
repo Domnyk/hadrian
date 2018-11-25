@@ -7,7 +7,6 @@ defmodule Hadrian.Accounts do
 
   alias Hadrian.Repo
   alias Hadrian.Accounts.User
-  alias Ecto.Changeset
 
   @doc """
   Returns the list of users.
@@ -59,25 +58,29 @@ defmodule Hadrian.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(attrs \\ %{}, password_required? \\ true) do
-    changeset = User.changeset(%User{}, attrs, password_required?)
-    if changeset.valid? do
-      changeset
-      |> case do
-           _ when password_required? == true -> insert_password_hash(changeset)
-           _ when password_required? == false -> changeset
-         end
-      |> Repo.insert() 
-    else
-      {:error, changeset}
-    end
+  def create_user(attrs \\ %{}) do
+    # changeset = User.changeset(%User{}, attrs, password_required?)
+    # if changeset.valid? do
+    #   changeset
+    #   |> case do
+    #        _ when password_required? == true -> insert_password_hash(changeset)
+    #        _ when password_required? == false -> changeset
+    #      end
+    #   |> Repo.insert()
+    # else
+    #   {:error, changeset}
+    # end
+
+    %User{}
+    |> User.changeset(attrs)
+    |> Repo.insert()
   end
 
-  defp insert_password_hash(%Changeset{} = changeset) do
-    password_hash = Comeonin.Bcrypt.hashpwsalt(changeset.changes.password)
-
-    Changeset.change(changeset, password_hash: password_hash)
-  end
+  # defp insert_password_hash(%Changeset{} = changeset) do
+  #   password_hash = Comeonin.Bcrypt.hashpwsalt(changeset.changes.password)
+  #
+  #   Changeset.change(changeset, password_hash: password_hash)
+  # end
 
   @doc """
   Updates a user.
@@ -220,5 +223,111 @@ defmodule Hadrian.Accounts do
   """
   def change_role(%Role{} = role) do
     Role.changeset(role, %{})
+  end
+
+
+  alias Hadrian.Accounts.ComplexesOwner
+
+  @doc """
+  Returns the list of complexes owners.
+
+  ## Examples
+
+      iex> list_complexes_owners()
+      [%ComplexesOwner{}, ...]
+
+  """
+  def list_complexes_owners do
+    Repo.all(ComplexesOwner)
+  end
+
+  @doc """
+  Gets a single complex owner.
+
+  Raises `Ecto.NoResultsError` if the complexes owner does not exist.
+
+  ## Examples
+
+      iex> get_complexes_owner!(123)
+      %ComplexesOwner{}
+
+      iex> get_complexes_owner!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_complexes_owner!(id), do: Repo.get!(ComplexesOwner, id)
+
+
+
+  def get_complexes_owner_by_email(email) do
+    case Repo.get_by(ComplexesOwner, email: email) do
+      %ComplexesOwner{} = complexes_owner -> {:ok, complexes_owner}
+      _ -> {:no_such_complexes_owner, email: email}
+    end
+  end
+
+  @doc """
+  Creates a complexes owner.
+
+  ## Examples
+
+      iex> create_complexes_owner(%{field: value})
+      {:ok, %ComplexesOwner{}}
+
+      iex> create_complexes_owner(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_complexes_owner(attrs \\ %{}) do
+    %ComplexesOwner{}
+    |> ComplexesOwner.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a complexes owner.
+
+  ## Examples
+
+      iex> update_complexes_owner(role, %{field: new_value})
+      {:ok, %ComplexesOwner{}}
+
+      iex> update_complexes_owner(role, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_complexes_owner(%ComplexesOwner{} = complexes_owner, attrs) do
+    complexes_owner
+    |> ComplexesOwner.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a complexes owner.
+
+  ## Examples
+
+      iex> delete_complexes_owner(complexes_owner)
+      {:ok, %ComplexesOwner{}}
+
+      iex> delete_complexes_owner(complexes_owner)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_complexes_owner(%ComplexesOwner{} = complexes_owner) do
+    Repo.delete(complexes_owner)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking complexes owner changes.
+
+  ## Examples
+
+      iex> change_complexes_owner(ComplexesOwner)
+      %Ecto.Changeset{source: %ComplexesOwner{}}
+
+  """
+  def change_complexes_owner(%ComplexesOwner{} = complexes_owner) do
+    ComplexesOwner.changeset(complexes_owner, %{})
   end
 end

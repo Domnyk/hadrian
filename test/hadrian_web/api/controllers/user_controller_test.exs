@@ -4,14 +4,6 @@ defmodule HadrianWeb.Api.UserControllerTest do
   alias Hadrian.Accounts
 
   describe "create" do
-    test "hashes user's password", %{conn: conn} do
-      conn = post conn, user_path(conn, :create), Map.from_struct(build(:user))
-      resp = json_response(conn, 200)
-      user_from_db = Accounts.get_user!(resp["id"])
-
-      assert user_from_db.password_hash
-    end
-
     test "inserts user when data is valid", %{conn: conn} do
       conn = post conn, user_path(conn, :create), Map.from_struct(build(:user))
       resp = json_response(conn, 200)
@@ -21,14 +13,25 @@ defmodule HadrianWeb.Api.UserControllerTest do
     end
 
     test "returns json with user fields when data is valid", %{conn: conn} do
-      conn = post conn, user_path(conn, :create), Map.from_struct(build(:user))
+      user_data = Map.from_struct(build(:user))
+      conn = post conn, user_path(conn, :create), user_data
       resp = json_response(conn, 200)
 
       assert resp["id"]
-      assert resp["email"]
+      assert resp["email"] == user_data.email
     end
 
-    test "retursn json with field 'status' set to 'ok' when data is valid", %{conn: conn} do
+    test "returns json with display name when this field was set", %{conn: conn} do
+      user_data = Map.from_struct(build(:user, display_name: "Steve Short"))
+      conn = post conn, user_path(conn, :create), user_data
+      resp = json_response(conn, 200)
+
+      assert resp["id"]
+      assert resp["email"] == user_data.email
+      assert resp["display_name"] == user_data.display_name
+    end
+
+    test "returns json with field 'status' set to 'ok' when data is valid", %{conn: conn} do
       conn = post conn, user_path(conn, :create), Map.from_struct(build(:user))
       resp = json_response(conn, 200)
 
