@@ -3,13 +3,21 @@ defmodule HadrianWeb.Api.SessionController do
 
   require Logger
 
-  alias Hadrian.Security
+  alias Hadrian.Authentication
   alias Hadrian.Accounts
   alias Hadrian.Accounts.User
 
   # Only for FB call
-  def new() do
+  def new(conn, _params) do
 
+  end
+
+  defp redirect_to_fb(conn) do
+    fb_login_endpoint = Authentication.Facebook.get_sign_in_endpoint(System.get_env("FACEBOOK_APP_ID"),
+                                                                   get_redirect_endpoint())
+
+    Logger.debug("Sign in with FB. Redirecting to: #{fb_login_endpoint}")
+    redirect conn, external: fb_login_endpoint
   end
 
   def create(conn, %{"email" => email, "password" => password}) do
@@ -24,11 +32,11 @@ defmodule HadrianWeb.Api.SessionController do
 
   defp handle_unsigned_user(conn_with_fetched_session, %{email: email, password: password}) do
     with {:ok, %User{} = user} = Accounts.get_user_by_email(email),
-         :match = Security.authenticate(user.password_hash, password)
+         :match = Authentication.verify_password(password, user.password_hash)
     do
        conn_with_fetched_session
        |> put_session(:current_user_id, user.id)
-       |> render("ok.create.json", current_user: user)
+       |> render("ok.create.json")
     end
   end
 
