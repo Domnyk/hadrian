@@ -14,9 +14,9 @@ defmodule Hadrian.ActivitiesTest do
                     duration_of_paying_phase: nil, time_block_id: nil}
 
     test "list_events/0 returns all events" do
-      events_list = insert_list(3, :event)
+      event = insert( :event)
 
-      assert Activities.list_events() == events_list
+      assert Activities.list_events() == [event]
     end
 
     test "get_event!/1 returns the event with given id" do

@@ -4,10 +4,10 @@ defmodule Hadrian.Accounts do
   """
 
   import Ecto.Query, warn: false
-  
+
   alias Hadrian.Repo
   alias Hadrian.Accounts.User
-  alias Hadrian.Accounts.Registration
+  alias Ecto.Changeset
 
   @doc """
   Returns the list of users.
@@ -43,7 +43,7 @@ defmodule Hadrian.Accounts do
   def get_user_by_email(email) do
     case Repo.get_by(User, email: email) do
       %User{} = user -> {:ok, user}
-      _ -> {:error, email: email}
+      _ -> {:no_such_user, email: email}
     end
   end
 
@@ -59,17 +59,24 @@ defmodule Hadrian.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(attrs \\ %{}) do
-    alias Hadrian.Registration
-    
-    changeset = User.changeset(%User{}, attrs)
+  def create_user(attrs \\ %{}, password_required? \\ true) do
+    changeset = User.changeset(%User{}, attrs, password_required?)
     if changeset.valid? do
       changeset
-      |> Registration.insert_password_hash
+      |> case do
+           _ when password_required? == true -> insert_password_hash(changeset)
+           _ when password_required? == false -> changeset
+         end
       |> Repo.insert() 
     else
       {:error, changeset}
     end
+  end
+
+  defp insert_password_hash(%Changeset{} = changeset) do
+    password_hash = Comeonin.Bcrypt.hashpwsalt(changeset.changes.password)
+
+    Changeset.change(changeset, password_hash: password_hash)
   end
 
   @doc """

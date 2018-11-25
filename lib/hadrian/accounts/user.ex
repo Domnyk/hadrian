@@ -13,7 +13,7 @@ defmodule Hadrian.Accounts.User do
   end
 
   @doc false
-  def changeset(user, attrs) do
+  def changeset(user, attrs, password_required? \\ true) do
     alphanum_or_blank = ~r/^(\A\z|\w+)$/
     
     # Based on: https://gist.github.com/corpsee/4264638
@@ -27,6 +27,9 @@ defmodule Hadrian.Accounts.User do
     |> validate_format(:login, alphanum_or_blank)
     |> validate_format(:display_name, alphanum_or_blank)
     |> validate_format(:email, email)
-    |> validate_required([:password, :email])
+    |> case do
+         changeset when password_required? == true -> validate_required(changeset, [:password, :email])
+         changeset when password_required? == false -> validate_required(changeset, [:email])
+       end
   end
 end

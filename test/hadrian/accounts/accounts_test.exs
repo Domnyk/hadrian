@@ -45,7 +45,7 @@ defmodule Hadrian.AccountsTest do
     test "get_user_by_email/1 returns {:error, email} when user does not exist" do
       email = "bob@test.com"
 
-      {:error, email: ^email} = Accounts.get_user_by_email(email)
+      {:no_such_user, email: ^email} = Accounts.get_user_by_email(email)
     end
 
     test "create_user/1 with valid data creates a user" do
