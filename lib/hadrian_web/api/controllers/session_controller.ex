@@ -22,18 +22,18 @@ defmodule HadrianWeb.Api.SessionController do
        end
     end
 
-  defp handle_unsigned_user(conn, %{email: email, password: password}) do
+  defp handle_unsigned_user(conn_with_fetched_session, %{email: email, password: password}) do
     with {:ok, %User{} = user} = Accounts.get_user_by_email(email),
          :match = Security.authenticate(user.password_hash, password)
     do
-       conn
+       conn_with_fetched_session
        |> put_session(:current_user_id, user.id)
        |> render("ok.create.json", current_user: user)
     end
   end
 
-  defp handle_signed_in_user(conn) do
-    render(conn, "warning.create.json", message: "User has already signed in")
+  defp handle_signed_in_user(conn_with_fetched_session) do
+    render(conn_with_fetched_session, "warning.create.json", message: "User has already signed in")
   end
 
   def delete(conn, _params) do
