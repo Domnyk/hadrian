@@ -23,6 +23,7 @@ defmodule HadrianWeb.Router do
     resources "/users", UserController, only: [:index, :create]
 
     resources "/session", SessionController, only: [:new, :create]
+    get "/session", SessionController, :create
     delete "/session", SessionController, :delete
   end
 end

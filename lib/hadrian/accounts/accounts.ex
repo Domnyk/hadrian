@@ -43,7 +43,7 @@ defmodule Hadrian.Accounts do
   def get_user_by_email(email) do
     case Repo.get_by(User, email: email) do
       %User{} = user -> {:ok, user}
-      _ -> {:error, email: email}
+      _ -> {:no_such_user, email: email}
     end
   end
 
@@ -59,11 +59,14 @@ defmodule Hadrian.Accounts do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(attrs \\ %{}) do
-    changeset = User.changeset(%User{}, attrs)
+  def create_user(attrs \\ %{}, password_required? \\ true) do
+    changeset = User.changeset(%User{}, attrs, password_required?)
     if changeset.valid? do
       changeset
-      |> insert_password_hash()
+      |> case do
+           _ when password_required? == true -> insert_password_hash(changeset)
+           _ when password_required? == false -> changeset
+         end
       |> Repo.insert() 
     else
       {:error, changeset}
