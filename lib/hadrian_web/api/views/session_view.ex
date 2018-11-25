@@ -15,5 +15,4 @@ defmodule HadrianWeb.Api.SessionView do
   def render("ok.delete.json", %{}) do
     %{status: :ok}
   end
-
 end
