@@ -5,8 +5,8 @@ defmodule Hadrian.Repo.Migrations.AddEvents do
     create table(:events) do
       add :min_num_of_participants,   :int
       add :max_num_of_participants,   :int
-      add :duration_of_joining_phase, :interval
-      add :duration_of_paying_phase,  :interval
+      add :end_of_joining_phase,      :Date
+      add :end_of_paying_phase,       :Date
       add :start_time,                :time
       add :end_time,                  :time
       add :daily_schedule_id,         references(:daily_schedules)

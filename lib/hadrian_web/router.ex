@@ -25,5 +25,7 @@ defmodule HadrianWeb.Router do
     resources "/session", SessionController, only: [:new, :create]
     get "/session", SessionController, :create
     delete "/session", SessionController, :delete
+
+    resources "/events", EventController, except: [:new, :edit]
   end
 end

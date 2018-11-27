@@ -13,10 +13,8 @@ defmodule HadrianWeb.Api.UserView do
   end
   
   def render("ok.create.json", %{complexes_owner: complexes_owner}) do
-    response = %{
-      status: :ok,
-      email: complexes_owner.email
-    }
+    %{status: :ok,
+      email: complexes_owner.email}
   end
 
   def render("error.create.json", %{changeset: changeset}) do
