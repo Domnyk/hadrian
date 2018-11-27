@@ -13,6 +13,13 @@ defmodule HadrianWeb.Api.SportComplexController do
   end
 
   def create(conn, %{"data" => %{"sport_complex" => sport_complex_params}}) do
+    complexes_owner_id =
+      conn
+      |> fetch_session()
+      |> get_session(:current_user_id)
+
+    sport_complex_params = Map.merge(sport_complex_params, %{"complexes_owner_id" => complexes_owner_id})
+
     with {:ok, %SportComplex{} = sport_complex} <- Owners.create_sport_complex(sport_complex_params) do
       conn
       |> put_status(:created)

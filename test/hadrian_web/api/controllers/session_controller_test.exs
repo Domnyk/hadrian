@@ -18,7 +18,7 @@ defmodule HadrianWeb.Api.SessionControllerTest do
 
       conn = post conn, session_path(conn, :create, complexes_owner_attrs)
 
-      assert json_response(conn, 200) == %{"status" => "ok"}
+      assert json_response(conn, 200) == %{"status" => "ok", "email" => complexes_owner_attrs["email"]}
       assert Plug.Conn.get_session(conn, :current_user_id) == complexes_owner.id
     end
 
@@ -48,7 +48,7 @@ defmodule HadrianWeb.Api.SessionControllerTest do
         |> post(session_path(conn, :create, complexes_owner_attrs))
         |> json_response(200)
 
-      assert response == %{"status" => "ok"}
+      assert response == %{"status" => "ok", "email" => complexes_owner_attrs["email"]}
     end
   end
 

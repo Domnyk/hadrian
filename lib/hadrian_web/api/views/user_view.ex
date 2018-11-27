@@ -12,18 +12,11 @@ defmodule HadrianWeb.Api.UserView do
       email: user.email}
   end
   
-  def render("ok.create.json", %{user: user}) do
+  def render("ok.create.json", %{complexes_owner: complexes_owner}) do
     response = %{
       status: :ok,
-      id: user.id,
-      email: user.email
+      email: complexes_owner.email
     }
-
-    if user.email != nil do
-      Map.put(response, :display_name, user.display_name)
-    else
-      response
-    end
   end
 
   def render("error.create.json", %{changeset: changeset}) do

@@ -14,7 +14,9 @@ defmodule HadrianWeb.Api.SessionController do
          :not_signed_in ->
            Agent.start_link(fn -> redirect_url end, name: __MODULE__)
            redirect_to_fb(conn)
-         :signed_in -> redirect(conn, external: redirect_url)
+         :signed_in ->
+           Logger.info("User already signed in")
+           redirect(conn, external: redirect_url)
        end
   end
 
@@ -66,7 +68,7 @@ defmodule HadrianWeb.Api.SessionController do
     do
        conn_with_fetched_session
        |> put_session(:current_user_id, complexes_owner.id)
-       |> render("ok.create.json")
+       |> render("ok.create.json", complexes_owner: complexes_owner)
     end
   end
 
@@ -75,23 +77,23 @@ defmodule HadrianWeb.Api.SessionController do
     redirect_url = Agent.get(__MODULE__, fn state -> state end)
 
     with {:ok, access_token} <- Authentication.Facebook.exchange_code_for_access_token(code),
-         {:ok, user_email} <- Authentication.Facebook.get_user_email(access_token),
-         {:ok, %User{} = user} <- Accounts.get_user_by_email(user_email)
+         {:ok, %{email: email, name: name}} <- Authentication.Facebook.get_user_email(access_token)
     do
-      Logger.info("User exists in DB. Creating session")
-      conn
-      |> fetch_session()
-      |> put_session(:current_user_id, user.id)
-      |> redirect(external: redirect_url)
-  else
-    {:no_such_user, email: email} ->
-      Logger.info("No user in database with such email: #{inspect(email)}. Creating user")
-      Logger.info("Email: " <> email)
-      {:ok, %User{} = user} = Accounts.create_user(%{email: email})
-      conn
-      |> fetch_session()
-      |> put_session(:current_user_id, user.id)
-      |> redirect(external: redirect_url)
+      case Accounts.get_user_by_email(email) do
+        {:ok, %User{} = user} ->
+          Logger.info("User exists in DB. Creating session")
+          conn
+          |> fetch_session()
+          |> put_session(:current_user_id, user.id)
+          |> redirect(external: redirect_url <> "#display_name=#{user.display_name}&email=#{user.email}")
+        {:no_such_user, email: _} ->
+          Logger.info("No user in database with such email: #{inspect(email)}. Creating user")
+          {:ok, %User{} = user} = Accounts.create_user(%{email: email, display_name: name})
+          conn
+          |> fetch_session()
+          |> put_session(:current_user_id, user.id)
+          |> redirect(external: redirect_url)
+      end
   end
 
 end

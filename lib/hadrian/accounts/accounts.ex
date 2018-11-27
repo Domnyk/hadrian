@@ -59,18 +59,6 @@ defmodule Hadrian.Accounts do
 
   """
   def create_user(attrs \\ %{}) do
-    # changeset = User.changeset(%User{}, attrs, password_required?)
-    # if changeset.valid? do
-    #   changeset
-    #   |> case do
-    #        _ when password_required? == true -> insert_password_hash(changeset)
-    #        _ when password_required? == false -> changeset
-    #      end
-    #   |> Repo.insert()
-    # else
-    #   {:error, changeset}
-    # end
-
     %User{}
     |> User.changeset(attrs)
     |> Repo.insert()

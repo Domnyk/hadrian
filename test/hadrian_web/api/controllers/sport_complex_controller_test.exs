@@ -25,7 +25,7 @@ defmodule HadrianWeb.Api.SportComplexControllerTest do
     test "when no errors occured inserts new sport complex into DB", %{conn: conn} do
       complexes_owner = insert(:complexes_owner)
       attrs = build(:sport_complex_attrs)
-              |> Kernel.put_in(["data", "sport_complex", "complexes_owner_id"], complexes_owner.id)
+      conn = Plug.Test.init_test_session(conn, %{current_user_id: complexes_owner.id})
 
       conn = post conn, sport_complex_path(conn, :create), attrs
       resp = json_response(conn, 201)
@@ -38,7 +38,7 @@ defmodule HadrianWeb.Api.SportComplexControllerTest do
     test "when no errors occured returns response with status \"ok\" and sport complex data", %{conn: conn} do
       complexes_owner = insert(:complexes_owner)
       attrs = build(:sport_complex_attrs)
-              |> Kernel.put_in(["data", "sport_complex", "complexes_owner_id"], complexes_owner.id)
+      conn = Plug.Test.init_test_session(conn, %{current_user_id: complexes_owner.id})
 
       conn = post conn, sport_complex_path(conn, :create), attrs
       resp = json_response(conn, 201)

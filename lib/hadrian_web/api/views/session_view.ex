@@ -1,6 +1,9 @@
 defmodule HadrianWeb.Api.SessionView do
-  def render("ok.create.json", %{}) do
-    %{status: :ok}
+  def render("ok.create.json", %{complexes_owner: complexes_owner}) do
+    %{
+      status: :ok,
+      email: complexes_owner.email
+    }
   end
 
   def render("warning.create.json", %{message: message}) do

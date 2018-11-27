@@ -19,12 +19,12 @@ defmodule Hadrian.Authentication.Facebook do
   end
 
   def get_user_email(access_token) do
-    user_email_endpoint = get_user_email_endpoint(access_token)
+    user_email_endpoint = get_user_info_endpoint(access_token)
 
     with {:ok, %HTTPoison.Response{status_code: 200, body: body}} <- HTTPoison.get(user_email_endpoint),
          {:ok, user_data} <- Poison.decode(body)
       do
-      {:ok, user_data["email"]}
+      {:ok, %{email: user_data["email"], name: user_data["name"]}}
     else
       {:error, data} -> Logger.error(inspect(data))
     end
@@ -49,9 +49,9 @@ defmodule Hadrian.Authentication.Facebook do
     <> "&code=#{code}"
   end
 
-  defp get_user_email_endpoint(access_token) do
+  defp get_user_info_endpoint(access_token) do
     "https://graph.facebook.com/v3.1/me?"
-    <> "fields=email"
+    <> "fields=email,name"
     <> "&access_token=#{access_token}"
   end
 end
