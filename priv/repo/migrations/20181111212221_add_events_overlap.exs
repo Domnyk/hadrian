@@ -13,7 +13,7 @@ defmodule Hadrian.Repo.Migrations.AddEventsOverlap do
       BEGIN
         SELECT events.start_time, events.end_time INTO overlaping_event_start_time, overlaping_event_end_time FROM events
         WHERE
-          events.daily_schedule_id = NEW.daily_schedule_id AND
+          event_day = NEW.event_day AND
           (
             (NEW.end_time > events.start_time AND NEW.end_time < events.end_time) OR
             (NEW.start_time > events.start_time AND NEW.start_time < events.end_time)

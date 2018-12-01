@@ -27,7 +27,8 @@ defmodule HadrianWeb.Endpoint do
   plug Plug.Session,
     store: :cookie,
     key: "_hadrian_key",
-    signing_salt: "rrY7P9+r"
+    signing_salt: "rrY7P9+r",
+    http_only: true
 
   # CORS Plug to allow requests from external apps
   plug CORSPlug,

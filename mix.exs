@@ -39,7 +39,6 @@ defmodule Hadrian.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
-      {:cowboy, "~> 1.0"},
       {:ueberauth, "~> 0.4"},
       {:ueberauth_facebook, "~> 0.7"},
       {:ex_machina, "~> 2.2", only: [:dev, :test]},
@@ -48,7 +47,8 @@ defmodule Hadrian.Mixfile do
       {:bcrypt_elixir, "~> 1.0"},
       {:phoenix_integration, "~> 0.5", only: :test},
       {:poison, "~> 3.1"},
-      {:httpoison, "~> 1.0"}
+      {:httpoison, "~> 1.0"},
+      {:plug_cowboy, "~> 1.0"}
     ]
   end
 

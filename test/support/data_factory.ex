@@ -51,7 +51,7 @@ defmodule Hadrian.DataFactory do
       name: sequence(:name, name_val),
       geo_coordinates: sequence(:geo_coordinates, gen_geo_coordinates_val()),
       address: sequence(:address, gen_address_val()),
-      booking_margin: %{"months" => 1, "days" => 2, "secs" => 3}
+      booking_margin: %{"months" => 0, "days" => 2, "secs" => 3}
     }
   end
 
@@ -159,15 +159,6 @@ defmodule Hadrian.DataFactory do
     }
   end
 
-  def daily_schedule_factory do
-    alias Hadrian.Owners.DailySchedule
-
-    %DailySchedule{
-      schedule_day: ~D[2018-07-14],
-      is_day_off: false
-    }
-  end
-
   def user_factory do
     alias Hadrian.Accounts.User
 
@@ -187,13 +178,21 @@ defmodule Hadrian.DataFactory do
   def event_factory do
     alias Hadrian.Activities.Event
 
+    today = DateTime.to_date(DateTime.utc_now())
+    today_plus_week = Date.add(today, 7)
+    today_plus_two_weeks = Date.add(today, 14)
+    start_time = ~T[13:00:00.000000]
+    end_time = Time.add(start_time, 7200, :second)
+
     %Event{
       min_num_of_participants: 2,
       max_num_of_participants: 10,
-      duration_of_joining_phase: %{"months" => 0, "days" => 5, "secs" => 0},
-      duration_of_paying_phase: %{"months" => 1, "days" => 7, "secs" => 0},
-      start_time: ~T[13:00:00.000000],
-      end_time: ~T[15:00:00.000000]
+      event_day: today_plus_two_weeks,
+      end_of_joining_phase: today,
+      end_of_paying_phase: today_plus_week,
+      start_time: start_time,
+      end_time: end_time,
+      sport_arena_id: nil
     }
   end
 end

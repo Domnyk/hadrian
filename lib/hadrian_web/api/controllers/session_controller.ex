@@ -53,13 +53,17 @@ defmodule HadrianWeb.Api.SessionController do
   end
 
   defp check_sign_in_status(conn) do
-    conn
-    |> fetch_session()
-    |> get_session(:current_user_id)
-    |> case do
-         nil -> :not_signed_in
-         _ -> :signed_in
-       end
+    current_user =
+      conn
+      |> fetch_session()
+      |> get_session(:current_user_id)
+
+    Logger.info("Current user inside check_sign_in_status: #{current_user}")
+
+    case current_user do
+      nil -> :not_signed_in
+       _ -> :signed_in
+    end
   end
 
   defp handle_not_signed_in(conn_with_fetched_session, %{email: email, password: password}) do

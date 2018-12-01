@@ -1,8 +1,11 @@
 defmodule HadrianWeb.Router do
   use HadrianWeb, :router
- 
+
+  alias HadrianWeb.Api.Plugs.Authenticate
+
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
   end
 
   scope "/api", HadrianWeb.Api do
@@ -26,6 +29,12 @@ defmodule HadrianWeb.Router do
     get "/session", SessionController, :create
     delete "/session", SessionController, :delete
 
-    resources "/events", EventController, except: [:new, :edit]
+    resources "/events", EventController, only: [:index, :show]
+  end
+
+  scope "/api", HadrianWeb.Api do
+    pipe_through Authenticate
+
+    resources "/events", EventController, only: [:create, :update, :delete]
   end
 end

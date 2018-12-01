@@ -210,66 +210,6 @@ defmodule Hadrian.OwnersTest do
     end
   end
 
-  describe "daily_schedules" do
-    alias Hadrian.Owners.DailySchedule
-
-    @update_attrs %{schedule_day: ~D[2011-05-18]}
-    @invalid_attrs %{schedule_day: nil, sport_arena_id: nil}
-
-    test "list_daily_schedules/0 returns all daily_schedules" do
-      daily_schedules_list = insert_list(3, :daily_schedule)
-
-      assert Owners.list_daily_schedules() == daily_schedules_list
-    end
-
-    test "get_daily_schedule!/1 returns the daily_schedule with given id" do
-      daily_schedule = insert(:daily_schedule)
-
-      assert Owners.get_daily_schedule!(daily_schedule.id) == daily_schedule
-    end
-
-    test "create_daily_schedule/1 with valid data creates a daily_schedule" do
-      sport_arena = insert(:sport_arena)
-      valid_attrs = %{schedule_day: ~D[2010-04-17], is_day_off: true, sport_arena_id: sport_arena.id}
-
-      assert {:ok, %DailySchedule{} = daily_schedule} = Owners.create_daily_schedule(valid_attrs)
-      assert daily_schedule.schedule_day == valid_attrs.schedule_day
-      assert daily_schedule.is_day_off == valid_attrs.is_day_off
-    end
-
-    test "create_daily_schedule/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Owners.create_daily_schedule(@invalid_attrs)
-    end
-
-    test "update_daily_schedule/2 with valid data updates the daily_schedule" do
-      sport_arena = insert(:sport_arena)
-      daily_schedule = insert(:daily_schedule, sport_arena_id: sport_arena.id)
-
-      assert {:ok, daily_schedule} = Owners.update_daily_schedule(daily_schedule, @update_attrs)
-      assert %DailySchedule{} = daily_schedule
-      assert daily_schedule.schedule_day == @update_attrs.schedule_day
-    end
-
-    test "update_daily_schedule/2 with invalid data returns error changeset" do
-      daily_schedule = insert(:daily_schedule)
-
-      assert {:error, %Ecto.Changeset{}} = Owners.update_daily_schedule(daily_schedule, @invalid_attrs)
-      assert daily_schedule == Owners.get_daily_schedule!(daily_schedule.id)
-    end
-
-    test "delete_daily_schedule/1 deletes the daily_schedule" do
-      daily_schedule = insert(:daily_schedule)
-      assert {:ok, %DailySchedule{}} = Owners.delete_daily_schedule(daily_schedule)
-      assert_raise Ecto.NoResultsError, fn -> Owners.get_daily_schedule!(daily_schedule.id) end
-    end
-
-    test "change_daily_schedule/1 returns a daily_schedule changeset" do
-      daily_schedule = insert(:daily_schedule)
-
-      assert %Ecto.Changeset{} = Owners.change_daily_schedule(daily_schedule)
-    end
-  end
-
   describe "sport_disciplines" do
     alias Hadrian.Owners.SportDiscipline
 

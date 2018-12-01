@@ -2,77 +2,83 @@ defmodule Hadrian.ActivitiesTest do
   use Hadrian.DataCase
 
   alias Hadrian.Activities
+  alias HadrianTest.Helpers
+
+  setup do
+    complexes_owner = insert(:complexes_owner)
+    sport_complex = insert(:sport_complex, complexes_owner_id: complexes_owner.id)
+    sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
+    football = insert(:sport_discipline, name: "Football")
+    basketball = insert(:sport_discipline, name: "Basketball")
+    sport_arena = insert(:sport_arena, sport_object_id: sport_object.id, sport_disciplines: [football, basketball])
+
+    {:ok, sport_arena: sport_arena}
+  end
 
   describe "events" do
     alias Hadrian.Activities.Event
 
-    
-    @update_attrs %{max_num_of_participants: 50, min_num_of_participants: 43, 
-                    duration_of_joining_phase: %{"months" => 0, "days" => 5, "secs" => 0},
-                    duration_of_paying_phase: %{"months" => 0, "days" => 5, "secs" => 0}}
-    @invalid_attrs %{max_num_of_participants: nil, min_num_of_participants: nil, duration_of_joining_phase: nil,
-                    duration_of_paying_phase: nil, time_block_id: nil}
-
-    test "list_events/0 returns all events" do
-      event = insert( :event)
+    test "list_events/0 returns all events", %{sport_arena: sport_arena} do
+      event =
+        insert(:event, sport_arena: sport_arena)
+        |> Helpers.unpreload(:sport_arena)
 
       assert Activities.list_events() == [event]
     end
 
-    test "get_event!/1 returns the event with given id" do
-      event = insert(:event)
+    test "get_event!/1 returns the event with given id", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
 
       assert Activities.get_event!(event.id) == event
     end
 
-    test "create_event/1 with valid data creates an event" do
-      daily_schedule = insert(:daily_schedule)
-      valid_attrs = %{max_num_of_participants: 100, min_num_of_participants: 42,
-                    start_time: ~T[13:00:00.000000], end_time: ~T[15:00:00.000000],
-                    duration_of_joining_phase: %{"months" => 0, "days" => 7, "secs" => 0},
-                    duration_of_paying_phase: %{"months" => 0, "days" => 7, "secs" => 0}, daily_schedule_id: daily_schedule.id}
-      
-      assert {:ok, %Event{} = event} = Activities.create_event(valid_attrs)
-      assert event.duration_of_joining_phase == %Postgrex.Interval{months: 0, days: 7, secs: 0}
-      assert event.duration_of_paying_phase == %Postgrex.Interval{months: 0, days: 7, secs: 0}
-      assert event.max_num_of_participants == valid_attrs.max_num_of_participants
-      assert event.min_num_of_participants == valid_attrs.min_num_of_participants
+    test "create_event/1 with valid data creates an event", %{sport_arena: sport_arena} do
+      event_attrs = params_for(:event, sport_arena_id: sport_arena.id)
+
+      assert {:ok, %Event{} = event} = Activities.create_event(event_attrs)
+      Enum.each(event_attrs, fn ({key, value}) ->
+        assert value == Map.get(event, key)
+      end)
     end
 
     test "create_event/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Activities.create_event(@invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Activities.create_event(generate_invalid_attrs())
     end
 
-    test "update_event/2 with valid data updates the event" do
-      daily_schedule = insert(:daily_schedule)
-      event = insert(:event, daily_schedule_id: daily_schedule.id)
+    test "update_event/2 with valid data updates the event", %{sport_arena: sport_arena}  do
+      event = insert(:event, sport_arena_id: sport_arena.id)
+      new_attrs = params_for(:event, sport_arena_id: sport_arena.id)
 
-      assert {:ok, updated_event} = Activities.update_event(event, @update_attrs)
-      assert %Event{} = updated_event
-      assert updated_event.duration_of_joining_phase == %Postgrex.Interval{months: 0, days: 5, secs: 0}
-      assert updated_event.duration_of_paying_phase == %Postgrex.Interval{months: 0, days: 5, secs: 0}
-      assert updated_event.max_num_of_participants == @update_attrs.max_num_of_participants
-      assert updated_event.min_num_of_participants == @update_attrs.min_num_of_participants
+      assert {:ok, %Event{} = updated_event} = Activities.update_event(event, new_attrs)
+      Enum.each(new_attrs, fn ({key, value}) ->
+        assert value == Map.get(updated_event, key)
+      end)
     end
 
-    test "update_event/2 with invalid data returns error changeset" do
-      event = insert(:event)
+    test "update_event/2 with invalid data returns error changeset", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
 
-      assert {:error, %Ecto.Changeset{}} = Activities.update_event(event, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Activities.update_event(event, generate_invalid_attrs())
       assert event == Activities.get_event!(event.id)
     end
 
-    test "delete_event/1 deletes the event" do
-      event = insert(:event)
+    test "delete_event/1 deletes the event", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
 
       assert {:ok, %Event{}} = Activities.delete_event(event)
       assert_raise Ecto.NoResultsError, fn -> Activities.get_event!(event.id) end
     end
 
-    test "change_event/1 returns a event changeset" do
-      event = insert(:event)
+    test "change_event/1 returns a event changeset", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
 
       assert %Ecto.Changeset{} = Activities.change_event(event)
     end
+  end
+
+  defp generate_invalid_attrs() do
+    params_for(:event)
+    |> Map.put(:sport_arena_id, nil)
+    |> Enum.into(%{}, fn {k, _} -> {k, nil} end)
   end
 end
