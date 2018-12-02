@@ -4,10 +4,9 @@ defmodule Hadrian.Repo.Migrations.AddUsersInEvents do
   def up do
     create table("users_in_events") do
       add :user_id,               references("users")
-      add :event_id,              references("events")
-      add :is_ready,              :boolean
-      add :has_pad,               :boolean
-      add :is_user_events_owner,  :boolean
+      add :event_id,              references("events", on_delete: :delete_all)
+      add :has_paid,              :boolean, default: false, null: false
+      add :is_event_owner,        :boolean, default: false, null: false
     end
 
     create index("users_in_events", [:event_id], name: "event_id_idx")

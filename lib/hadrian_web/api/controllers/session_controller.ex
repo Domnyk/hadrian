@@ -96,7 +96,7 @@ defmodule HadrianWeb.Api.SessionController do
           conn
           |> fetch_session()
           |> put_session(:current_user_id, user.id)
-          |> redirect(external: redirect_url)
+          |> redirect(external: redirect_url <> "#display_name=#{user.display_name}&email=#{user.email}")
       end
   end
 

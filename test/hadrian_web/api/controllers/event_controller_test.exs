@@ -3,52 +3,49 @@ defmodule HadrianWeb.EventControllerTest do
 
   alias Hadrian.Activities.Event
 
-  @update_attrs %{}
+  @update_attrs %{ users: [] }
 
   setup %{conn: conn} do
+    user = insert(:user)
     complexes_owner = insert(:complexes_owner)
     sport_complex = insert(:sport_complex, complexes_owner_id: complexes_owner.id)
     sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
     football = insert(:sport_discipline, name: "Football")
     basketball = insert(:sport_discipline, name: "Basketball")
     sport_arena = insert(:sport_arena, sport_object_id: sport_object.id, sport_disciplines: [football, basketball])
-    event = insert(:event, sport_arena_id: sport_arena.id)
+    event = insert(:event, sport_arena_id: sport_arena.id, users: [user])
 
-    {:ok, conn: put_req_header(conn, "accept", "application/json"), event: event}
+    {:ok, conn: put_req_header(conn, "accept", "application/json"), event: event, user: user}
   end
 
   describe "index" do
-    test "lists all events", %{conn: conn, event: event} do
-      conn = get conn, event_path(conn, :index)
+    test "lists all events in sport arena", %{conn: conn, event: event} do
+      conn = get conn, sport_arena_event_path(conn, :index, event.sport_arena_id)
       assert json_response(conn, 200)["data"] == [%{"id" => event.id}]
-    end
-
-    test "lists all events in sport arena when passed id", %{conn: conn, event: event} do
-      conn1 = get conn, event_path(conn, :index), sport_arena_id: event.sport_arena_id
-      assert json_response(conn1, 200)["data"] == [%{"id" => event.id}]
-
-      conn2 = get conn, event_path(conn, :index), sport_arena_id: event.sport_arena_id + 1
-      assert json_response(conn2, 200)["data"] == []
     end
   end
 
   describe "create event" do
     setup [:sign_user_in]
 
-    test "renders event when data is valid", %{conn: conn, event: %Event{sport_arena_id: sport_arena_id}} do
+    test "renders event when data is valid", %{conn: conn, event: %Event{sport_arena_id: sport_arena_id}, user: user} do
+      conn = Plug.Test.init_test_session(conn, %{current_user_id: user.id})
       create_attrs =
         string_params_for(:event, sport_arena_id: sport_arena_id)
         |> prepare_time_attrs()
 
-      conn = post conn, event_path(conn, :create), event: create_attrs
+      conn = post conn, sport_arena_event_path(conn, :create, sport_arena_id), event: create_attrs
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
-      conn = get conn, event_path(conn, :show, id)
+      conn = get conn, sport_arena_event_path(conn, :show, sport_arena_id ,id)
       assert json_response(conn, 200)["data"] == %{"id" => id}
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post conn, event_path(conn, :create), event: get_invalid_attrs()
+      invalid_attrs = get_invalid_attrs()
+      |> Map.put("users", [])
+
+      conn = post conn, sport_arena_event_path(conn, :create, "-1"), event: invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
 
@@ -69,16 +66,19 @@ defmodule HadrianWeb.EventControllerTest do
     setup [:sign_user_in]
 
     test "renders event when data is valid", %{conn: conn, event: %Event{id: id} = event} do
-      conn = put conn, event_path(conn, :update, event), event: @update_attrs
+      conn = put conn, sport_arena_event_path(conn, :update, event.sport_arena_id, event), event: @update_attrs
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
-      conn = get conn, event_path(conn, :show, id)
+      conn = get conn, sport_arena_event_path(conn, :show, event.sport_arena_id, id)
       assert json_response(conn, 200)["data"] == %{
         "id" => id}
     end
 
     test "renders errors when data is invalid", %{conn: conn, event: event} do
-      conn = put conn, event_path(conn, :update, event), event: get_invalid_attrs()
+      invalid_attrs = get_invalid_attrs()
+      |> Map.put("users", [])
+
+      conn = put conn, sport_arena_event_path(conn, :update, event.sport_arena_id, event), event: invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -87,10 +87,10 @@ defmodule HadrianWeb.EventControllerTest do
     setup [:sign_user_in]
 
     test "deletes chosen event", %{conn: conn, event: event} do
-      conn = delete conn, event_path(conn, :delete, event)
+      conn = delete conn, sport_arena_event_path(conn, :delete, event.sport_arena_id, event)
       assert response(conn, 204)
       assert_error_sent 404, fn ->
-        get conn, event_path(conn, :show, event)
+        get conn, sport_arena_event_path(conn, :show, event.sport_arena_id, event)
       end
     end
   end

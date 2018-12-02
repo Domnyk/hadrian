@@ -1,8 +1,11 @@
 defmodule Hadrian.Activities.Event do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Hadrian.Accounts.User
+  alias Hadrian.Repo
 
   schema "events" do
+    field :name,                      :string
     field :max_num_of_participants,   :integer
     field :min_num_of_participants,   :integer
     field :event_day,                 :date
@@ -10,18 +13,24 @@ defmodule Hadrian.Activities.Event do
     field :end_of_paying_phase,       :date
     field :start_time,                :time
     field :end_time,                  :time
-    timestamps()
 
     belongs_to :sport_arena, Hadrian.Owners.SportArena
-    many_to_many :users, Hadrian.Accounts.User, join_through: "users_in_events"
+    many_to_many :users, Hadrian.Accounts.User, join_through: "users_in_events", on_replace: :delete
   end
 
   @doc false
-  def changeset(event, attrs) do
+  def changeset(event, attrs, insert_current_user? \\ false) do
     event
-    |> cast(attrs, [:min_num_of_participants, :max_num_of_participants, :event_day, :end_of_joining_phase,
+    |> Repo.preload(:users)
+    |> cast(attrs, [:name, :min_num_of_participants, :max_num_of_participants, :event_day, :end_of_joining_phase,
                     :end_of_paying_phase, :start_time, :end_time, :sport_arena_id])
-    |> validate_required([:min_num_of_participants, :max_num_of_participants, :event_day, :end_of_joining_phase,
+    |> validate_required([:name, :min_num_of_participants, :max_num_of_participants, :event_day, :end_of_joining_phase,
                           :end_of_paying_phase, :start_time, :end_time, :sport_arena_id])
+    |> put_assoc(:users, parse_users(attrs))
+  end
+
+  defp parse_users(attrs) do
+    (attrs["users"] || [])
+    |> Enum.map(& Repo.get(User, &1))
   end
 end

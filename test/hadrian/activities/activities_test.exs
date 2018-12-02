@@ -1,8 +1,10 @@
 defmodule Hadrian.ActivitiesTest do
   use Hadrian.DataCase
 
+  alias Hadrian.Repo
   alias Hadrian.Activities
   alias HadrianTest.Helpers
+
 
   setup do
     complexes_owner = insert(:complexes_owner)
@@ -18,17 +20,10 @@ defmodule Hadrian.ActivitiesTest do
   describe "events" do
     alias Hadrian.Activities.Event
 
-    test "list_events/0 returns all events", %{sport_arena: sport_arena} do
-      event =
-        insert(:event, sport_arena: sport_arena)
-        |> Helpers.unpreload(:sport_arena)
-
-      assert Activities.list_events() == [event]
-    end
-
     test "list_events/1 returns events in given sport object", %{sport_arena: sport_arena} do
       event =
         insert(:event, sport_arena: sport_arena)
+        |> Repo.preload(:users)
         |> Helpers.unpreload(:sport_arena)
 
       assert Activities.list_events(sport_arena.id + 1) == []

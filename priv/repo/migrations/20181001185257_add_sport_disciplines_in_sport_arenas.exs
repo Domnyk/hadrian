@@ -4,7 +4,7 @@ defmodule Hadrian.Repo.Migrations.AddSportDisciplinesInSportArenas do
   def up do
     create table("sport_disciplines_in_sport_arenas") do
       add :sport_discipline_id, references("sport_disciplines")
-      add :sport_arena_id, references("sport_arenas"), on_delete: :deleta_all
+      add :sport_arena_id, references("sport_arenas",  on_delete: :delete_all)
     end
 
     create unique_index(:sport_disciplines_in_sport_arenas, [:sport_discipline_id, :sport_arena_id])

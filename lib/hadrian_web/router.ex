@@ -29,12 +29,16 @@ defmodule HadrianWeb.Router do
     get "/session", SessionController, :create
     delete "/session", SessionController, :delete
 
-    resources "/events", EventController, only: [:index, :show]
+    resources "/sport_arenas", SportArenaController do
+      resources "/events", EventController, only: [:index, :show]
+    end
   end
 
   scope "/api", HadrianWeb.Api do
     pipe_through [:api, Authorize]
 
-    resources "/events", EventController, only: [:create, :update, :delete]
+    resources "/sport_arenas", SportArenaController do
+      resources "/events", EventController, only: [:create, :update, :delete]
+    end
   end
 end

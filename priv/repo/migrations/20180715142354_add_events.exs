@@ -3,16 +3,15 @@ defmodule Hadrian.Repo.Migrations.AddEvents do
 
   def up do
     create table(:events) do
-      add :min_num_of_participants,   :int
-      add :max_num_of_participants,   :int
-      add :event_day,                 :date
-      add :end_of_joining_phase,      :date
-      add :end_of_paying_phase,       :date
-      add :start_time,                :time
-      add :end_time,                  :time
+      add :name,                      :string, null: false
+      add :min_num_of_participants,   :int, null: false
+      add :max_num_of_participants,   :int, null: false
+      add :event_day,                 :date, null: false
+      add :end_of_joining_phase,      :date, null: false
+      add :end_of_paying_phase,       :date, null: false
+      add :start_time,                :time, null: false
+      add :end_time,                  :time, null: false
       add :sport_arena_id,            references("sport_arenas"), null: false
-
-      timestamps()
     end
 
     create constraint(:events, :min_num_of_participants_bigger_than_0, check: "min_num_of_participants > 0")

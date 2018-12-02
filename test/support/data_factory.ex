@@ -185,14 +185,14 @@ defmodule Hadrian.DataFactory do
     end_time = Time.add(start_time, 7200, :second)
 
     %Event{
+      name: sequence(:name, &"Event number #{&1}"),
       min_num_of_participants: 2,
       max_num_of_participants: 10,
       event_day: today_plus_two_weeks,
       end_of_joining_phase: today,
       end_of_paying_phase: today_plus_week,
       start_time: start_time,
-      end_time: end_time,
-      sport_arena_id: nil
+      end_time: end_time
     }
   end
 end

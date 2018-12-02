@@ -17,12 +17,9 @@ defmodule Hadrian.Activities do
       [%Event{}, ...]
 
   """
-  def list_events do
-    Repo.all(Event)
-  end
-
   def list_events(sport_arena_id) when is_integer(sport_arena_id) do
     Repo.all(Event)
+    |> Repo.preload(:users)
     |> Enum.filter(fn event -> event.sport_arena_id == sport_arena_id end)
   end
 
@@ -43,7 +40,9 @@ defmodule Hadrian.Activities do
   def get_event!(id), do: Repo.get!(Event, id)
 
   @doc """
-  Creates a event.
+  Creates an event.
+
+  Creates an event and associates events' creator with this event.
 
   ## Examples
 
@@ -56,7 +55,7 @@ defmodule Hadrian.Activities do
   """
   def create_event(attrs \\ %{}) do
     %Event{}
-    |> Event.changeset(attrs)
+    |> Event.changeset(attrs, true)
     |> Repo.insert()
   end
 
