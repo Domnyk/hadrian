@@ -21,6 +21,11 @@ defmodule Hadrian.Activities do
     Repo.all(Event)
   end
 
+  def list_events(sport_arena_id) when is_integer(sport_arena_id) do
+    Repo.all(Event)
+    |> Enum.filter(fn event -> event.sport_arena_id == sport_arena_id end)
+  end
+
   @doc """
   Gets a single event.
 

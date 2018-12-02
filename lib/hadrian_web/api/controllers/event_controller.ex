@@ -6,6 +6,11 @@ defmodule HadrianWeb.Api.EventController do
 
   action_fallback HadrianWeb.Api.FallbackController
 
+  def index(conn, %{"sport_arena_id" => sport_arena_id}) do
+    events = Activities.list_events(sport_arena_id)
+    render(conn, "index.json", events: events)
+  end
+
   def index(conn, _params) do
     events = Activities.list_events()
     render(conn, "index.json", events: events)

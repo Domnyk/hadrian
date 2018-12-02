@@ -26,6 +26,15 @@ defmodule Hadrian.ActivitiesTest do
       assert Activities.list_events() == [event]
     end
 
+    test "list_events/1 returns events in given sport object", %{sport_arena: sport_arena} do
+      event =
+        insert(:event, sport_arena: sport_arena)
+        |> Helpers.unpreload(:sport_arena)
+
+      assert Activities.list_events(sport_arena.id + 1) == []
+      assert Activities.list_events(sport_arena.id) == [event]
+    end
+
     test "get_event!/1 returns the event with given id", %{sport_arena: sport_arena} do
       event = insert(:event, sport_arena_id: sport_arena.id)
 

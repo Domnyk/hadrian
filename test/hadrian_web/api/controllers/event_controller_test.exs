@@ -22,6 +22,14 @@ defmodule HadrianWeb.EventControllerTest do
       conn = get conn, event_path(conn, :index)
       assert json_response(conn, 200)["data"] == [%{"id" => event.id}]
     end
+
+    test "lists all events in sport arena when passed id", %{conn: conn, event: event} do
+      conn1 = get conn, event_path(conn, :index), sport_arena_id: event.sport_arena_id
+      assert json_response(conn1, 200)["data"] == [%{"id" => event.id}]
+
+      conn2 = get conn, event_path(conn, :index), sport_arena_id: event.sport_arena_id + 1
+      assert json_response(conn2, 200)["data"] == []
+    end
   end
 
   describe "create event" do
