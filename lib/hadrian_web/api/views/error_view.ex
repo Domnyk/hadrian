@@ -7,6 +7,13 @@ defmodule HadrianWeb.Api.ErrorView do
   #   "Internal Server Error"
   # end
 
+  def render("401.json", _assigns) do
+    %{
+      status: :error,
+      reason: "You are not authorized to access this resource"
+    }
+  end
+
   def template_not_found(template, _assigns) do
     %{
       status: :error,

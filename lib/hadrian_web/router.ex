@@ -1,7 +1,7 @@
 defmodule HadrianWeb.Router do
   use HadrianWeb, :router
 
-  alias HadrianWeb.Api.Plugs.Authenticate
+  alias HadrianWeb.Api.Plugs.Authorize
 
   pipeline :api do
     plug :accepts, ["json"]
@@ -33,7 +33,7 @@ defmodule HadrianWeb.Router do
   end
 
   scope "/api", HadrianWeb.Api do
-    pipe_through Authenticate
+    pipe_through [:api, Authorize]
 
     resources "/events", EventController, only: [:create, :update, :delete]
   end

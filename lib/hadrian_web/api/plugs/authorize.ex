@@ -1,14 +1,13 @@
-defmodule HadrianWeb.Api.Plugs.Authenticate do
+defmodule HadrianWeb.Api.Plugs.Authorize do
   import Plug.Conn
 
   def init(opts) do
     opts
   end
 
-  def call(conn, opts) do
+  def call(conn, _opts) do
     current_user_id =
       conn
-      |> fetch_session
       |> get_session(:current_user_id)
 
     case current_user_id do
@@ -20,12 +19,7 @@ defmodule HadrianWeb.Api.Plugs.Authenticate do
   defp handle_unauthorized(conn) do
     conn
     |> put_status(:unauthorized)
-    |> Phoenix.Controller.redirect(external: get_origin(conn))
-  end
-
-  defp get_origin(conn) do
-    conn.req_headers |> inspect |> IO.puts
-
-    "http://example.com"
+    |> Phoenix.Controller.render(HadrianWeb.Api.ErrorView, :"401")
+    |> halt()
   end
 end
