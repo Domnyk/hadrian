@@ -2,7 +2,7 @@ defmodule Hadrian.Activities.Event do
   use Ecto.Schema
   import Ecto.Changeset
   alias Hadrian.Accounts.User
-  alias Hadrian.Activities.UserInEvent
+  alias Hadrian.Activities.Participator
   alias Hadrian.Repo
 
   schema "events" do
@@ -16,7 +16,7 @@ defmodule Hadrian.Activities.Event do
     field :end_time,                  :time
 
     belongs_to :sport_arena, Hadrian.Owners.SportArena
-    many_to_many :users, Hadrian.Accounts.User, join_through: UserInEvent, on_replace: :delete
+    many_to_many :users, Hadrian.Accounts.User, join_through: Participator, on_replace: :delete
   end
 
   @doc false
