@@ -2,6 +2,7 @@ defmodule Hadrian.Activities.Event do
   use Ecto.Schema
   import Ecto.Changeset
   alias Hadrian.Accounts.User
+  alias Hadrian.Activities.UserInEvent
   alias Hadrian.Repo
 
   schema "events" do
@@ -15,22 +16,16 @@ defmodule Hadrian.Activities.Event do
     field :end_time,                  :time
 
     belongs_to :sport_arena, Hadrian.Owners.SportArena
-    many_to_many :users, Hadrian.Accounts.User, join_through: "users_in_events", on_replace: :delete
+    many_to_many :users, Hadrian.Accounts.User, join_through: UserInEvent, on_replace: :delete
   end
 
   @doc false
-  def changeset(event, attrs, insert_current_user? \\ false) do
+  def changeset(event, attrs) do
     event
     |> Repo.preload(:users)
     |> cast(attrs, [:name, :min_num_of_participants, :max_num_of_participants, :event_day, :end_of_joining_phase,
                     :end_of_paying_phase, :start_time, :end_time, :sport_arena_id])
     |> validate_required([:name, :min_num_of_participants, :max_num_of_participants, :event_day, :end_of_joining_phase,
                           :end_of_paying_phase, :start_time, :end_time, :sport_arena_id])
-    |> put_assoc(:users, parse_users(attrs))
-  end
-
-  defp parse_users(attrs) do
-    (attrs["users"] || [])
-    |> Enum.map(& Repo.get(User, &1))
   end
 end

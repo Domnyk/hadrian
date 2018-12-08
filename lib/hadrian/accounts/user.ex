@@ -1,12 +1,13 @@
 defmodule Hadrian.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  alias Hadrian.Activities.UserInEvent
 
   schema "users" do
     field :email, :string
     field :display_name, :string
 
-    many_to_many :events, Hadrian.Activities.Event, join_through: "users_in_events"
+    many_to_many :events, Hadrian.Activities.Event, join_through: UserInEvent
   end
 
   @doc false
