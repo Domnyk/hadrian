@@ -120,10 +120,6 @@ defmodule Hadrian.Activities do
   end
 
   def get_participator!(event_id, user_id) do
-    query = from p in Participator, where: p.event_id == ^event_id and p.user_id == ^user_id
-    # [participator] = Repo.all(query)
-
-    # participator
     Repo.get_by!(Participator, %{event_id: event_id, user_id: user_id})
   end
 

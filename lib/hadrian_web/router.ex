@@ -42,7 +42,8 @@ defmodule HadrianWeb.Router do
     end
 
     resources "/events", EventController do
-      resources "/participators", ParticipationController, only: [:create, :delete]
+      resources "/participators", ParticipatorController, only: [:index, :create]
+      delete "/participators", ParticipatorController, :delete
     end
   end
 end

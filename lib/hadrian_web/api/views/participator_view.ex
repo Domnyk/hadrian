@@ -4,14 +4,15 @@ defmodule HadrianWeb.Api.ParticipatorView do
   alias HadrianWeb.Api.ErrorView
 
   def render("index.json", %{participators: participators}) do
-    %{data: render_many(participators, ParticipatorView, "show.json")}
+    %{participators: render_many(participators, ParticipatorView, "show.json")}
   end
 
-  def render("show.json", %{event: event}) do
+  def render("show.json", %{participator: participator}) do
     %{
-      event: %{
-        id: event.id
-      }
+      event_id: participator.event_id,
+      user_id: participator.user_id,
+      is_event_owner: participator.is_event_owner,
+      has_paid: participator.has_paid
     }
   end
 end
