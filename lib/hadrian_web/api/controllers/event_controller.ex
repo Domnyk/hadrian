@@ -13,7 +13,8 @@ defmodule HadrianWeb.Api.EventController do
   def index(conn, %{"sport_arena_id" => sport_arena_id}) when is_binary(sport_arena_id) do
     {id, _} = Integer.parse(sport_arena_id)
     events = Activities.list_events(id)
-    render(conn, "index.json", events: events)
+    events_with_participators = Enum.map(events, fn event -> {event, Activities.list_participators(event.id)} end)
+    render(conn, "index.json", events_with_participators: events_with_participators)
   end
 
   def create(conn, %{"sport_arena_id" => sport_arena_id, "event" => event_params}) do
@@ -32,7 +33,8 @@ defmodule HadrianWeb.Api.EventController do
 
   def show(conn, %{"id" => id}) do
     event = Activities.get_event!(id)
-    render(conn, "show.json", event: event)
+    participators = Activities.list_participators(id)
+    render(conn, "event.json", event: event, participators: participators)
   end
 
   def update(conn, %{"id" => id, "event" => event_params}) do

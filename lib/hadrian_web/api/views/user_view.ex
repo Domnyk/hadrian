@@ -9,7 +9,8 @@ defmodule HadrianWeb.Api.UserView do
 
   def render("user.json", %{user: user}) do
     %{id: user.id,
-      email: user.email}
+      email: user.email,
+      display_name: user.display_name}
   end
 
   def render("id.json", %{user: user}) do
