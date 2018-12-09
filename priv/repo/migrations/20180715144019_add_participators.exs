@@ -10,7 +10,6 @@ defmodule Hadrian.Repo.Migrations.AddParticipations do
     end
 
     create unique_index(:participations, [:user_id, :event_id], name: :participation_index)
-    create unique_index(:participations, [:is_event_owner], where: "is_event_owner = true", name: :only_one_owner_index)
     create index(:participations, :event_id)
   end
 
