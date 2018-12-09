@@ -98,9 +98,9 @@ defmodule Hadrian.ActivitiesTest do
       user_2 = insert(:user)
       user_3 = insert(:user)
 
-      assert {:ok, %Participator{} = participator_1} = Activities.create_participator(event, user_1)
-      assert {:ok, %Participator{} = participator_2} = Activities.create_participator(event, user_2)
-      assert {:ok, %Participator{} = participator_3} = Activities.create_participator(event, user_3)
+      assert {:ok, %Participator{}} = Activities.create_participator(event, user_1)
+      assert {:ok, %Participator{}} = Activities.create_participator(event, user_2)
+      assert {:ok, %Participator{}} = Activities.create_participator(event, user_3)
       participators = Activities.get_event!(event.id).participators
       assert length(participators) == 3
       assert [user_1.id, user_2.id, user_3.id] == Enum.map(participators, fn %User{id: id} -> id end)
@@ -134,7 +134,7 @@ defmodule Hadrian.ActivitiesTest do
       event = insert(:event, sport_arena_id: sport_arena.id)
       user = insert(:user)
 
-      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user)
+      assert {:ok, %Participator{}} = Activities.create_participator(event, user)
       assert {:error, %Changeset{errors: [user_id: {"can't join to the same event twice", []}]}}
              = Activities.create_participator(event, user)
     end
@@ -144,8 +144,8 @@ defmodule Hadrian.ActivitiesTest do
       event_2 = insert(:event, sport_arena_id: sport_arena.id)
       user = insert(:user)
 
-      assert {:ok, %Participator{} = participator} = Activities.create_participator(event_1, user)
-      assert {:ok, %Participator{} = participator} = Activities.create_participator(event_2, user)
+      assert {:ok, %Participator{}} = Activities.create_participator(event_1, user)
+      assert {:ok, %Participator{}} = Activities.create_participator(event_2, user)
       assert Activities.get_event!(event_1.id).participators != []
       assert Activities.get_event!(event_2.id).participators != []
     end
@@ -179,7 +179,7 @@ defmodule Hadrian.ActivitiesTest do
       user_2 = insert(:user)
       is_event_owner = true
 
-      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user_1, is_event_owner)
+      assert {:ok, %Participator{}} = Activities.create_participator(event, user_1, is_event_owner)
       assert {:error, %Changeset{errors: [is_event_owner: {"event can have only one owner", []}]}}
              = Activities.create_participator(event, user_2, is_event_owner)
     end

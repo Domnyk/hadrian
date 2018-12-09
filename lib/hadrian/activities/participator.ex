@@ -3,7 +3,6 @@ defmodule Hadrian.Activities.Participator do
   import Ecto.Changeset
   alias Hadrian.Accounts.User
   alias Hadrian.Activities.Event
-  alias Hadrian.Activities.Participator
 
   schema "participators" do
     field :has_paid, :boolean, default: false
