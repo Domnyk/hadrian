@@ -110,28 +110,28 @@ defmodule Hadrian.Activities do
     Event.changeset(event, %{})
   end
 
-  alias Hadrian.Activities.Participator
+  alias Hadrian.Activities.Participation
   alias Hadrian.Accounts.User
 
-  def list_participators(event_id) do
-    query = from p in Participator, where: p.event_id == ^event_id
+  def list_participations(event_id) do
+    query = from p in Participation, where: p.event_id == ^event_id
 
     Repo.all(query)
   end
 
-  def get_participator!(event_id, user_id) do
-    Repo.get_by!(Participator, %{event_id: event_id, user_id: user_id})
+  def get_participation!(event_id, user_id) do
+    Repo.get_by!(Participation, %{event_id: event_id, user_id: user_id})
   end
 
-  def create_participator(%Event{} = event, %User{} = user, is_event_owner \\ false) do
+  def create_participation(%Event{} = event, %User{} = user, is_event_owner \\ false) do
     attrs = %{user_id: user.id, event_id: event.id, has_paid: false, is_event_owner: is_event_owner}
 
-    %Participator{}
-    |> Participator.changeset(attrs)
+    %Participation{}
+    |> Participation.changeset(attrs)
     |> Repo.insert()
   end
 
-  def delete_participator(%Participator{} = participator) do
-    Repo.delete(participator)
+  def delete_participation(%Participation{} = participation) do
+    Repo.delete(participation)
   end
 end

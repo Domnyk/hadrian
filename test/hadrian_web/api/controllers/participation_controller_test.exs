@@ -1,4 +1,4 @@
-defmodule HadrianWeb.Api.ParticipatorControllerTest do
+defmodule HadrianWeb.Api.ParticipationControllerTest do
   use HadrianWeb.ConnCase
 
   alias Hadrian.Activities.Event
@@ -20,22 +20,22 @@ defmodule HadrianWeb.Api.ParticipatorControllerTest do
   describe "index" do
     setup [:sign_user_in]
 
-    test "list participators in event", %{conn: conn, event: %Event{id: event_id}, user: %User{id: user_id}} do
-      conn = get conn, event_participator_path(conn, :index, event_id)
-      assert [%{"event_id" => ^event_id, "user_id" => ^user_id}] = json_response(conn, 200)["participators"]
+    test "list participations in event", %{conn: conn, event: %Event{id: event_id}, user: %User{id: user_id}} do
+      conn = get conn, event_participation_path(conn, :index, event_id)
+      assert [%{"event_id" => ^event_id, "user_id" => ^user_id}] = json_response(conn, 200)["participations"]
     end
   end
 
   describe "create" do
     setup [:sign_user_in]
 
-    test "creates new participator", %{conn: conn, event: %Event{id: event_id}} do
+    test "creates new participation", %{conn: conn, event: %Event{id: event_id}} do
       current_user_id =
         conn
         |> fetch_session()
         |> get_session(:current_user_id)
 
-      conn = post conn, event_participator_path(conn, :create, event_id)
+      conn = post conn, event_participation_path(conn, :create, event_id)
       assert %{"event_id" => ^event_id, "user_id" => ^current_user_id} = json_response(conn, 201)
     end
   end
@@ -43,9 +43,9 @@ defmodule HadrianWeb.Api.ParticipatorControllerTest do
   describe "delete" do
     setup [:sign_user_in]
 
-    test "deletes participator", %{conn: conn, event: %Event{id: event_id}} do
-      post conn, event_participator_path(conn, :create, event_id)
-      conn = delete conn, event_participator_path(conn, :delete, event_id)
+    test "deletes participation", %{conn: conn, event: %Event{id: event_id}} do
+      post conn, event_participation_path(conn, :create, event_id)
+      conn = delete conn, event_participation_path(conn, :delete, event_id)
       assert response(conn, 204)
     end
   end

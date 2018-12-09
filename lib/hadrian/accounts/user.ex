@@ -1,13 +1,13 @@
 defmodule Hadrian.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
-  alias Hadrian.Activities.Participator
+  alias Hadrian.Activities.Participation
 
   schema "users" do
     field :email, :string
     field :display_name, :string
 
-    many_to_many :events, Hadrian.Activities.Event, join_through: Participator
+    many_to_many :events, Hadrian.Activities.Event, join_through: Participation
   end
 
   @doc false

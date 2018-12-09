@@ -22,7 +22,7 @@ defmodule HadrianWeb.EventControllerTest do
   describe "index" do
     test "lists all events in sport arena", %{conn: conn, event: %Event{id: id} = event} do
       conn = get conn, sport_arena_event_path(conn, :index, event.sport_arena_id)
-      assert [%{"id" => ^id}] = json_response(conn, 200)["data"]
+      assert [%{"id" => ^id}] = json_response(conn, 200)
     end
   end
 
@@ -35,10 +35,10 @@ defmodule HadrianWeb.EventControllerTest do
         |> prepare_time_attrs()
 
       conn = post conn, sport_arena_event_path(conn, :create, sport_arena_id), event: create_attrs
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+      assert %{"id" => id} = json_response(conn, 201)
 
       conn = get conn, sport_arena_event_path(conn, :show, sport_arena_id ,id)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
+      assert %{"id" => ^id} = json_response(conn, 200)
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -68,12 +68,12 @@ defmodule HadrianWeb.EventControllerTest do
 
     test "renders event when data is valid", %{conn: conn, event: %Event{id: id} = event} do
       conn = put conn, sport_arena_event_path(conn, :update, event.sport_arena_id, event), event: @update_attrs
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
+      assert %{"id" => ^id} = json_response(conn, 200)
 
       conn = get conn, sport_arena_event_path(conn, :show, event.sport_arena_id, id)
       resp = json_response(conn, 200)
 
-      assert event.id == resp["data"]["id"]
+      assert event.id == resp["id"]
     end
 
     test "renders errors when data is invalid", %{conn: conn, event: event} do

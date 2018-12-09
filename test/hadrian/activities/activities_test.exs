@@ -87,111 +87,111 @@ defmodule Hadrian.ActivitiesTest do
     end
   end
 
-  describe "participators" do
-    alias Hadrian.Activities.Participator
+  describe "participations" do
+    alias Hadrian.Activities.Participation
     alias Hadrian.Accounts.User
     alias Ecto.Changeset
 
-    test "list_participators/1 lists all participators", %{sport_arena: sport_arena} do
+    test "list_participations/1 lists all participations", %{sport_arena: sport_arena} do
       event = insert(:event, sport_arena_id: sport_arena.id)
       user_1 = insert(:user)
       user_2 = insert(:user)
       user_3 = insert(:user)
 
-      assert {:ok, %Participator{}} = Activities.create_participator(event, user_1)
-      assert {:ok, %Participator{}} = Activities.create_participator(event, user_2)
-      assert {:ok, %Participator{}} = Activities.create_participator(event, user_3)
+      assert {:ok, %Participation{}} = Activities.create_participation(event, user_1)
+      assert {:ok, %Participation{}} = Activities.create_participation(event, user_2)
+      assert {:ok, %Participation{}} = Activities.create_participation(event, user_3)
       participators = Activities.get_event!(event.id).participators
       assert length(participators) == 3
       assert [user_1.id, user_2.id, user_3.id] == Enum.map(participators, fn %User{id: id} -> id end)
     end
 
-    test "get_participator/2 returns existing participator", %{sport_arena: sport_arena} do
+    test "get_participation/2 returns existing participation", %{sport_arena: sport_arena} do
       event = insert(:event, sport_arena_id: sport_arena.id)
       user = insert(:user)
 
-      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user)
-      assert participator == Activities.get_participator!(event.id, user.id)
+      assert {:ok, %Participation{} = participation} = Activities.create_participation(event, user)
+      assert participation == Activities.get_participation!(event.id, user.id)
     end
 
-    test "get_participator!/2 raises error when participator does not exist" do
+    test "get_participation!/2 raises error when participation does not exist" do
       bad_user_id = -1
       bad_event_id = -3
 
-      assert_raise Ecto.NoResultsError, fn -> Activities.get_participator!(bad_event_id, bad_user_id) end
+      assert_raise Ecto.NoResultsError, fn -> Activities.get_participation!(bad_event_id, bad_user_id) end
     end
 
-    test "create_participator/2 creates new participator", %{sport_arena: sport_arena} do
+    test "create_participation/2 creates new participation", %{sport_arena: sport_arena} do
       event = insert(:event, sport_arena_id: sport_arena.id)
       user = insert(:user)
 
-      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user)
-      assert participator.is_event_owner == false
+      assert {:ok, %Participation{} = participation} = Activities.create_participation(event, user)
+      assert participation.is_event_owner == false
       assert Activities.get_event!(event.id).participators != []
     end
 
-    test "create_participator/2 does not allow to join same event twice", %{sport_arena: sport_arena} do
+    test "create_participation/2 does not allow to join same event twice", %{sport_arena: sport_arena} do
       event = insert(:event, sport_arena_id: sport_arena.id)
       user = insert(:user)
 
-      assert {:ok, %Participator{}} = Activities.create_participator(event, user)
+      assert {:ok, %Participation{}} = Activities.create_participation(event, user)
       assert {:error, %Changeset{errors: [user_id: {"can't join to the same event twice", []}]}}
-             = Activities.create_participator(event, user)
+             = Activities.create_participation(event, user)
     end
 
-    test "create_participator/2 allows to join same user to different events", %{sport_arena: sport_arena} do
+    test "create_participation/2 allows to join same user to different events", %{sport_arena: sport_arena} do
       event_1 = insert(:event, sport_arena_id: sport_arena.id)
       event_2 = insert(:event, sport_arena_id: sport_arena.id)
       user = insert(:user)
 
-      assert {:ok, %Participator{}} = Activities.create_participator(event_1, user)
-      assert {:ok, %Participator{}} = Activities.create_participator(event_2, user)
+      assert {:ok, %Participation{}} = Activities.create_participation(event_1, user)
+      assert {:ok, %Participation{}} = Activities.create_participation(event_2, user)
       assert Activities.get_event!(event_1.id).participators != []
       assert Activities.get_event!(event_2.id).participators != []
     end
 
-    test "create_participator/2 allows to join different users to the same event", %{sport_arena: sport_arena} do
+    test "create_participation/2 allows to join different users to the same event", %{sport_arena: sport_arena} do
       event = insert(:event, sport_arena_id: sport_arena.id)
       user_1 = insert(:user)
       user_2 = insert(:user)
 
-      assert {:ok, %Participator{} = participator_1} = Activities.create_participator(event, user_1)
-      assert participator_1.is_event_owner == false
-      assert {:ok, %Participator{} = participator_2} = Activities.create_participator(event, user_2)
-      assert participator_2.is_event_owner == false
+      assert {:ok, %Participation{} = participation_1} = Activities.create_participation(event, user_1)
+      assert participation_1.is_event_owner == false
+      assert {:ok, %Participation{} = participation_2} = Activities.create_participation(event, user_2)
+      assert participation_2.is_event_owner == false
       assert Activities.get_event!(event.id).participators != []
       assert length(Activities.get_event!(event.id).participators) == 2
     end
 
-    test "create_participator/3 allows to mark user as event's owner", %{sport_arena: sport_arena} do
+    test "create_participation/3 allows to mark user as event's owner", %{sport_arena: sport_arena} do
       event = insert(:event, sport_arena_id: sport_arena.id)
       user = insert(:user)
       is_event_owner = true
 
-      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user, is_event_owner)
-      assert participator.is_event_owner == is_event_owner
+      assert {:ok, %Participation{} = participation} = Activities.create_participation(event, user, is_event_owner)
+      assert participation.is_event_owner == is_event_owner
       assert Activities.get_event!(event.id).participators != []
     end
 
-    test "create_participator/3 does not allow for event to have 2 owners", %{sport_arena: sport_arena} do
+    test "create_participation/3 does not allow for event to have 2 owners", %{sport_arena: sport_arena} do
       event = insert(:event, sport_arena_id: sport_arena.id)
       user_1 = insert(:user)
       user_2 = insert(:user)
       is_event_owner = true
 
-      assert {:ok, %Participator{}} = Activities.create_participator(event, user_1, is_event_owner)
+      assert {:ok, %Participation{}} = Activities.create_participation(event, user_1, is_event_owner)
       assert {:error, %Changeset{errors: [is_event_owner: {"event can have only one owner", []}]}}
-             = Activities.create_participator(event, user_2, is_event_owner)
+             = Activities.create_participation(event, user_2, is_event_owner)
     end
 
-    test "delete_participator/2 deletes participator", %{sport_arena: sport_arena} do
+    test "delete_participation/2 deletes participation", %{sport_arena: sport_arena} do
       event = insert(:event, sport_arena_id: sport_arena.id)
       user = insert(:user)
       is_event_owner = true
 
-      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user, is_event_owner)
+      assert {:ok, %Participation{} = participation} = Activities.create_participation(event, user, is_event_owner)
 
-      assert {:ok, %Participator{}} = Activities.delete_participator(participator);
+      assert {:ok, %Participation{}} = Activities.delete_participation(participation);
       assert Activities.get_event!(event.id).participators == []
     end
   end
