@@ -3,8 +3,10 @@ defmodule HadrianWeb.Api.EventController do
 
   require Logger
 
+  alias Hadrian.Accounts
   alias Hadrian.Activities
   alias Hadrian.Activities.Event
+  alias Hadrian.Activities.Participator
 
   action_fallback HadrianWeb.Api.FallbackController
 
@@ -15,11 +17,12 @@ defmodule HadrianWeb.Api.EventController do
   end
 
   def create(conn, %{"sport_arena_id" => sport_arena_id, "event" => event_params}) do
-    params = event_params
-    |> Map.put("sport_arena_id", sport_arena_id)
-    |> Map.put("users", [get_session(conn, :current_user_id)])
+    params = Map.put(event_params, "sport_arena_id", sport_arena_id)
+    event_owner = Accounts.get_user!(get_session(conn, :current_user_id))
 
-    with {:ok, %Event{} = event} <- Activities.create_event(params) do
+    with {:ok, %Event{} = event} <- Activities.create_event(params),
+         {:ok, %Participator{}} <- Activities.create_participator(event, event_owner, true)
+    do
       conn
       |> put_status(:created)
       |> put_resp_header("location", sport_arena_event_path(conn, :show, sport_arena_id, event))

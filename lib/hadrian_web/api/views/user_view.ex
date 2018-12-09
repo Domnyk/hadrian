@@ -13,7 +13,7 @@ defmodule HadrianWeb.Api.UserView do
   end
 
   def render("id.json", %{user: user}) do
-    user.id
+    %{id: user.id}
   end
   
   def render("ok.create.json", %{complexes_owner: complexes_owner}) do

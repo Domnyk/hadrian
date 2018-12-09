@@ -19,7 +19,7 @@ defmodule Hadrian.Activities do
   """
   def list_events(sport_arena_id) when is_integer(sport_arena_id) do
     Repo.all(Event)
-    |> Repo.preload(:users)
+    |> Repo.preload(:participators)
     |> Enum.filter(fn event -> event.sport_arena_id == sport_arena_id end)
   end
 
@@ -37,7 +37,10 @@ defmodule Hadrian.Activities do
       ** (Ecto.NoResultsError)
 
   """
-  def get_event!(id), do: Repo.get!(Event, id)
+  def get_event!(id) do
+    Repo.get!(Event, id)
+    |> Repo.preload(:participators)
+  end
 
   @doc """
   Creates an event.
@@ -55,7 +58,7 @@ defmodule Hadrian.Activities do
   """
   def create_event(attrs \\ %{}) do
     %Event{}
-    |> Event.changeset(attrs, true)
+    |> Event.changeset(attrs)
     |> Repo.insert()
   end
 
@@ -74,6 +77,7 @@ defmodule Hadrian.Activities do
   def update_event(%Event{} = event, attrs) do
     event
     |> Event.changeset(attrs)
+
     |> Repo.update()
   end
 
@@ -104,5 +108,34 @@ defmodule Hadrian.Activities do
   """
   def change_event(%Event{} = event) do
     Event.changeset(event, %{})
+  end
+
+  alias Hadrian.Activities.Participator
+  alias Hadrian.Accounts.User
+
+  def list_participators(event_id) do
+    query = from p in Participator, where: p.event_id == ^event_id
+
+    Repo.all(query)
+  end
+
+  def get_participator!(event_id, user_id) do
+    query = from p in Participator, where: p.event_id == ^event_id and p.user_id == ^user_id
+    # [participator] = Repo.all(query)
+
+    # participator
+    Repo.get_by!(Participator, %{event_id: event_id, user_id: user_id})
+  end
+
+  def create_participator(%Event{} = event, %User{} = user, is_event_owner \\ false) do
+    attrs = %{user_id: user.id, event_id: event.id, has_paid: false, is_event_owner: is_event_owner}
+
+    %Participator{}
+    |> Participator.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def delete_participator(%Participator{} = participator) do
+    Repo.delete(participator)
   end
 end

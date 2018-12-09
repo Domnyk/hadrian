@@ -13,23 +13,23 @@ defmodule HadrianWeb.EventControllerTest do
     football = insert(:sport_discipline, name: "Football")
     basketball = insert(:sport_discipline, name: "Basketball")
     sport_arena = insert(:sport_arena, sport_object_id: sport_object.id, sport_disciplines: [football, basketball])
-    event = insert(:event, sport_arena_id: sport_arena.id, users: [user])
+    event = insert(:event, sport_arena_id: sport_arena.id, participators: [user])
 
     {:ok, conn: put_req_header(conn, "accept", "application/json"), event: event, user: user}
   end
 
+  # TODO: Compare all fields
   describe "index" do
-    test "lists all events in sport arena", %{conn: conn, event: event} do
+    test "lists all events in sport arena", %{conn: conn, event: %Event{id: id} = event} do
       conn = get conn, sport_arena_event_path(conn, :index, event.sport_arena_id)
-      assert json_response(conn, 200)["data"] == [%{"id" => event.id}]
+      assert [%{"id" => ^id}] = json_response(conn, 200)["data"]
     end
   end
 
   describe "create event" do
     setup [:sign_user_in]
 
-    test "renders event when data is valid", %{conn: conn, event: %Event{sport_arena_id: sport_arena_id}, user: user} do
-      conn = Plug.Test.init_test_session(conn, %{current_user_id: user.id})
+    test "renders event when data is valid", %{conn: conn, event: %Event{sport_arena_id: sport_arena_id}} do
       create_attrs =
         string_params_for(:event, sport_arena_id: sport_arena_id)
         |> prepare_time_attrs()
@@ -38,7 +38,7 @@ defmodule HadrianWeb.EventControllerTest do
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get conn, sport_arena_event_path(conn, :show, sport_arena_id ,id)
-      assert json_response(conn, 200)["data"] == %{"id" => id}
+      assert %{"id" => ^id} = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -62,6 +62,7 @@ defmodule HadrianWeb.EventControllerTest do
     end
   end
 
+  # TODO: Compare all fields
   describe "update event" do
     setup [:sign_user_in]
 
@@ -70,8 +71,9 @@ defmodule HadrianWeb.EventControllerTest do
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get conn, sport_arena_event_path(conn, :show, event.sport_arena_id, id)
-      assert json_response(conn, 200)["data"] == %{
-        "id" => id}
+      resp = json_response(conn, 200)
+
+      assert event.id == resp["data"]["id"]
     end
 
     test "renders errors when data is invalid", %{conn: conn, event: event} do
@@ -96,7 +98,8 @@ defmodule HadrianWeb.EventControllerTest do
   end
 
   defp sign_user_in(%{conn: conn}) do
-    conn_from_signed_in_user = Plug.Test.init_test_session(conn, %{current_user_id: Enum.random(0..1000)})
+    user = insert(:user)
+    conn_from_signed_in_user = Plug.Test.init_test_session(conn, %{current_user_id: user.id})
 
     {:ok, conn: conn_from_signed_in_user}
   end

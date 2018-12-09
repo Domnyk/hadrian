@@ -40,5 +40,9 @@ defmodule HadrianWeb.Router do
     resources "/sport_arenas", SportArenaController do
       resources "/events", EventController, only: [:create, :update, :delete]
     end
+
+    resources "/events", EventController do
+      resources "/participators", ParticipationController, only: [:create, :delete]
+    end
   end
 end

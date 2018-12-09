@@ -22,7 +22,7 @@ defmodule HadrianWeb.Api.EventView do
       end_of_paying_phase: event.end_of_paying_phase,
       start_time: event.start_time,
       end_time: event.end_time,
-      users: render_many(event.users, UserView, "id.json")
+      participators: render_many(event.participators, UserView, "id.json")
     }
   end
 end

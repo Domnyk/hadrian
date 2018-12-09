@@ -8,6 +8,16 @@ defmodule HadrianWeb.Api.SessionController do
   alias Hadrian.Accounts.User
   alias Hadrian.Accounts.ComplexesOwner
 
+  # Only for dev env
+  def new(conn, %{"id" => id, "redirect_url" => redirect_url}) do
+    user = Accounts.get_user!(id)
+
+    conn
+    |> fetch_session()
+    |> put_session(:current_user_id, id)
+    |> redirect(external: redirect_url <> "#display_name=#{user.display_name}&email=#{user.email}")
+  end
+
   def new(conn, %{"redirect_url" => redirect_url}) do
     check_sign_in_status(conn)
     |> case do

@@ -17,13 +17,14 @@ defmodule Hadrian.ActivitiesTest do
     {:ok, sport_arena: sport_arena}
   end
 
+  # TODO: Compare all fields
   describe "events" do
     alias Hadrian.Activities.Event
 
     test "list_events/1 returns events in given sport object", %{sport_arena: sport_arena} do
       event =
         insert(:event, sport_arena: sport_arena)
-        |> Repo.preload(:users)
+        |> Repo.preload(:participators)
         |> Helpers.unpreload(:sport_arena)
 
       assert Activities.list_events(sport_arena.id + 1) == []
@@ -31,9 +32,9 @@ defmodule Hadrian.ActivitiesTest do
     end
 
     test "get_event!/1 returns the event with given id", %{sport_arena: sport_arena} do
-      event = insert(:event, sport_arena_id: sport_arena.id)
+      %Event{id: id} = insert(:event, sport_arena_id: sport_arena.id)
 
-      assert Activities.get_event!(event.id) == event
+      assert %Event{id: ^id}  = Activities.get_event!(id)
     end
 
     test "create_event/1 with valid data creates an event", %{sport_arena: sport_arena} do
@@ -60,7 +61,7 @@ defmodule Hadrian.ActivitiesTest do
     end
 
     test "update_event/2 with invalid data returns error changeset", %{sport_arena: sport_arena} do
-      event = insert(:event, sport_arena_id: sport_arena.id)
+      event = insert(:event, sport_arena_id: sport_arena.id) |> Hadrian.Repo.preload(:participators)
 
       assert {:error, %Ecto.Changeset{}} = Activities.update_event(event, generate_invalid_attrs())
       assert event == Activities.get_event!(event.id)
@@ -78,11 +79,120 @@ defmodule Hadrian.ActivitiesTest do
 
       assert %Ecto.Changeset{} = Activities.change_event(event)
     end
+
+    defp generate_invalid_attrs() do
+      params_for(:event)
+      |> Map.put(:sport_arena_id, nil)
+      |> Enum.into(%{}, fn {k, _} -> {k, nil} end)
+    end
   end
 
-  defp generate_invalid_attrs() do
-    params_for(:event)
-    |> Map.put(:sport_arena_id, nil)
-    |> Enum.into(%{}, fn {k, _} -> {k, nil} end)
+  describe "participators" do
+    alias Hadrian.Activities.Participator
+    alias Hadrian.Accounts.User
+    alias Ecto.Changeset
+
+    test "list_participators/1 lists all participators", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
+      user_1 = insert(:user)
+      user_2 = insert(:user)
+      user_3 = insert(:user)
+
+      assert {:ok, %Participator{} = participator_1} = Activities.create_participator(event, user_1)
+      assert {:ok, %Participator{} = participator_2} = Activities.create_participator(event, user_2)
+      assert {:ok, %Participator{} = participator_3} = Activities.create_participator(event, user_3)
+      participators = Activities.get_event!(event.id).participators
+      assert length(participators) == 3
+      assert [user_1.id, user_2.id, user_3.id] == Enum.map(participators, fn %User{id: id} -> id end)
+    end
+
+    test "get_participator/2 returns existing participator", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
+      user = insert(:user)
+
+      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user)
+      assert participator == Activities.get_participator!(event.id, user.id)
+    end
+
+    test "get_participator!/2 raises error when participator does not exist" do
+      bad_user_id = -1
+      bad_event_id = -3
+
+      assert_raise Ecto.NoResultsError, fn -> Activities.get_participator!(bad_event_id, bad_user_id) end
+    end
+
+    test "create_participator/2 creates new participator", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
+      user = insert(:user)
+
+      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user)
+      assert participator.is_event_owner == false
+      assert Activities.get_event!(event.id).participators != []
+    end
+
+    test "create_participator/2 does not allow to join same event twice", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
+      user = insert(:user)
+
+      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user)
+      assert {:error, %Changeset{errors: [user_id: {"can't join to the same event twice", []}]}}
+             = Activities.create_participator(event, user)
+    end
+
+    test "create_participator/2 allows to join same user to different events", %{sport_arena: sport_arena} do
+      event_1 = insert(:event, sport_arena_id: sport_arena.id)
+      event_2 = insert(:event, sport_arena_id: sport_arena.id)
+      user = insert(:user)
+
+      assert {:ok, %Participator{} = participator} = Activities.create_participator(event_1, user)
+      assert {:ok, %Participator{} = participator} = Activities.create_participator(event_2, user)
+      assert Activities.get_event!(event_1.id).participators != []
+      assert Activities.get_event!(event_2.id).participators != []
+    end
+
+    test "create_participator/2 allows to join different users to the same event", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
+      user_1 = insert(:user)
+      user_2 = insert(:user)
+
+      assert {:ok, %Participator{} = participator_1} = Activities.create_participator(event, user_1)
+      assert participator_1.is_event_owner == false
+      assert {:ok, %Participator{} = participator_2} = Activities.create_participator(event, user_2)
+      assert participator_2.is_event_owner == false
+      assert Activities.get_event!(event.id).participators != []
+      assert length(Activities.get_event!(event.id).participators) == 2
+    end
+
+    test "create_participator/3 allows to mark user as event's owner", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
+      user = insert(:user)
+      is_event_owner = true
+
+      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user, is_event_owner)
+      assert participator.is_event_owner == is_event_owner
+      assert Activities.get_event!(event.id).participators != []
+    end
+
+    test "create_participator/3 does not allow for event to have 2 owners", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
+      user_1 = insert(:user)
+      user_2 = insert(:user)
+      is_event_owner = true
+
+      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user_1, is_event_owner)
+      assert {:error, %Changeset{errors: [is_event_owner: {"event can have only one owner", []}]}}
+             = Activities.create_participator(event, user_2, is_event_owner)
+    end
+
+    test "delete_participator/2 deletes participator", %{sport_arena: sport_arena} do
+      event = insert(:event, sport_arena_id: sport_arena.id)
+      user = insert(:user)
+      is_event_owner = true
+
+      assert {:ok, %Participator{} = participator} = Activities.create_participator(event, user, is_event_owner)
+
+      assert {:ok, %Participator{}} = Activities.delete_participator(participator);
+      assert Activities.get_event!(event.id).participators == []
+    end
   end
 end
