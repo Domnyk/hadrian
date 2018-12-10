@@ -44,9 +44,14 @@ defmodule HadrianWeb.Api.ParticipationControllerTest do
     setup [:sign_user_in]
 
     test "deletes participation", %{conn: conn, event: %Event{id: event_id}} do
+      current_user_id =
+        conn
+        |> fetch_session()
+        |> get_session(:current_user_id)
+
       post conn, event_participation_path(conn, :create, event_id)
       conn = delete conn, event_participation_path(conn, :delete, event_id)
-      assert response(conn, 204)
+      assert %{"event_id" => ^event_id, "user_id" => ^current_user_id} = json_response(conn, 200)
     end
   end
 

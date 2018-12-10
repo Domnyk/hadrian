@@ -31,7 +31,9 @@ defmodule HadrianWeb.Api.ParticipationController do
     with %Participation{} = participation <- Activities.get_participation!(event_id, current_user_id),
          {:ok, %Participation{}} <- Activities.delete_participation(participation)
     do
-      send_resp(conn, :no_content, "")
+      conn
+      |> put_status(:ok)
+      |> render("show.json", participation: participation)
     end
   end
 end
