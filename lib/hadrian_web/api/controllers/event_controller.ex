@@ -25,6 +25,7 @@ defmodule HadrianWeb.Api.EventController do
          {:ok, %Participation{}} <- Activities.create_participation(event, event_owner, true)
     do
       participations = Activities.list_participations(event.id)
+      event = Activities.get_event!(event.id)
 
       conn
       |> put_status(:created)
