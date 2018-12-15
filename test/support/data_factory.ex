@@ -195,4 +195,30 @@ defmodule Hadrian.DataFactory do
       end_time: end_time
     }
   end
+
+  def payment_factory do
+    alias Hadrian.Payments.Payment
+
+    %Payment{
+      payer_email: sequence(:email, &"test#{&1}@domain.com"),
+      sport_object_name: "Some funny sport object name",
+      amount_to_pay: "20",
+      complexes_owner_email: sequence(:email, &"test#{&1}@owner.com"),
+      return_url: "https://domain.com/return",
+      cancel_url: "https://domain.com/cancel"
+    }
+  end
+
+  def payment_attrs_factory do
+    alias Hadrian.Payments.Payment
+
+    %{
+      "payer_email" => sequence(:email, &"test#{&1}@domain.com"),
+      "sport_object_name" => "Some funny sport object name",
+      "amount_to_pay" => "20",
+      "complexes_owner_email" => sequence(:email, &"test#{&1}@owner.com"),
+      "return_url" => "https://domain.com/return",
+      "cancel_url" => "https://domain.com/cancel"
+    }
+  end
 end

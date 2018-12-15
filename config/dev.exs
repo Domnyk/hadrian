@@ -69,3 +69,6 @@ config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.HTTP
 # Configure client url
 config :hadrian, :client_url, "https://localhost:8080"
 
+# Configure Paypal's sandbox address
+config :hadrian, :api_url, "https://api.sandbox.paypal.com"
+
