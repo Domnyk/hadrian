@@ -9,6 +9,7 @@ defmodule Hadrian.Payments.Payment do
   alias Hadrian.Accounts.ComplexesOwner
   alias Hadrian.Owners.SportObject
   alias HTTPoison, as: HTTP
+  alias Poison, as: Json
 
   @create_payment_endpoint "/v1/payments/payment"
 
@@ -84,48 +85,65 @@ defmodule Hadrian.Payments.Payment do
       redirect_urls: redirect_urls}
   end
 
-  def create(token, payment = %Payment{}) when is_binary(token) do
+  def create(payment = %Payment{}, token) when is_binary(token) do
     Logger.info("Attempt to create payment")
 
     url = Application.get_env(:hadrian, :api_url) <> @create_payment_endpoint
     body = create_body(payment)
+    perform_create_request(url, body, token)
+  end
+
+  def create(payment, token) do
+    msg = ~s(Wrong type of arguments. \n token: #{inspect(token)} \n payment: #{inspect(payment)})
+    raise ArgumentError, message: msg
+  end
+
+  defp perform_create_request(url, body, token) do
     headers = create_headers(token)
-    perform_create_request(url, body, headers)
-  end
 
-  def create(token, payment) do
-    msg = ~s(Token is not string. \n Token: #{inspect(token)}. Payment: #{inspect(payment)})
-    Logger.error(msg)
-  end
-
-  defp perform_create_request(url, body, headers) do
     with {:ok, response = %HTTP.Response{}} <- HTTP.post(url, body, headers),
-         {:ok, %HTTP.Response{}} <- parse_status_code(response) do
-      Logger.info("Received response: \n #{inspect(response)}")
-      response
+         {:ok, %HTTP.Response{}} <- parse_status_code(response),
+         %{"approval_url" => approval_url, "execute" => execute_url} <- parse_body(response.body) do
+      Logger.debug ~s(Received resposnse: \n #{inspect(response)})
+      %{token: token, urls: %{approval: approval_url, execute: execute_url}}
     else
-      {:unauthorized, %HTTP.Response{}} ->
-        Logger.warn("Token expired")
-        headers = Payments.fetch_token() |> create_headers()
-        perform_create_request(url, body, headers)
+      {:unauthorized, %HTTP.Response{}} -> handle_unauthorized(url, body)
+      {:unkown_status_code, resp = %HTTP.Response{}} -> raise "Unknown status code in response: #{inspect(resp)}"
     end
-  end
-
-  def create_body(payment = %Payment{}) do
-    alias Poison, as: Json
-
-    # TODO: replace encode!/1 with encode/1
-    payment
-    |> to_map()
-    |>  Json.encode!()
   end
 
   defp parse_status_code(response = %HTTP.Response{status_code: status_code}) do
     case status_code do
-      200 -> {:ok, response}
+      201 -> {:ok, response}
       401 -> {:unauthorized, response}
-      _   -> {:error, response}
+      _   -> {:unkown_status_code, response}
     end
+  end
+
+  defp parse_body(body) when is_binary(body) do
+    Json.decode!(body)
+    |> Map.get("links")
+    |> Enum.filter(fn %{"rel" => rel} -> rel == "execute" or rel == "approval_url" end)
+    |> Enum.reduce(%{}, fn %{"rel" => r, "href" => h}, acc -> Map.put(acc, r, h) end)
+  end
+
+  defp parse_body(body) do
+    msg = "Argument is not string. body: #{inspect(body)}"
+    raise ArgumentError, message: msg
+  end
+
+  defp handle_unauthorized(url, body) do
+    Logger.warn("Token expired")
+    token = Payments.fetch_token()
+    perform_create_request(url, body, token)
+  end
+
+  defp create_body(payment = %Payment{}) do
+
+
+    payment
+    |> to_map()
+    |>  Json.encode!()
   end
 
   defp create_headers(token) when is_binary(token) do

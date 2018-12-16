@@ -26,11 +26,8 @@ defmodule Hadrian.Payments.Token do
   end
 
   def fetch(client_id, secret) do
-    msg = "Wrong type of parameters for Payments.Token.fetch_/2. "
-    <> "client_id: " <> inspect(client_id) <> " "
-    <> "secret: " <> inspect(secret)
-
-    Logger.error(msg)
+    msg = ~s(Wrong type of arguments. \n client_id: #{inspect(client_id)} \n secret: #{inspect(secret)})
+    raise ArgumentError, message: msg
   end
 
   defp create_headers() do
@@ -42,7 +39,8 @@ defmodule Hadrian.Payments.Token do
   end
 
   defp create_body(grant_type) do
-    Logger.error("Wrong grant_type for create_body/1: " <> inspect(grant_type))
+    msg = ~s(Wrong argument. \n grant_type: #{inspect(grant_type)})
+    raise ArgumentError, message: msg
   end
 
   defp create_options(client_id, secret) when is_binary(client_id) and is_binary(secret) do
@@ -50,11 +48,8 @@ defmodule Hadrian.Payments.Token do
   end
 
   defp create_options(client_id, secret) do
-    msg = "Wrong client_id or secret for create_options/2."
-    <> "client_id: " <> inspect(client_id) <> " "
-    <> "secret: " <> inspect(secret)
-
-    Logger.error(msg)
+    msg = ~s(Wrong type of arguments. \n client_id: #{inspect(client_id)} \n secret: #{inspect(secret)})
+    raise ArgumentError, message: msg
   end
 
   defp parse_body(body) when is_binary(body) do
