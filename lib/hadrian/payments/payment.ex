@@ -1,11 +1,16 @@
 defmodule Hadrian.Payments.Payment do
+  require Logger
   import Ecto.Changeset
   alias Hadrian.Repo
+  alias Hadrian.Payments
   alias Hadrian.Payments.Payment
   alias Hadrian.Accounts
   alias Hadrian.Accounts.User
   alias Hadrian.Accounts.ComplexesOwner
   alias Hadrian.Owners.SportObject
+  alias HTTPoison, as: HTTP
+
+  @create_payment_endpoint "/v1/payments/payment"
 
   defstruct [:payer_email, :sport_object_name, :amount_to_pay, :complexes_owner_email, :return_url, :cancel_url]
 
@@ -77,5 +82,58 @@ defmodule Hadrian.Payments.Payment do
 
     %{intent: :sale, payer: payer, application_context: application_context, transactions: transactions,
       redirect_urls: redirect_urls}
+  end
+
+  def create(token, payment = %Payment{}) when is_binary(token) do
+    Logger.info("Attempt to create payment")
+
+    url = Application.get_env(:hadrian, :api_url) <> @create_payment_endpoint
+    body = create_body(payment)
+    headers = create_headers(token)
+    perform_create_request(url, body, headers)
+  end
+
+  def create(token, payment) do
+    msg = ~s(Token is not string. \n Token: #{inspect(token)}. Payment: #{inspect(payment)})
+    Logger.error(msg)
+  end
+
+  defp perform_create_request(url, body, headers) do
+    with {:ok, response = %HTTP.Response{}} <- HTTP.post(url, body, headers),
+         {:ok, %HTTP.Response{}} <- parse_status_code(response) do
+      Logger.info("Received response: \n #{inspect(response)}")
+      response
+    else
+      {:unauthorized, %HTTP.Response{}} ->
+        Logger.warn("Token expired")
+        headers = Payments.fetch_token() |> create_headers()
+        perform_create_request(url, body, headers)
+    end
+  end
+
+  def create_body(payment = %Payment{}) do
+    alias Poison, as: Json
+
+    # TODO: replace encode!/1 with encode/1
+    payment
+    |> to_map()
+    |>  Json.encode!()
+  end
+
+  defp parse_status_code(response = %HTTP.Response{status_code: status_code}) do
+    case status_code do
+      200 -> {:ok, response}
+      401 -> {:unauthorized, response}
+      _   -> {:error, response}
+    end
+  end
+
+  defp create_headers(token) when is_binary(token) do
+    ["Content-Type": "Application/json", "Authorization": "Bearer #{token}"]
+  end
+
+  defp create_headers(token) do
+    msg = ~s(Token is not string. \n Token: #{inspect(token)})
+    Logger.error(msg)
   end
 end
