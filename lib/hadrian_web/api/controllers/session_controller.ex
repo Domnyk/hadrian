@@ -15,6 +15,7 @@ defmodule HadrianWeb.Api.SessionController do
     conn
     |> fetch_session()
     |> put_session(:current_user_id, id)
+    |> put_session(:current_user_type, :user)
     |> redirect(external: redirect_url <> "#id=#{user.id}&display_name=#{user.display_name}&email=#{user.email}")
   end
 
@@ -82,6 +83,7 @@ defmodule HadrianWeb.Api.SessionController do
     do
        conn_with_fetched_session
        |> put_session(:current_user_id, complexes_owner.id)
+       |> put_session(:current_user_type, :complexes_owner)
        |> render("ok.create.json", complexes_owner: complexes_owner)
     end
   end
@@ -99,6 +101,7 @@ defmodule HadrianWeb.Api.SessionController do
           conn
           |> fetch_session()
           |> put_session(:current_user_id, user.id)
+          |> put_session(:current_user_type, :user)
           |> redirect(external: redirect_url <> "#id=#{user.id}&display_name=#{user.display_name}&email=#{user.email}")
         {:no_such_user, email: _} ->
           Logger.info("No user in database with such email: #{inspect(email)}. Creating user")
@@ -106,6 +109,7 @@ defmodule HadrianWeb.Api.SessionController do
           conn
           |> fetch_session()
           |> put_session(:current_user_id, user.id)
+          |> put_session(:current_user_type, :user)
           |> redirect(external: redirect_url <> "#id=#{user.id}&display_name=#{user.display_name}&email=#{user.email}")
       end
   end

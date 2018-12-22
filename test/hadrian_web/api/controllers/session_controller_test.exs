@@ -13,18 +13,18 @@ defmodule HadrianWeb.Api.SessionControllerTest do
 
   describe "create/2 when passwords match" do
     test "creates session with current user field", %{conn: conn} do
-      complexes_owner_attrs = build(:complexes_owner_attrs)
-      {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(complexes_owner_attrs)
+      attrs = string_params_for(:complexes_owner)
+      {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(attrs)
 
-      conn = post conn, session_path(conn, :create, complexes_owner_attrs)
+      conn = post conn, session_path(conn, :create, attrs)
 
-      assert json_response(conn, 200) == %{"status" => "ok", "email" => complexes_owner_attrs["email"]}
+      assert json_response(conn, 200) == %{"status" => "ok", "email" => attrs["email"]}
       assert Plug.Conn.get_session(conn, :current_user_id) == complexes_owner.id
     end
 
     test "sends warning when user tries to sign in when already signed", %{conn: conn} do
-      complexes_owner_attrs = build(:complexes_owner_attrs)
-      {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(complexes_owner_attrs)
+      attrs = string_params_for(:complexes_owner)
+      {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(attrs)
 
       # Initializing session this way depends makes it dependent on how current user is stored.
       # Ideally: request is made, then second request with session set to first request's session value is made
@@ -32,7 +32,7 @@ defmodule HadrianWeb.Api.SessionControllerTest do
       response =
         conn
         |> Plug.Test.init_test_session(current_user_id: complexes_owner.id)
-        |> post(session_path(conn, :create, complexes_owner_attrs))
+        |> post(session_path(conn, :create, attrs))
         |> json_response(200)
 
       assert Map.get(response, "status") == "warning"
@@ -40,22 +40,22 @@ defmodule HadrianWeb.Api.SessionControllerTest do
     end
 
     test "sends response with user data", %{conn: conn} do
-      complexes_owner_attrs = build(:complexes_owner_attrs)
-      {:ok, %ComplexesOwner{}} = Accounts.create_complexes_owner(complexes_owner_attrs)
+      attrs = string_params_for(:complexes_owner)
+      {:ok, %ComplexesOwner{}} = Accounts.create_complexes_owner(attrs)
 
       response =
         conn
-        |> post(session_path(conn, :create, complexes_owner_attrs))
+        |> post(session_path(conn, :create, attrs))
         |> json_response(200)
 
-      assert response == %{"status" => "ok", "email" => complexes_owner_attrs["email"]}
+      assert response == %{"status" => "ok", "email" => attrs["email"]}
     end
   end
 
   describe "delete/1" do
     test "clears session", %{conn: conn} do
-      user_attrs = build(:user_attrs)
-      {:ok, %User{} = user} = Accounts.create_user(user_attrs)
+      attrs = string_params_for(:user)
+      {:ok, %User{} = user} = Accounts.create_user(attrs)
 
       conn_with_session = Plug.Test.init_test_session(conn, current_user_id: user.id)
       assert Plug.Conn.get_session(conn_with_session, :current_user_id) == user.id

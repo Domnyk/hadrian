@@ -5,8 +5,8 @@ defmodule HadrianWeb.Api.UserControllerTest do
 
   describe "create" do
     test "inserts user when data is valid", %{conn: conn} do
-      complexes_owner_attrs = build(:complexes_owner_attrs)
-      complexes_owner_data = %{"complexes_owner" => complexes_owner_attrs}
+      attrs = string_params_for(:complexes_owner)
+      complexes_owner_data = %{"complexes_owner" => attrs}
       conn = post conn, user_path(conn, :create), complexes_owner_data
       resp = json_response(conn, 200)
       user_from_db = Accounts.get_complexes_owner_by_email(resp["email"])
@@ -15,13 +15,13 @@ defmodule HadrianWeb.Api.UserControllerTest do
     end
 
     test "returns json with user fields when data is valid", %{conn: conn} do
-      complexes_owner_attrs = build(:complexes_owner_attrs)
-      complexes_owner_data = %{"complexes_owner" => complexes_owner_attrs}
+      attrs = string_params_for(:complexes_owner)
+      complexes_owner_data = %{"complexes_owner" => attrs}
       conn = post conn, user_path(conn, :create), complexes_owner_data
       resp = json_response(conn, 200)
 
       assert resp["status"] == "ok"
-      assert resp["email"] == complexes_owner_attrs["email"]
+      assert resp["email"] == attrs["email"]
     end
 
     test "returns status 'error' when data is invalid", %{conn: conn} do

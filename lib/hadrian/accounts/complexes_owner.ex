@@ -7,6 +7,7 @@ defmodule Hadrian.Accounts.ComplexesOwner do
     field :email, :string
     field :password, :string, virtual: true
     field :password_hash, :string
+    field :paypal_email, :string
 
     has_many :sport_complexes, Hadrian.Owners.SportComplex, foreign_key: :complexes_owner_id
   end
@@ -17,10 +18,11 @@ defmodule Hadrian.Accounts.ComplexesOwner do
     email = ~r/^[\p{L}\p{Nd}]{1}([-\p{L}\p{Nd}_]+[\.]{0,2}[+]?)+@([-\p{L}\p{Nd}_]{1,}\.)+[\p{L}\p{Nd}]{2,4}$/xiu
 
     complexes_owner
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :password, :paypal_email])
     |> unique_constraint(:email)
     |> validate_format(:email, email)
-    |> validate_required([:email, :password])
+    |> validate_format(:paypal_email, email)
+    |> validate_required([:email, :password, :paypal_email])
     |> maybe_insert_hash_password()
   end
 

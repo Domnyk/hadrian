@@ -3,6 +3,7 @@ defmodule HadrianWeb.Api.ParticipationController do
 
   require Logger
 
+  alias Hadrian.Owners
   alias Hadrian.Accounts
   alias Hadrian.Activities
   alias Hadrian.Activities.Participation
@@ -24,6 +25,18 @@ defmodule HadrianWeb.Api.ParticipationController do
       |> put_status(:created)
       |> render("show.json", participation: participation)
     end
+  end
+
+  defp create_payment(token, %Participation{} = participation) when is_binary(token) do
+    user = Accounts.get_user!(participation.user_id)
+    sport_object =
+      Activities.get_event!(participation.event_id)
+      |> Map.get(:sport_arena_id)
+      |> Owners.get_sport_arena!()
+      |> Map.get(:sport_object_id)
+      |> Owners.get_sport_object!()
+
+    attrs = %{ payer_email: user.email, sport_object_name: sport_object.name }
   end
 
   def delete(conn, %{"event_id" => event_id}) do

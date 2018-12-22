@@ -1,6 +1,7 @@
 defmodule Hadrian.Payments do
   alias Hadrian.Payments.Token
   alias Hadrian.Payments.Payment
+  alias Hadrian.Activities.Participation
 
   def fetch_token() do
     client_id = System.get_env("PAYPAL_CLIENT_ID")
@@ -14,16 +15,24 @@ defmodule Hadrian.Payments do
     |> Ecto.Changeset.apply_changes()
     |> Payment.create(token)
     |> case do
-         map = %{token: token, urls: urls} -> {:ok, %{token: token, urls: urls}}
+         map = %{token: _, urls: _} -> {:ok, map}
          _ -> :error
        end
   end
 
-  def get_payment_approval_address(token) do
-
+  def get_payment_approval_address(participation = %Participation{}) do
+    participation.payment_approve_url
   end
 
-  def execute_payment(token) do
+  def get_payment_approval_address(participation) do
+    msg = ~s(Wrong type of arguments. \n participation: #{inspect(participation)})
+    raise ArgumentError, message: msg
+  end
 
+  def execute_payment(participation = %Participation{}, token) do
+    case Payment.execute(participation.payment_execute_url, participation.payer_id, token) do
+      token when is_binary(token) -> {:ok, token}
+      _ -> :error
+    end
   end
 end

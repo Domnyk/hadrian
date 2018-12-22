@@ -46,10 +46,10 @@ defmodule Hadrian.AccountsTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      user_attrs = build(:user_attrs)
+      attrs = string_params_for(:user)
 
-      assert {:ok, %User{} = user} = Accounts.create_user(user_attrs)
-      assert user.email == user_attrs["email"]
+      assert {:ok, %User{} = user} = Accounts.create_user(attrs)
+      assert user.email == attrs["email"]
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -203,10 +203,10 @@ defmodule Hadrian.AccountsTest do
     end
 
     test "create_complexes_owner/1 with valid data creates a complexes owner" do
-      complexes_owner_attrs = build(:complexes_owner_attrs)
+      attrs = string_params_for(:complexes_owner)
 
-      assert {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(complexes_owner_attrs)
-      assert complexes_owner.email == complexes_owner_attrs["email"]
+      assert {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(attrs)
+      assert complexes_owner.email == attrs["email"]
     end
 
     test "create_complexes_owner/1 with invalid data returns error changeset" do
@@ -214,7 +214,8 @@ defmodule Hadrian.AccountsTest do
     end
 
     test "update_complexes_owner/2 with valid data updates the complexes owner" do
-      {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(build(:complexes_owner_attrs))
+      attrs = string_params_for(:complexes_owner)
+      {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(attrs)
 
       assert {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.update_complexes_owner(complexes_owner, @update_attrs)
       assert %ComplexesOwner{} = complexes_owner
@@ -239,7 +240,8 @@ defmodule Hadrian.AccountsTest do
     end
 
     test "change_complexes_owner/1 returns a complexes owner changeset" do
-      {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(build(:complexes_owner_attrs))
+      attrs = string_params_for(:complexes_owner)
+      {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(attrs)
       assert %Ecto.Changeset{} = Accounts.change_complexes_owner(complexes_owner)
     end
 

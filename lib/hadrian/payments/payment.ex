@@ -85,6 +85,15 @@ defmodule Hadrian.Payments.Payment do
       redirect_urls: redirect_urls}
   end
 
+  @doc """
+    Creates payment. Fetches new token if necessary. Returns payment urls and token - it may be new token if one
+    that was provided had expired. May raise error
+
+    ## Examples
+
+      iex> create(payment, token)
+      {:ok, %{token: new_or_old_token, urls: urls}
+  """
   def create(payment = %Payment{}, token) when is_binary(token) do
     Logger.info("Attempt to create payment")
 
@@ -100,10 +109,11 @@ defmodule Hadrian.Payments.Payment do
 
   defp perform_create_request(url, body, token) do
     headers = create_headers(token)
+    ok_status_code = 201
 
     with {:ok, response = %HTTP.Response{}} <- HTTP.post(url, body, headers),
-         {:ok, %HTTP.Response{}} <- parse_status_code(response),
-         %{"approval_url" => approval_url, "execute" => execute_url} <- parse_body(response.body) do
+         {:ok, %HTTP.Response{}} <- parse_status_code(response, ok_status_code),
+         %{"approval_url" => approval_url, "execute" => execute_url} <- parse_creation_body(response.body) do
       Logger.debug ~s(Received resposnse: \n #{inspect(response)})
       %{token: token, urls: %{approval: approval_url, execute: execute_url}}
     else
@@ -112,22 +122,22 @@ defmodule Hadrian.Payments.Payment do
     end
   end
 
-  defp parse_status_code(response = %HTTP.Response{status_code: status_code}) do
+  defp parse_status_code(response = %HTTP.Response{status_code: status_code}, ok_status_code) do
     case status_code do
-      201 -> {:ok, response}
+      ^ok_status_code -> {:ok, response}
       401 -> {:unauthorized, response}
       _   -> {:unkown_status_code, response}
     end
   end
 
-  defp parse_body(body) when is_binary(body) do
+  defp parse_creation_body(body) when is_binary(body) do
     Json.decode!(body)
     |> Map.get("links")
     |> Enum.filter(fn %{"rel" => rel} -> rel == "execute" or rel == "approval_url" end)
     |> Enum.reduce(%{}, fn %{"rel" => r, "href" => h}, acc -> Map.put(acc, r, h) end)
   end
 
-  defp parse_body(body) do
+  defp parse_creation_body(body) do
     msg = "Argument is not string. body: #{inspect(body)}"
     raise ArgumentError, message: msg
   end
@@ -139,8 +149,6 @@ defmodule Hadrian.Payments.Payment do
   end
 
   defp create_body(payment = %Payment{}) do
-
-
     payment
     |> to_map()
     |>  Json.encode!()
@@ -153,5 +161,51 @@ defmodule Hadrian.Payments.Payment do
   defp create_headers(token) do
     msg = ~s(Token is not string. \n Token: #{inspect(token)})
     Logger.error(msg)
+  end
+
+  @doc """
+    Executes payment
+
+
+  """
+  def execute(execute_payment_url, payer_id, token) when is_binary(execute_payment_url) and is_binary(payer_id)
+                                                         and is_binary(token) do
+    body = create_execution_body(payer_id)
+    headers = create_headers(token)
+    ok_status_code = 200
+
+    with {:ok, response = %HTTP.Response{}} <- HTTP.post(execute_payment_url, body, headers),
+         {:ok, %HTTP.Response{}} <- parse_status_code(response, ok_status_code) do
+      Logger.debug ~s(Received response: \n #{inspect(response)})
+      token
+     else
+       {:unauthorized, %HTTP.Response{}} -> handle_unauthorized_when_executing(execute_payment_url, payer_id)
+    end
+  end
+
+  defp create_execution_body(payer_id) when is_binary(payer_id) do
+    %{payer_id: payer_id}
+    |> Json.encode!()
+  end
+
+  defp create_execution_body(payer_id) do
+    msg = "Argument is not string. payer_id: #{inspect(payer_id)}"
+    raise ArgumentError, message: msg
+  end
+
+  # TODO: This should be generalized with handle_unauthorized/2
+  defp handle_unauthorized_when_executing(execute_payment_url, payer_id) do
+    Logger.warn("Token expired")
+    token = Payments.fetch_token()
+    execute(execute_payment_url, payer_id, token)
+  end
+
+  defp parse_execution_body(body) when is_binary(body) do
+
+  end
+
+  defp parse_execution_body(body) do
+    msg = "Argument is not string. body: #{inspect(body)}"
+    raise ArgumentError, message: msg
   end
 end

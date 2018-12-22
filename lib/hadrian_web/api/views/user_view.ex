@@ -19,7 +19,16 @@ defmodule HadrianWeb.Api.UserView do
   
   def render("ok.create.json", %{complexes_owner: complexes_owner}) do
     %{status: :ok,
+      id: complexes_owner.id,
       email: complexes_owner.email}
+  end
+
+  def render("ok.create.json", %{user: user}) do
+    %{status: :ok,
+      id: user.id,
+      email: user.email,
+      display_name: user.display_name,
+      paypal_email: user.paypal_email}
   end
 
   def render("error.create.json", %{changeset: changeset}) do

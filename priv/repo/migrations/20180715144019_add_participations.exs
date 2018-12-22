@@ -7,6 +7,9 @@ defmodule Hadrian.Repo.Migrations.AddParticipations do
       add :event_id,              references(:events, on_delete: :delete_all)
       add :has_paid,              :boolean, default: false, null: false
       add :is_event_owner,        :boolean, default: false, null: false
+      add :payment_approve_url,   :varchar, size: 200
+      add :payment_execute_url,   :varchar, size: 200
+      add :payer_id,              :varchar, size: 200
     end
 
     create unique_index(:participations, [:user_id, :event_id], name: :participation_index)
@@ -15,7 +18,6 @@ defmodule Hadrian.Repo.Migrations.AddParticipations do
 
   def down do
     drop unique_index(:participations, [:user_id, :event_id], name: :participation_index)
-    drop unique_index(:participations, [:is_event_owner], name: :only_one_owner_index)
     drop index(:participations, :event_id)
 
     drop table(:participations)

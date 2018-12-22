@@ -94,16 +94,15 @@ defmodule Hadrian.ActivitiesTest do
 
     test "list_participations/1 lists all participations", %{sport_arena: sport_arena} do
       event = insert(:event, sport_arena_id: sport_arena.id)
-      user_1 = insert(:user)
-      user_2 = insert(:user)
-      user_3 = insert(:user)
+      [user_1, user_2, user_3] = insert_list(3, :user)
 
       assert {:ok, %Participation{}} = Activities.create_participation(event, user_1)
       assert {:ok, %Participation{}} = Activities.create_participation(event, user_2)
       assert {:ok, %Participation{}} = Activities.create_participation(event, user_3)
       participators = Activities.get_event!(event.id).participators
       assert length(participators) == 3
-      assert [user_1.id, user_2.id, user_3.id] == Enum.map(participators, fn %User{id: id} -> id end)
+      assert Enum.sort([user_1.id, user_2.id, user_3.id]) == Enum.map(participators, fn %User{id: id} -> id end)
+                                                             |> Enum.sort()
     end
 
     test "get_participation/2 returns existing participation", %{sport_arena: sport_arena} do

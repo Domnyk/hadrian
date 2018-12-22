@@ -12,14 +12,8 @@ defmodule Hadrian.DataFactory do
 
     %ComplexesOwner{
       password: "Very secret password",
-      email: sequence(:email, &"test#{&1}@domain.com")
-    }
-  end
-
-  def complexes_owner_attrs_factory do
-    %{
-      "email" => sequence(:email, &"test#{&1}@domain.com"),
-      "password" => "Very secret password"
+      email: sequence(:email, &"test#{&1}@domain.com"),
+      paypal_email: sequence(:paypal_email, &"paypal#{&1}@domain.com"),
     }
   end
 
@@ -164,7 +158,8 @@ defmodule Hadrian.DataFactory do
 
     %User{
       display_name: sequence(:display_name, &"Display name #{&1}"),
-      email: sequence(:email, &"test#{&1}@domain.com")
+      email: sequence(:email, &"test#{&1}@domain.com"),
+      paypal_email: sequence(:paypal_email, &"paypal#{&1}@domain.com")
     }
   end
 

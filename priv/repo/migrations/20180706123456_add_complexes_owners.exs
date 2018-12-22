@@ -3,8 +3,9 @@ defmodule Hadrian.Repo.Migrations.AddComplexesOwners do
 
   def up do
     create table(:complexes_owners) do
-      add :email, :string
+      add :email, :varchar, size: 100
       add :password_hash, :string
+      add :paypal_email, :varchar, size: 100
     end
 
     create unique_index(:complexes_owners, [:email])

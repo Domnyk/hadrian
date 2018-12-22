@@ -36,6 +36,8 @@ defmodule HadrianWeb.Router do
     scope "/" do
       pipe_through [Authorize]
 
+      resources "/users", UserController, only: [:update]
+
       resources "/sport_arenas", SportArenaController do
         resources "/events", EventController, only: [:create, :update, :delete]
       end

@@ -5,6 +5,7 @@ defmodule Hadrian.Repo.Migrations.AddUsers do
     create table(:users) do
       add :email, :varchar, size: 100
       add :display_name, :varchar, size: 50
+      add :paypal_email, :varchar, size: 100
     end
 
     create unique_index(:users, [:email])
