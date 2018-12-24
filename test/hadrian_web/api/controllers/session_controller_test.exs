@@ -14,12 +14,13 @@ defmodule HadrianWeb.Api.SessionControllerTest do
   describe "create/2 when passwords match" do
     test "creates session with current user field", %{conn: conn} do
       attrs = string_params_for(:complexes_owner)
-      {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(attrs)
+      {:ok, %ComplexesOwner{} = owner} = Accounts.create_complexes_owner(attrs)
 
       conn = post conn, session_path(conn, :create, attrs)
 
-      assert json_response(conn, 200) == %{"status" => "ok", "email" => attrs["email"]}
-      assert Plug.Conn.get_session(conn, :current_user_id) == complexes_owner.id
+      assert json_response(conn, 200) == %{"id" => owner.id, "email" => owner.email,
+                                           "paypal_email" => owner.paypal_email}
+      assert Plug.Conn.get_session(conn, :current_user_id) == owner.id
     end
 
     test "sends warning when user tries to sign in when already signed", %{conn: conn} do
@@ -41,14 +42,14 @@ defmodule HadrianWeb.Api.SessionControllerTest do
 
     test "sends response with user data", %{conn: conn} do
       attrs = string_params_for(:complexes_owner)
-      {:ok, %ComplexesOwner{}} = Accounts.create_complexes_owner(attrs)
+      {:ok, %ComplexesOwner{} = owner} = Accounts.create_complexes_owner(attrs)
 
       response =
         conn
         |> post(session_path(conn, :create, attrs))
         |> json_response(200)
 
-      assert response == %{"status" => "ok", "email" => attrs["email"]}
+      assert response == %{"id" => owner.id, "email" => owner.email, "paypal_email" => owner.paypal_email}
     end
   end
 

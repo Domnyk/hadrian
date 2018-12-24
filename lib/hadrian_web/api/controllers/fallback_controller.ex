@@ -1,4 +1,6 @@
 defmodule HadrianWeb.Api.FallbackController do
+  require Logger
+
   @moduledoc """
   Translates controller action results into valid `Plug.Conn` responses.
 
@@ -7,6 +9,8 @@ defmodule HadrianWeb.Api.FallbackController do
   use HadrianWeb, :controller
 
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
+    Logger.warn inspect(changeset)
+
     conn
     |> put_status(:unprocessable_entity)
     |> render(HadrianWeb.Api.ChangesetView, "error.json", changeset: changeset)

@@ -70,8 +70,8 @@ defmodule HadrianWeb.Api.SportArenaControllerTest do
      params = %{ data: %{ sport_arena: @invalid_attrs }}
      conn = post conn, sport_object_sport_arena_path(conn, :create, sport_object.id), params
      resp = json_response(conn, 422)
-     assert resp["status"] == "error"
-     assert resp["errors"] != %{}
+
+     assert resp != %{}
     end
   end
 
@@ -96,8 +96,8 @@ defmodule HadrianWeb.Api.SportArenaControllerTest do
                                                   sport_arena: sport_arena} do
       conn = put conn, sport_arena_path(conn, :update, sport_arena), data: %{sport_arena: @invalid_attrs}
       resp = json_response(conn, 422)
-      assert resp["status"] == "error"
-      assert resp["errors"] != %{}
+
+      assert resp != %{}
     end
 
     defp build_params(sport_disciplines_ids, name) do

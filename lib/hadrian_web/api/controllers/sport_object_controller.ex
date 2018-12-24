@@ -1,6 +1,8 @@
 defmodule HadrianWeb.Api.SportObjectController do
   use HadrianWeb, :controller
 
+  require Logger
+
   alias Hadrian.Owners
   alias Hadrian.Owners.SportObject
 

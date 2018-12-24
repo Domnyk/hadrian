@@ -77,7 +77,6 @@ defmodule Hadrian.Activities do
   def update_event(%Event{} = event, attrs) do
     event
     |> Event.changeset(attrs)
-
     |> Repo.update()
   end
 
@@ -129,6 +128,12 @@ defmodule Hadrian.Activities do
     %Participation{}
     |> Participation.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def update_participation(%Participation{} = participation, attrs) do
+    participation
+    |> Participation.changeset(attrs)
+    |> Repo.update()
   end
 
   def delete_participation(%Participation{} = participation) do

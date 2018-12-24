@@ -31,7 +31,7 @@ defmodule HadrianWeb.SportObjectControllerTest do
 
   describe "index/1 where argument is sport complex id" do
     test "returns all sport objects in sport complex", %{conn: conn, sport_complex: sport_complex, sport_object: sport_object} do
-      conn = get conn, sport_complex_sport_object_path(conn, :index, sport_complex.id)
+      conn = get conn, complex_sport_object_path(conn, :index, sport_complex.id)
 
       resp = json_response(conn, 200)
       [sport_object_from_resp | _] = resp["data"]["sport_objects"]
@@ -63,7 +63,7 @@ defmodule HadrianWeb.SportObjectControllerTest do
       |> Kernel.put_in(["data", "sport_object", "sport_complex_id"], sport_complex.id)
       sport_object_from_req = request_data["data"]["sport_object"]
 
-      conn = post conn, sport_complex_sport_object_path(conn, :create, sport_complex.id), request_data
+      conn = post conn, complex_sport_object_path(conn, :create, sport_complex.id), request_data
       resp = json_response(conn, 201)
       sport_object_from_res = resp["data"]["sport_object"]
 
@@ -79,12 +79,10 @@ defmodule HadrianWeb.SportObjectControllerTest do
       |> Kernel.put_in(["data", "sport_object", "sport_complex_id"], sport_complex.id)
       |> Kernel.put_in(["data", "sport_object", "geo_coordinates"], nil)
 
-      conn = post conn, sport_complex_sport_object_path(conn, :create, sport_complex.id), invalid_request_data
+      conn = post conn, complex_sport_object_path(conn, :create, sport_complex.id), invalid_request_data
       resp = json_response(conn, 422)
 
-      assert resp["errors"]
-      assert resp["status"] == "error"
-      assert resp["errors"]["geo_coordinates"] == ["can't be blank"]
+      assert resp["geo_coordinates"] == ["can't be blank"]
     end
   end
 
@@ -111,7 +109,6 @@ defmodule HadrianWeb.SportObjectControllerTest do
       conn = put conn, sport_object_path(conn, :update, sport_object.id), params
 
       resp = json_response(conn, 422)
-      assert resp["status"] == "error"
       assert resp["errors"] != %{}
     end
   end

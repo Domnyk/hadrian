@@ -6,31 +6,31 @@ defmodule HadrianWeb.Api.UserControllerTest do
   describe "create" do
     test "inserts user when data is valid", %{conn: conn} do
       attrs = string_params_for(:complexes_owner)
-      complexes_owner_data = %{"complexes_owner" => attrs}
-      conn = post conn, user_path(conn, :create), complexes_owner_data
+      conn = post conn, user_path(conn, :create), attrs
       resp = json_response(conn, 200)
-      user_from_db = Accounts.get_complexes_owner_by_email(resp["email"])
 
-      assert user_from_db
+      assert Accounts.get_complexes_owner!(resp["id"])
     end
 
     test "returns json with user fields when data is valid", %{conn: conn} do
       attrs = string_params_for(:complexes_owner)
-      complexes_owner_data = %{"complexes_owner" => attrs}
-      conn = post conn, user_path(conn, :create), complexes_owner_data
+      conn = post conn, user_path(conn, :create), attrs
       resp = json_response(conn, 200)
 
-      assert resp["status"] == "ok"
+      assert resp["id"]
       assert resp["email"] == attrs["email"]
+      assert resp["paypal_email"] == attrs["paypal_email"]
     end
 
-    test "returns status 'error' when data is invalid", %{conn: conn} do
-      invalid_data = %{"complexes_owner" => %{}}
+    test "returns errors when data is invalid", %{conn: conn} do
+      invalid_data = %{}
 
       conn = post conn, user_path(conn, :create), invalid_data
-      resp = json_response(conn, 200)
+      resp = json_response(conn, 422)
 
-      assert resp["status"] == "error"
+      assert resp["email"]
+      assert resp["password"]
+      assert resp["paypal_email"]
     end
   end
 end

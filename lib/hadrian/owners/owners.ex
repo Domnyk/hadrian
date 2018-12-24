@@ -37,6 +37,14 @@ defmodule Hadrian.Owners do
   """
   def get_sport_complex!(id), do: Repo.get!(SportComplex, id)
 
+  def get_sport_complex(id) do
+    try do
+      {:ok, Repo.get!(SportComplex, id)}
+    rescue
+      Ecto.NoResultsError -> :not_found
+    end
+  end
+
   @doc """
   Creates a sport_complex.
 
@@ -88,32 +96,6 @@ defmodule Hadrian.Owners do
   def delete_sport_complex(%SportComplex{} = sport_complex) do
     Repo.delete(sport_complex)
   end
-
-
-  @doc """
-  Deletes a SportComplex by id.
-
-  ## Examples
-      
-      iex> delete_sport_complex(sport_complex)
-      {:ok, %SportComplex{}}
-
-      iex> delete_sport_complex(sport_complex)
-      {:error, :no_such_sport_complex}
-
-      iex> delete_sport_complex(sport_complex)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_sport_complex(id) do
-    with %SportComplex{} = sport_complex <- Repo.get(SportComplex, id) do
-      change_sport_complex(sport_complex)
-      |> Repo.delete
-    else
-      nil -> {:error, :not_found}
-    end
-  end
-
 
 
   @doc """

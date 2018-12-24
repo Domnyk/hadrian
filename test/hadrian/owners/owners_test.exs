@@ -26,6 +26,16 @@ defmodule Hadrian.OwnersTest do
       assert Owners.get_sport_complex!(sport_complex.id) == sport_complex
     end
 
+    test "get_sport_complex/1 returns complex" do
+      complexes_owner = insert(:complexes_owner)
+      sport_complex = insert(:sport_complex, complexes_owner_id: complexes_owner.id)
+      assert Owners.get_sport_complex(sport_complex.id) == {:ok, sport_complex}
+    end
+
+    test "get_sport_complex/1 returns :not_found" do
+      assert Owners.get_sport_complex(-1) == :not_found
+    end
+
     test "create_sport_complex/1 with valid data creates a sport_complex" do
       complexes_owner = insert(:complexes_owner)
       valid_attrs = %{name: "some name", complexes_owner_id: complexes_owner.id}
@@ -57,26 +67,6 @@ defmodule Hadrian.OwnersTest do
       sport_complex = insert(:sport_complex, complexes_owner_id: complexes_owner.id)
       assert {:ok, %SportComplex{}} = Owners.delete_sport_complex(sport_complex)
       assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_complex!(sport_complex.id) end
-    end
-
-    test "when passed id of existing sport complex delete_sport_complex_1 deletes it" do
-      complexes_owner = insert(:complexes_owner)
-      sport_complex = insert(:sport_complex, complexes_owner_id: complexes_owner.id)
-      id = Integer.to_string(sport_complex.id)
-      assert {:ok, %SportComplex{}} = Owners.delete_sport_complex(id)
-      assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_complex!(sport_complex.id) end
-    end
-
-    test "when passed id of existing sport complex but it cannot be deleted due to DB constraints delete_sport_comlex 
-          returns :error" do
-      sport_complex = insert(:sport_complex)
-      insert(:sport_object, sport_complex_id: sport_complex.id)
-      id = Integer.to_string(sport_complex.id)
-      assert {:error, %Ecto.Changeset{}} = Owners.delete_sport_complex(id)
-    end
-
-    test "when passed id of non existing sport complex delete_sport_complex_1 returns :error" do
-      assert {:error, :not_found} = Owners.delete_sport_complex("1")
     end
 
     test "change_sport_complex/1 returns a sport_complex changeset" do

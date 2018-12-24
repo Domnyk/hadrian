@@ -1,41 +1,21 @@
 defmodule HadrianWeb.Api.UserView do
   use HadrianWeb, :view
   alias HadrianWeb.Api.UserView
-  alias HadrianWeb.Api.ErrorView
 
   def render("index.json", %{users: users}) do
-    %{data: render_many(users, UserView, "user.json")}
+    %{data: render_many(users, UserView, "show.json")}
   end
 
-  def render("user.json", %{user: user}) do
+  def render("show.json", %{user: user}) do
     %{id: user.id,
       email: user.email,
+      paypal_email: user.paypal_email,
       display_name: user.display_name}
   end
-
-  def render("id.json", %{user: user}) do
-    %{id: user.id}
-  end
   
-  def render("ok.create.json", %{complexes_owner: complexes_owner}) do
-    %{status: :ok,
-      id: complexes_owner.id,
-      email: complexes_owner.email}
-  end
-
-  def render("ok.create.json", %{user: user}) do
-    %{status: :ok,
-      id: user.id,
-      email: user.email,
-      display_name: user.display_name,
-      paypal_email: user.paypal_email}
-  end
-
-  def render("error.create.json", %{changeset: changeset}) do
-    errors = ErrorView.parse_errors(changeset)
-
-    %{}
-    |> Map.put(:errors, errors)
-    |> Map.put(:status, :error)
+  def render("show.json", %{complexes_owner: complexes_owner}) do
+    %{id: complexes_owner.id,
+      email: complexes_owner.email,
+      paypal_email: complexes_owner.paypal_email}
   end
 end

@@ -11,7 +11,7 @@ defmodule HadrianWeb.Router do
   scope "/api", HadrianWeb.Api do
     pipe_through :api
 
-    resources "/sport_complexes", SportComplexController, only: [:index, :create, :update, :delete] do
+    resources "/complexes", ComplexController, only: [:index] do
       resources "/sport_objects", SportObjectController, only: [:index, :create] 
     end
 
@@ -36,15 +36,17 @@ defmodule HadrianWeb.Router do
     scope "/" do
       pipe_through [Authorize]
 
-      resources "/users", UserController, only: [:update]
+      resources "/complexes", ComplexController, only: [:create, :update, :delete]
+      patch "/users", UserController, :update
 
       resources "/sport_arenas", SportArenaController do
         resources "/events", EventController, only: [:create, :update, :delete]
       end
 
       resources "/events", EventController do
-        resources "/participations", ParticipationController, only: [:index, :create]
-        delete "/participations", ParticipationController, :delete
+        resources "/participators", ParticipationController, only: [:index, :create]
+        delete "/participators", ParticipationController, :delete
+        get "/participators/pay", ParticipationController, :pay
       end
     end
   end
