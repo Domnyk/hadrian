@@ -7,7 +7,7 @@ defmodule HadrianWeb.Api.ParticipationController do
   alias Hadrian.Accounts
   alias Hadrian.Payments
   alias HadrianWeb.Api.Helpers.Session
-  alias Hadrian.PayPalStorage
+  alias Hadrian.PaypalStorage
   alias Hadrian.Activities
   alias Hadrian.Activities.Participation
   alias HadrianWeb.Endpoint
@@ -26,6 +26,10 @@ defmodule HadrianWeb.Api.ParticipationController do
     with {:ok, %Participation{} = participation} <- Activities.create_participation(event, new_participation) do
       Logger.info "Creating payment"
       HadrianWeb.Api.PaymentController.create(conn, %{"event_id" => event_id})
+
+      conn
+      |> put_status(:ok)
+      |> render("show.json", participation: participation)
     end
   end
 

@@ -12,13 +12,13 @@ defmodule HadrianWeb.Api.PaymentController do
   alias Hadrian.Accounts.ComplexesOwner
   alias Hadrian.Accounts.User
   alias Hadrian.Payments
-  alias Hadrian.PayPalStorage
+  alias Hadrian.PaypalStorage
   alias HadrianWeb.Api.Helpers.Session
 
   action_fallback HadrianWeb.Api.FallbackController
 
   def create(conn, %{"event_id" => event_id}) do
-    token = Hadrian.PayPalStorage.get_token()
+    token = PaypalStorage.get_token()
     participation = Activities.get_participation!(event_id, Session.get_user_id(conn))
     user = Accounts.get_user!(participation.user_id)
     object = get_object!(event_id)
@@ -27,8 +27,7 @@ defmodule HadrianWeb.Api.PaymentController do
 
     with {:ok, %{token: token, urls: urls}} <- Payments.create_payment(token, attrs),
          {:ok, %Participation{}} <- update_participation(participation, urls) do
-      PayPalStorage.put_token(token)
-      send_resp(conn, :ok, "")
+      PaypalStorage.put_token(token)
     end
   end
 
@@ -66,7 +65,7 @@ defmodule HadrianWeb.Api.PaymentController do
   end
 
   def execute(conn, %{"event_id" => event_id, "PayerID" => payer_id}) do
-    token = Hadrian.PayPalStorage.get_token()
+    token = Hadrian.PaypalStorage.get_token()
     participation = Activities.get_participation!(event_id, Session.get_user_id(conn))
     {:ok, participation} = Activities.update_participation(participation, %{payer_id: payer_id})
 
@@ -75,7 +74,7 @@ defmodule HadrianWeb.Api.PaymentController do
 
       Activities.update_participation(participation, %{has_paid: true})
       redirect_url = Application.get_env(:hadrian, :client_url) <> "/payment?status=success"
-      PayPalStorage.put_token(token)
+      PaypalStorage.put_token(token)
       redirect(conn, external: redirect_url)
     end
   end

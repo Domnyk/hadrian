@@ -1,8 +1,14 @@
-defmodule Hadrian.PayPalStorage do
+defmodule Hadrian.PaypalStorage do
   use Agent
 
+  require Logger
+
+  alias Hadrian.Payments
+
   def start_link() do
-    Agent.start_link(fn -> %{token: ""} end, name: __MODULE__)
+    Logger.debug "Storage process has started"
+    token = Payments.fetch_token()
+    Agent.start_link(fn -> %{token: token} end, name: __MODULE__)
   end
 
   def get_token do
@@ -10,6 +16,7 @@ defmodule Hadrian.PayPalStorage do
   end
 
   def put_token(token) when is_binary(token) do
+    Logger.info "Token has been replaced"
     Agent.update(__MODULE__, &Map.put(&1, :token, token))
   end
 

@@ -14,7 +14,7 @@ defmodule Hadrian.Application do
       supervisor(HadrianWeb.Endpoint, []),
       # Start your own worker by calling: Hadrian.Worker.start_link(arg1, arg2, arg3)
       # worker(Hadrian.Worker, [arg1, arg2, arg3]),
-      worker(Hadrian.PayPalStorage, []),
+      worker(Hadrian.PaypalStorage, []),
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
