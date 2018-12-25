@@ -45,8 +45,9 @@ defmodule HadrianWeb.Router do
 
       resources "/events", EventController do
         resources "/participators", ParticipationController, only: [:index, :create]
+        get "/payments/approve", PaymentController, :approve
+        get "/payments/execute", PaymentController, :execute
         delete "/participators", ParticipationController, :delete
-        get "/participators/pay", ParticipationController, :pay
       end
     end
   end
