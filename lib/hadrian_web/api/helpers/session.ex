@@ -12,4 +12,11 @@ defmodule HadrianWeb.Api.Helpers.Session do
     |> fetch_session()
     |> get_session(:current_user_type)
   end
+
+  def user_signed_in?(%Plug.Conn{} = conn) do
+    case get_user_id(conn) do
+      id when is_number(id) -> true
+      _ -> false
+    end
+  end
 end

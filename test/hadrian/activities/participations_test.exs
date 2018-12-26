@@ -6,8 +6,6 @@ defmodule Hadrian.ParticipationsTest do
   alias Hadrian.Activities.Participation
   alias Hadrian.Accounts.User
 
-  @independence_day_2018 ~D[2018-11-11]
-
   setup do
     complexes_owner = insert(:complexes_owner)
     sport_complex = insert(:sport_complex, complexes_owner_id: complexes_owner.id)
@@ -97,6 +95,15 @@ defmodule Hadrian.ParticipationsTest do
 
       assert {:error, %Changeset{errors: [end_of_joining_phase: {"joining phase has ended already", []}]}}
              = Activities.create_participation(event, user)
+    end
+
+    test "does not allow to join event when max number of participators has been reached", %{sport_arena: arena} do
+      event = insert(:event, sport_arena_id: arena.id, max_num_of_participants: 1, min_num_of_participants: 1)
+      [user_1, user_2] = insert_list(2, :user)
+
+      assert {:ok, %Participation{} = participation_1} = Activities.create_participation(event, user_1)
+      assert {:error, %Changeset{errors: [max_num_of_participants: {"reached max number of participators", []}]}}
+             = Activities.create_participation(event, user_2)
     end
   end
 

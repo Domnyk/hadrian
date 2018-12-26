@@ -7,6 +7,7 @@ defmodule HadrianWeb.Api.SessionController do
   alias Hadrian.Accounts
   alias Hadrian.Accounts.User
   alias Hadrian.Accounts.ComplexesOwner
+  alias HadrianWeb.Api.Helpers.Session
 
   # Only for dev env
   def new(conn, %{"id" => id, "redirect_url" => redirect_url}) do
@@ -20,12 +21,12 @@ defmodule HadrianWeb.Api.SessionController do
   end
 
   def new(conn, %{"redirect_url" => redirect_url}) do
-    check_sign_in_status(conn)
+    Session.user_signed_in?(conn)
     |> case do
-         :not_signed_in ->
+         false ->
            Agent.start_link(fn -> redirect_url end, name: __MODULE__)
            redirect_to_fb(conn)
-         :signed_in ->
+         true ->
            Logger.info("User already signed in")
            redirect(conn, external: redirect_url)
        end
@@ -56,25 +57,11 @@ defmodule HadrianWeb.Api.SessionController do
   end
 
   defp handle_session_creation_with_password(conn, email, password) do
-    check_sign_in_status(conn)
+    Session.user_signed_in?(conn)
     |> case do
-         :not_signed_in -> handle_not_signed_in(conn, %{email: email, password: password})
-         :signed_in -> render(conn, "warning.create.json", message: "Complexes owner has already signed in")
+         false -> handle_not_signed_in(conn, %{email: email, password: password})
+         true -> render(conn, "warning.create.json", message: "Complexes owner has already signed in")
        end
-  end
-
-  defp check_sign_in_status(conn) do
-    current_user =
-      conn
-      |> fetch_session()
-      |> get_session(:current_user_id)
-
-    Logger.info("Current user inside check_sign_in_status: #{current_user}")
-
-    case current_user do
-      nil -> :not_signed_in
-       _ -> :signed_in
-    end
   end
 
   defp handle_not_signed_in(conn_with_fetched_session, %{email: email, password: password}) do
@@ -105,7 +92,7 @@ defmodule HadrianWeb.Api.SessionController do
           |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}&email=#{user.email}")
         {:no_such_user, email: _} ->
           Logger.info("No user in database with such email: #{inspect(email)}. Creating user")
-          {:ok, %User{} = user} = Accounts.create_user(%{email: email, display_name: name})
+          {:ok, %User{} = user} = Accounts.create_user(%{email: email, display_name: name, paypal_email: email})
           conn
           |> fetch_session()
           |> put_session(:current_user_id, user.id)
