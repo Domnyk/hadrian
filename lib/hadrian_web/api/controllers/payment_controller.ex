@@ -3,19 +3,13 @@ defmodule HadrianWeb.Api.PaymentController do
 
   require Logger
 
-  alias HadrianWeb.Endpoint
   alias Hadrian.Activities
-  alias Hadrian.Activities.Participation
-  alias Hadrian.Owners
-  alias Hadrian.Owners.SportObject
-  alias Hadrian.Accounts
-  alias Hadrian.Accounts.ComplexesOwner
-  alias Hadrian.Accounts.User
   alias Hadrian.Payments
   alias Hadrian.PaypalStorage
   alias HadrianWeb.Api.Helpers.Session
+  alias HadrianWeb.Api.Plugs
 
-  # TODO: Add plug to check whether payment can be approved and executed or not
+  plug Plugs.ValidatePaymentTime
 
   action_fallback HadrianWeb.Api.FallbackController
 
