@@ -15,6 +15,8 @@ defmodule HadrianWeb.Api.PaymentController do
   alias Hadrian.PaypalStorage
   alias HadrianWeb.Api.Helpers.Session
 
+  # TODO: Add plug to check whether payment can be approved and executed or not
+
   action_fallback HadrianWeb.Api.FallbackController
 
   def approve(conn, %{"event_id" => event_id}) do

@@ -27,3 +27,6 @@ config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.InMemory
 
 # Configure client url
 config :hadrian, :client_url, "https://domain.test.com"
+
+# Configure Paypal's sandbox address
+config :hadrian, :api_url, "https://api.sandbox.paypal.com"

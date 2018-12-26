@@ -1,4 +1,4 @@
-defmodule HadrianTest.Helpers do
+defmodule Hadrian.Helpers do
 
   @doc """
     Reverse of Repo.preload/3
