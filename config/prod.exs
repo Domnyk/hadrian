@@ -78,4 +78,4 @@ config :hadrian, :client_url, "https://vinci-11235813.herokuapp.com"
 
 # Paypal
 config :hadrian, :api_url, "https://api.sandbox.paypal.com"
-  
+config :hadrian, :paypal_storage, Hadrian.PaypalStorage

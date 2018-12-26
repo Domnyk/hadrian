@@ -30,3 +30,4 @@ config :hadrian, :client_url, "https://domain.test.com"
 
 # Configure Paypal's sandbox address
 config :hadrian, :api_url, "https://api.sandbox.paypal.com"
+config :hadrian, :paypal_storage, Hadrian.PaypalStorage.Test
