@@ -3,14 +3,10 @@ defmodule HadrianWeb.Api.ParticipationController do
 
   require Logger
 
-  alias Hadrian.Owners
   alias Hadrian.Accounts
   alias Hadrian.Payments
-  alias HadrianWeb.Api.Helpers.Session
-  alias Hadrian.PaypalStorage
   alias Hadrian.Activities
   alias Hadrian.Activities.Participation
-  alias HadrianWeb.Endpoint
 
   action_fallback HadrianWeb.Api.FallbackController
 
@@ -23,10 +19,8 @@ defmodule HadrianWeb.Api.ParticipationController do
     event = Activities.get_event!(event_id)
     new_participation = Accounts.get_user!(get_session(conn, :current_user_id))
 
-    with {:ok, %Participation{} = participation} <- Activities.create_participation(event, new_participation) do
-      Logger.info "Creating payment"
-      HadrianWeb.Api.PaymentController.create(conn, %{"event_id" => event_id})
-
+    with {:ok, %Participation{} = participation} <- Activities.create_participation(event, new_participation),
+         {:ok, %Participation{} = participation} <- Payments.create_payment(participation) do
       conn
       |> put_status(:ok)
       |> render("show.json", participation: participation)
