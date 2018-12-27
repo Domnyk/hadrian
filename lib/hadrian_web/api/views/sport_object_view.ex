@@ -51,4 +51,12 @@ defmodule HadrianWeb.Api.SportObjectView do
     %{id: sport_object.id, 
       name: sport_object.name}
   end
+
+  def render("search.json", %{results: results}) do
+    render_many(results, SportObjectView, "result.json", as: :result)
+  end
+
+  def render("result.json", %{result: %{object_id: id, average_price: avg_price, distance: dist}}) do
+    %{object_id: id, average_price: avg_price, distance: dist}
+  end
 end

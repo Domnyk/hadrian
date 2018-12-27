@@ -5,6 +5,7 @@ defmodule Hadrian.Repo.Migrations.AddSportArenas do
     create table("sport_arenas") do
       add :name,            :varchar, size: 100
       add :sport_object_id, references("sport_objects")
+      add :price_per_hour,  :float, null: false
     end
 
     create index("sport_arenas", [:sport_object_id], [name: "sport_object_id_idx"])

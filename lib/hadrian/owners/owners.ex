@@ -287,6 +287,24 @@ defmodule Hadrian.Owners do
     SportObject.changeset(sport_object, %{})
   end
 
+  def search_for_objects(criteria) when is_map(criteria) do
+    %{day: day, geo_location: geo_location, disciplines: disciplines} = criteria
+
+    object_to_search_results = fn (%SportObject{} = object) ->
+      %Types.GeoCoordinates{latitude: lat, longitude: lng} = object.geo_coordinates
+
+      %{object_id: object.id,
+      average_price: SportObject.get_average_price(object, disciplines),
+      distance: Hadrian.Geo.distance({lat, lng}, geo_location, :km)}
+    end
+
+    Repo.all(SportObject)
+    |> Repo.preload(:sport_arenas)
+    |> Enum.filter(fn object -> SportObject.are_disciplines_available?(object, disciplines) end)
+    |> Enum.filter(fn object -> SportObject.is_day_available?(object, day) end)
+    |> Enum.map(object_to_search_results)
+  end
+
   alias Hadrian.Owners.SportArena
 
   @doc """

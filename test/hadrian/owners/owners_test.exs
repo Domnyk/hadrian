@@ -260,9 +260,9 @@ defmodule Hadrian.OwnersTest do
     alias Hadrian.Owners.SportArena
     alias Hadrian.Owners.SportDiscipline
 
-    @valid_attrs %{name: "some name"}
-    @update_attrs %{name: "some updated name"}
-    @invalid_attrs %{name: nil}
+    @valid_attrs %{name: "some name", price_per_hour: 10.5}
+    @update_attrs %{name: "some updated name", price_per_hour: 12.5}
+    @invalid_attrs %{name: nil, price: nil}
 
     def sport_arena_fixture() do
       sport_complex = insert(:sport_complex)
@@ -325,6 +325,7 @@ defmodule Hadrian.OwnersTest do
 
       assert {:ok, %SportArena{} = sport_arena} = Owners.create_sport_arena(params)
       assert sport_arena.name == "some name"
+      assert sport_arena.price_per_hour == 10.5
     end
 
     test "create_sport_arena/1 with invalid data returns error changeset" do

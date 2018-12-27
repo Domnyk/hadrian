@@ -15,6 +15,7 @@ defmodule HadrianWeb.Router do
       resources "/sport_objects", SportObjectController, only: [:index, :create] 
     end
 
+    post "/sport_objects/search", SportObjectController, :search
     resources "/sport_objects", SportObjectController, only: [:index, :show, :update, :delete] do
       resources "/sport_arenas", SportArenaController, only: [:index, :create]
     end
@@ -35,6 +36,8 @@ defmodule HadrianWeb.Router do
 
     scope "/" do
       pipe_through [Authorize]
+
+      post "/objects/search", SportObjectController, :search
 
       resources "/complexes", ComplexController, only: [:create, :update, :delete]
       patch "/users", UserController, :update

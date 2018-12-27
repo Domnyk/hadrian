@@ -51,4 +51,13 @@ defmodule HadrianWeb.Api.SportObjectController do
       send_resp(conn, :no_content, "")
     end
   end
+
+  def search(conn, attrs) do
+    %{"day" => day_string, "disciplines" => disciplines, "geo_location" => %{"lat" => lat, "lng" => lng}} = attrs;
+    criteria = %{day: Date.from_iso8601!(day_string), disciplines: disciplines, geo_location: {lat, lng}}
+
+    with results when is_list(results) <- Owners.search_for_objects(criteria) do
+      render(conn, "search.json", results: results)
+    end
+  end
 end

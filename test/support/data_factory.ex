@@ -7,13 +7,22 @@ defmodule Hadrian.DataFactory do
     %{"months" => num_of_months, "days" => 2, "secs" => 10}
   end
 
+  @deprecated "Use owner_factory/0 instead"
   def complexes_owner_factory do
+    %Hadrian.Accounts.ComplexesOwner{
+      password: "Very secret password",
+      email: sequence(:email, &"test#{&1}@domain.com"),
+      paypal_email: sequence(:paypal_email, &"paypal#{&1}@domain.com"),
+    }
+  end
+
+  def owner_factory do
     alias Hadrian.Accounts.ComplexesOwner
 
     %ComplexesOwner{
       password: "Very secret password",
       email: sequence(:email, &"test#{&1}@domain.com"),
-      paypal_email: sequence(:paypal_email, &"paypal#{&1}@domain.com"),
+      paypal_email: sequence(:paypal_email, &"paypal#{&1}@domain.com")
     }
   end
 
@@ -35,6 +44,7 @@ defmodule Hadrian.DataFactory do
     }
   end
 
+  @deprecated "use object_factory/0 instead"
   def sport_object_factory do
     alias Decimal
     alias Hadrian.Owners.SportObject
@@ -43,6 +53,15 @@ defmodule Hadrian.DataFactory do
     
     %SportObject{
       name: sequence(:name, name_val),
+      geo_coordinates: sequence(:geo_coordinates, gen_geo_coordinates_val()),
+      address: sequence(:address, gen_address_val()),
+      booking_margin: %{"months" => 0, "days" => 2, "secs" => 3}
+    }
+  end
+
+  def object_factory do
+    %Hadrian.Owners.SportObject{
+      name: sequence(:name, &"Sport object number #{&1}"),
       geo_coordinates: sequence(:geo_coordinates, gen_geo_coordinates_val()),
       address: sequence(:address, gen_address_val()),
       booking_margin: %{"months" => 0, "days" => 2, "secs" => 3}
@@ -123,11 +142,17 @@ defmodule Hadrian.DataFactory do
     fn _ -> longitude_val end
   end
 
+  @deprecated "use arena_factory/0 instead"
   def sport_arena_factory do
     alias Hadrian.Owners.SportArena
 
-    %SportArena{
-      name: "Sport Arena of city Fake"
+    %SportArena{name: "Sport Arena of city Fake", price_per_hour: 10.5}
+  end
+
+  def arena_factory do
+    %Hadrian.Owners.SportArena{
+      name: "Sport Arena of city Fake",
+      price_per_hour: 10.5
     }
   end
 
@@ -136,6 +161,7 @@ defmodule Hadrian.DataFactory do
       "data" => %{
         "sport_arena" => %{
           "name" => "Sport arena of city Fake",
+          "price_per_hour" => "10.5",
           "sport_disciplines" => [
             %{"id" => 1, "name" => "Football"},
             %{"id" => 2, "name" => "Basketball"}
