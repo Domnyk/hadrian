@@ -41,7 +41,7 @@ defmodule HadrianWeb.Api.Plugs.ValidatePaymentTime do
   defp handle_invalid_payment_time(conn) do
     conn
     |> put_status(:bad_request)
-    |> Phoenix.Controller.render(HadrianWeb.Api.ErrorView, :"400")
+    |> Phoenix.Controller.render(HadrianWeb.Api.InvalidPaymentView, :payment_in_join_phase)
     |> halt()
   end
 end
