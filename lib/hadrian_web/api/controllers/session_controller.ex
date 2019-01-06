@@ -80,24 +80,24 @@ defmodule HadrianWeb.Api.SessionController do
     redirect_url = Agent.get(__MODULE__, fn state -> state end)
 
     with {:ok, access_token} <- Authentication.Facebook.exchange_code_for_access_token(code),
-         {:ok, %{email: email, name: name}} <- Authentication.Facebook.get_user_email(access_token)
+         {:ok, %{fb_id: fb_id, name: name}} <- Authentication.Facebook.get_user(access_token)
     do
-      case Accounts.get_user_by_email(email) do
+      case Accounts.get_user_by_fb_id(fb_id) do
         {:ok, %User{} = user} ->
           Logger.info("User exists in DB. Creating session")
           conn
           |> fetch_session()
           |> put_session(:current_user_id, user.id)
           |> put_session(:current_user_type, :user)
-          |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}&email=#{user.email}")
-        {:no_such_user, email: _} ->
-          Logger.info("No user in database with such email: #{inspect(email)}. Creating user")
-          {:ok, %User{} = user} = Accounts.create_user(%{email: email, display_name: name, paypal_email: email})
+          |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}")
+        {:no_such_user, fb_id: _} ->
+          Logger.info("No user in database with such fb_id: #{inspect(fb_id)}. Creating user")
+          {:ok, %User{} = user} = Accounts.create_user(%{fb_id: fb_id, display_name: name, paypal_email: "test@gmail.com"})
           conn
           |> fetch_session()
           |> put_session(:current_user_id, user.id)
           |> put_session(:current_user_type, :user)
-          |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}&email=#{user.email}")
+          |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}")
       end
   end
 

@@ -4,7 +4,7 @@ defmodule Hadrian.Accounts.User do
   alias Hadrian.Activities.Participation
 
   schema "users" do
-    field :email, :string
+    field :fb_id, :string
     field :display_name, :string
     field :paypal_email, :string
 
@@ -17,11 +17,10 @@ defmodule Hadrian.Accounts.User do
     email = ~r/^[\p{L}\p{Nd}]{1}([-\p{L}\p{Nd}_]+[\.]{0,2}[+]?)+@([-\p{L}\p{Nd}_]{1,}\.)+[\p{L}\p{Nd}]{2,4}$/xiu
 
     user
-    |> cast(attrs, [:email, :display_name, :paypal_email])
-    |> unique_constraint(:email)
+    |> cast(attrs, [:fb_id, :display_name, :paypal_email])
+    |> unique_constraint(:fb_id)
     |> unique_constraint(:display_name)
-    |> validate_format(:email, email)
     |> validate_format(:paypal_email, email)
-    |> validate_required([:email, :display_name, :paypal_email])
+    |> validate_required([:fb_id, :display_name, :paypal_email])
   end
 end

@@ -39,10 +39,10 @@ defmodule Hadrian.Accounts do
     Repo.get!(User, id)
   end
 
-  def get_user_by_email(email) do
-    case Repo.get_by(User, email: email) do
+  def get_user_by_fb_id(fb_id) when is_binary(fb_id) do
+    case Repo.get_by(User, fb_id: fb_id) do
       %User{} = user -> {:ok, user}
-      _ -> {:no_such_user, email: email}
+      _ -> {:no_such_user, fb_id: fb_id}
     end
   end
 

@@ -31,18 +31,18 @@ defmodule Hadrian.AccountsTest do
       assert_that_users_are_equal(user, user_from_db)
     end
 
-    test "get_user_by_email/1 returns the user with given email" do
+    test "get_user_by_fb_id/1 returns the user with given facebook id" do
       user = insert(:user)
 
-      {:ok, %User{} = user_from_db} = Accounts.get_user_by_email(user.email)
+      {:ok, %User{} = user_from_db} = Accounts.get_user_by_fb_id(user.fb_id)
 
       assert_that_users_are_equal(user, user_from_db)
     end
 
-    test "get_user_by_email/1 returns {:no_such_user, email} when user does not exist" do
-      email = "bob@test.com"
+    test "get_user_by_fb_id/1 returns {:no_such_user, fb_id} when user does not exist" do
+      fb_id = "0123456789"
 
-      {:no_such_user, email: ^email} = Accounts.get_user_by_email(email)
+      {:no_such_user, fb_id: ^fb_id} = Accounts.get_user_by_fb_id(fb_id)
     end
 
     test "create_user/1 with valid data creates a user" do
