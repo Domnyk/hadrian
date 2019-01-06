@@ -19,10 +19,11 @@ defmodule Hadrian.Accounts.ComplexesOwner do
 
     complexes_owner
     |> cast(attrs, [:email, :password, :paypal_email])
+    |> validate_required([:email, :password, :paypal_email])
     |> unique_constraint(:email)
+    |> unique_constraint(:paypal_email)
     |> validate_format(:email, email)
     |> validate_format(:paypal_email, email)
-    |> validate_required([:email, :password, :paypal_email])
     |> maybe_insert_hash_password()
   end
 

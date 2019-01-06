@@ -9,7 +9,7 @@ defmodule HadrianWeb.Api.PaymentController do
   alias HadrianWeb.Api.Helpers.Session
   alias HadrianWeb.Api.Plugs
 
-  # plug Plugs.ValidatePaymentTime
+  plug Plugs.ValidatePaymentTime
 
   action_fallback HadrianWeb.Api.FallbackController
 

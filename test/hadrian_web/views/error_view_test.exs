@@ -16,7 +16,7 @@ defmodule HadrianWeb.ErrorViewTest do
 
     test "when invalid changeset returns map with fields which did not pass validation" do
       user_attrs = %{"email" => "this email has wrong format"}
-      expected_map = %{email: ["has invalid format"], display_name: ["can't be blank"],
+      expected_map = %{fb_id: ["can't be blank"], display_name: ["can't be blank"],
                        paypal_email: ["can't be blank"]}
       changeset = User.changeset(%User{}, user_attrs)
 

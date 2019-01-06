@@ -39,6 +39,13 @@ defmodule Hadrian.Accounts do
     Repo.get!(User, id)
   end
 
+  def get_user_by_paypal_email(email) when is_binary(email) do
+    case Repo.get_by(User, paypal_email: email) do
+      %User{} = user -> {:ok, user}
+      _ -> {:no_such_user, paypal_email: email}
+    end
+  end
+
   def get_user_by_fb_id(fb_id) when is_binary(fb_id) do
     case Repo.get_by(User, fb_id: fb_id) do
       %User{} = user -> {:ok, user}

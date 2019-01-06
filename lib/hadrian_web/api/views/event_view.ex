@@ -43,7 +43,6 @@ defmodule HadrianWeb.Api.EventView do
   defp render_participator(%User{} = participator, %Participation{} = participation) do
     %{
       id: participator.id,
-      email: participator.email,
       display_name: participator.display_name,
       has_paid: participation.has_paid,
       is_event_owner: participation.is_event_owner}

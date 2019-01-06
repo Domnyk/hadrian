@@ -34,7 +34,7 @@ defmodule Hadrian.Payments.Payment do
   end
 
   defp validate_payer_exists(:payer_email, value) do
-    case Accounts.get_user_by_email(value) do
+    case Accounts.get_user_by_paypal_email(value) do
       {:ok, %User{}} -> []
       {:no_such_user, _} -> [payer_email: "no user with such email"]
     end

@@ -6,8 +6,8 @@ defmodule Hadrian.AccountsTest do
   describe "users" do
     alias Hadrian.Accounts.User
 
-    @update_attrs %{email: "new@domain.com", display_name: "New Display Name"}
-    @invalid_attrs %{email: nil, display_name: nil}
+    @update_attrs %{fb_id: "0123456789", display_name: "New Display Name"}
+    @invalid_attrs %{fb_id: nil, display_name: nil}
 
     test "list_users/0 returns all users" do
       num_of_users = 3
@@ -49,7 +49,7 @@ defmodule Hadrian.AccountsTest do
       attrs = string_params_for(:user)
 
       assert {:ok, %User{} = user} = Accounts.create_user(attrs)
-      assert user.email == attrs["email"]
+      assert user.fb_id == attrs["fb_id"]
     end
 
     test "create_user/1 with invalid data returns error changeset" do
@@ -61,7 +61,7 @@ defmodule Hadrian.AccountsTest do
 
       assert {:ok, user} = Accounts.update_user(user, @update_attrs)
       assert %User{} = user
-      assert user.email == @update_attrs.email
+      assert user.fb_id == @update_attrs.fb_id
     end
 
     test "update_user/2 with invalid data returns error changeset" do
@@ -71,7 +71,7 @@ defmodule Hadrian.AccountsTest do
 
       assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user_to_update, @invalid_attrs)
       assert original_user.id == user_to_update.id
-      assert original_user.email == user_to_update.email
+      assert original_user.fb_id == user_to_update.fb_id
     end
 
     test "delete_user/1 deletes the user" do
@@ -96,7 +96,7 @@ defmodule Hadrian.AccountsTest do
 
     defp assert_that_users_are_equal(%User{} = user_1, %User{} = user_2) do
       assert user_1.id == user_2.id
-      assert user_1.email == user_2.email
+      assert user_1.fb_id == user_2.fb_id
     end
   end
 

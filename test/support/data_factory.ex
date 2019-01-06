@@ -183,7 +183,7 @@ defmodule Hadrian.DataFactory do
     alias Hadrian.Accounts.User
 
     %User{
-      fb_id: sequence(:fb_id, gen_fb_id),
+      fb_id: sequence(:fb_id, gen_fb_id()),
       display_name: sequence(:display_name, &"Display name #{&1}"),
       paypal_email: sequence(:paypal_email, &"paypal#{&1}@domain.com")
     }
@@ -192,10 +192,12 @@ defmodule Hadrian.DataFactory do
   defp gen_fb_id do
     fb_id_length = 15
 
-    List.duplicate(0, fb_id_length)
-    |> Enum.map(fn x -> Enum.random(0..9) end)
-    |> Enum.map(fn x -> Integer.to_string(x) end)
-    |> Enum.reduce("", fn x, acc -> acc <> x end)
+    fb_id = List.duplicate(0, fb_id_length)
+      |> Enum.map(fn x -> Enum.random(0..9) end)
+      |> Enum.map(fn x -> Integer.to_string(x) end)
+      |> Enum.reduce("", fn x, acc -> acc <> x end)
+
+    fn _ -> fb_id end
   end
 
   def user_attrs_factory do
