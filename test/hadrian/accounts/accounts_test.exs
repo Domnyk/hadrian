@@ -163,7 +163,7 @@ defmodule Hadrian.AccountsTest do
   describe "complexes owners" do
     alias Hadrian.Accounts.ComplexesOwner
 
-    @update_attrs %{email: "new@domain.com", password: "Very secret password"}
+    @update_attrs %{email: "new@domain.com", password: "123456789aA_"}
     @invalid_attrs %{email: nil, password: nil}
 
     test "list_complexes_owners/0 returns all complexes owners" do
@@ -211,6 +211,18 @@ defmodule Hadrian.AccountsTest do
 
     test "create_complexes_owner/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Accounts.create_complexes_owner(@invalid_attrs)
+    end
+
+    test "create_complexes_owner/1 with invalid password length returns error changeset" do
+      less_than_8_characters = "123456"
+      invalid_attrs = %{email: "test@test.com", password: less_than_8_characters}
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_complexes_owner(invalid_attrs)
+    end
+
+    test "create_complexes_owner/1 with invalid password format returns error changeset" do
+      no_letter_no_special_character = "12345678"
+      invalid_attrs = %{email: "test@test.com", password: no_letter_no_special_character}
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_complexes_owner(invalid_attrs)
     end
 
     test "update_complexes_owner/2 with valid data updates the complexes owner" do

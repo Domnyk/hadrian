@@ -9,6 +9,7 @@ defmodule Hadrian.Repo.Migrations.AddComplexesOwners do
     end
 
     create unique_index(:complexes_owners, [:email])
+    create unique_index(:complexes_owners, [:paypal_email])
   end
 
   def down do

@@ -10,7 +10,7 @@ defmodule Hadrian.DataFactory do
   @deprecated "Use owner_factory/0 instead"
   def complexes_owner_factory do
     %Hadrian.Accounts.ComplexesOwner{
-      password: "Very secret password",
+      password: "12345678aA_",
       email: sequence(:email, &"test#{&1}@domain.com"),
       paypal_email: sequence(:paypal_email, &"paypal#{&1}@domain.com"),
     }
@@ -20,7 +20,7 @@ defmodule Hadrian.DataFactory do
     alias Hadrian.Accounts.ComplexesOwner
 
     %ComplexesOwner{
-      password: "Very secret password",
+      password: "12345678aA_",
       email: sequence(:email, &"test#{&1}@domain.com"),
       paypal_email: sequence(:paypal_email, &"paypal#{&1}@domain.com")
     }
