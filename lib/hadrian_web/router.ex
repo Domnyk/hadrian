@@ -11,6 +11,8 @@ defmodule HadrianWeb.Router do
   scope "/api", HadrianWeb.Api do
     pipe_through :api
 
+    get "/status", StatusController, :index
+
     resources "/complexes", ComplexController, only: [:index] do
       resources "/sport_objects", SportObjectController, only: [:index, :create] 
     end
