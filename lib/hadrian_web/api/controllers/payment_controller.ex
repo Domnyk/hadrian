@@ -8,6 +8,7 @@ defmodule HadrianWeb.Api.PaymentController do
   alias Hadrian.PaypalStorage
   alias HadrianWeb.Api.Helpers.Session
   alias HadrianWeb.Api.Plugs
+  alias Hadrian.Activities.Participation
 
   plug Plugs.ValidatePaymentTime
 
@@ -17,7 +18,9 @@ defmodule HadrianWeb.Api.PaymentController do
     current_user_id = Session.get_user_id(conn)
     participation = Activities.get_participation!(event_id, current_user_id)
 
-    redirect(conn, external: Payments.get_payment_approval_address(participation))
+    with {:ok, %Participation{} = participation} <- Payments.create_payment(participation) do
+      redirect(conn, external: Payments.get_payment_approval_address(participation))
+    end
   end
 
   def execute(conn, %{"event_id" => event_id, "PayerID" => payer_id}) do

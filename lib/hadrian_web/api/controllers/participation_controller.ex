@@ -19,8 +19,7 @@ defmodule HadrianWeb.Api.ParticipationController do
     event = Activities.get_event!(event_id)
     new_participation = Accounts.get_user!(get_session(conn, :current_user_id))
 
-    with {:ok, %Participation{} = participation} <- Activities.create_participation(event, new_participation),
-         {:ok, %Participation{} = participation} <- Payments.create_payment(participation) do
+    with {:ok, %Participation{} = participation} <- Activities.create_participation(event, new_participation) do
       conn
       |> put_status(:ok)
       |> render("show.json", participation: participation)
