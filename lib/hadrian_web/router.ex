@@ -3,15 +3,26 @@ defmodule HadrianWeb.Router do
 
   alias HadrianWeb.Api.Plugs.Authorize
 
-  pipeline :api do
+  pipeline :api_with_logger do
+    plug Plug.Logger
+    plug :accepts, ["json"]
+    plug :fetch_session
+  end
+
+  pipeline :api_without_logger do
     plug :accepts, ["json"]
     plug :fetch_session
   end
 
   scope "/api", HadrianWeb.Api do
-    pipe_through :api
+    pipe_through :api_without_logger
 
     get "/status", StatusController, :index
+  end
+
+  scope "/api", HadrianWeb.Api do
+    pipe_through :api_with_logger
+
 
     resources "/complexes", ComplexController, only: [:index] do
       resources "/sport_objects", SportObjectController, only: [:index, :create] 
