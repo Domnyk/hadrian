@@ -40,8 +40,6 @@ defmodule HadrianWeb.Api.ComplexController do
       conn
       |> put_status(:ok)
       |> render("show.json", complex: complex)
-    else
-      :not_found -> send_resp(conn, :not_found, "")
     end
   end
 

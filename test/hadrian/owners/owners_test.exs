@@ -33,7 +33,7 @@ defmodule Hadrian.OwnersTest do
     end
 
     test "get_sport_complex/1 returns :not_found" do
-      assert Owners.get_sport_complex(-1) == :not_found
+      assert Owners.get_sport_complex(-1) == {:error, :not_found}
     end
 
     test "create_sport_complex/1 with valid data creates a sport_complex" do

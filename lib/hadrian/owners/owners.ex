@@ -41,7 +41,7 @@ defmodule Hadrian.Owners do
     try do
       {:ok, Repo.get!(SportComplex, id)}
     rescue
-      Ecto.NoResultsError -> :not_found
+      Ecto.NoResultsError -> {:error, :not_found}
     end
   end
 
@@ -94,7 +94,10 @@ defmodule Hadrian.Owners do
 
   """
   def delete_sport_complex(%SportComplex{} = sport_complex) do
-    Repo.delete(sport_complex)
+    sport_complex
+    |> change_sport_complex()
+    |> Ecto.Changeset.no_assoc_constraint(:sport_objects)
+    |> Repo.delete()
   end
 
 
