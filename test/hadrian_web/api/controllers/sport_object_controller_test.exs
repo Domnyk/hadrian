@@ -58,6 +58,8 @@ defmodule HadrianWeb.SportObjectControllerTest do
   end
 
   describe "create" do
+    setup [:sign_owner_in]
+
     test "when data is valid it should create sport object", %{conn: conn, sport_complex: sport_complex} do
       request_data = build(:sport_object_params)
       |> Kernel.put_in(["data", "sport_object", "sport_complex_id"], sport_complex.id)
@@ -84,9 +86,23 @@ defmodule HadrianWeb.SportObjectControllerTest do
 
       assert resp["geo_coordinates"] == ["can't be blank"]
     end
+
+    test "client can't create object", %{conn: conn, sport_complex: sport_complex} do
+      conn = sign_client_in(conn)
+      invalid_request_data = build(:sport_object_params)
+                             |> Kernel.put_in(["data", "sport_object", "sport_complex_id"], sport_complex.id)
+                             |> Kernel.put_in(["data", "sport_object", "geo_coordinates"], nil)
+
+      conn = post conn, complex_sport_object_path(conn, :create, sport_complex.id), invalid_request_data
+
+      assert json_response(conn, 401)
+    end
+
   end
 
   describe "update" do
+    setup [:sign_owner_in]
+
     # TODO: This is verbose
     test "renders sport object when data is valid", %{conn: conn, sport_object: sport_object} do
       params = build(:sport_object_params)
@@ -111,10 +127,21 @@ defmodule HadrianWeb.SportObjectControllerTest do
       resp = json_response(conn, 422)
       assert resp["errors"] != %{}
     end
+
+    test "client can't update object", %{conn: conn, sport_object: sport_object} do
+      conn = sign_client_in(conn)
+      params = %{"data" => %{"sport_object" => %{"name" => nil}}}
+
+      conn = put conn, sport_object_path(conn, :update, sport_object.id), params
+
+      assert json_response(conn, 401)
+    end
   end
 
   describe "delete" do
-    test "deletes chosen sport object", %{conn: conn, sport_complex: _, sport_object: sport_object} do
+    setup [:sign_owner_in]
+
+    test "deletes chosen sport object", %{conn: conn, sport_object: sport_object} do
       conn = delete conn, sport_object_path(conn, :delete, sport_object.id)
 
       assert response(conn, 204)
@@ -128,6 +155,14 @@ defmodule HadrianWeb.SportObjectControllerTest do
 
       assert response(conn, 404)
     end
+
+    test "client can't delete object", %{conn: conn, sport_object: sport_object} do
+      conn = sign_client_in(conn)
+
+      conn = delete conn, sport_object_path(conn, :delete, sport_object.id)
+
+      assert json_response(conn, 401)
+    end
   end
 
   # TODO: This is verbose
@@ -140,5 +175,19 @@ defmodule HadrianWeb.SportObjectControllerTest do
     assert sport_object_in_json_format["booking_margin"]["days"] == sport_object.booking_margin.days
     assert sport_object_in_json_format["booking_margin"]["secs"] == sport_object.booking_margin.secs
     assert sport_object_in_json_format["sport_complex_id"] == sport_object.sport_complex_id
+  end
+
+  defp sign_owner_in(%{conn: conn}) do
+    owner = insert(:owner)
+    conn_with_signed_owner = Plug.Test.init_test_session(conn, %{current_user_id: owner.id, current_user_type: :owner})
+
+    {:ok, conn: conn_with_signed_owner}
+  end
+
+  defp sign_client_in(conn) do
+    client = insert(:user)
+    conn_with_signed_client = Plug.Test.init_test_session(conn, %{current_user_id: client.id, current_user_type: :client})
+
+    conn_with_signed_client
   end
 end

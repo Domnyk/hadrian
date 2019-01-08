@@ -11,6 +11,7 @@ defmodule HadrianWeb.Api.PaymentController do
   alias Hadrian.Activities.Participation
 
   plug Plugs.ValidatePaymentTime
+  plug Plugs.AuthorizeClient when action in [:approve, :execute]
 
   action_fallback HadrianWeb.Api.FallbackController
 

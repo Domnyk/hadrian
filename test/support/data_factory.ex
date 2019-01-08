@@ -253,4 +253,18 @@ defmodule Hadrian.DataFactory do
       "cancel_url" => "https://domain.com/cancel"
     }
   end
+
+  def participation_factory do
+    alias Hadrian.Activities.Participation
+
+    %Participation{
+      user_id: 1,
+      event_id: 1,
+      has_paid: false,
+      is_event_owner: false,
+      payment_approve_url: nil,
+      payment_execute_url: nil,
+      payer_id: nil
+    }
+  end
 end

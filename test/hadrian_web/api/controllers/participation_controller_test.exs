@@ -26,39 +26,52 @@ defmodule HadrianWeb.Api.ParticipationControllerTest do
     end
   end
 
-  # TODO: Configure test env to perform these tests
   describe "create" do
     setup [:sign_user_in]
 
-#    test "creates new participation", %{conn: conn, event: %Event{id: event_id}} do
-#      current_user_id =
-#        conn
-#        |> fetch_session()
-#        |> get_session(:current_user_id)
-#
-#      conn = post conn, event_participation_path(conn, :create, event_id)
-#      assert %{"event_id" => ^event_id, "user_id" => ^current_user_id} = json_response(conn, 201)
-#    end
+    test "creates new participation", %{conn: conn, event: %Event{id: event_id}} do
+      current_user_id =
+        conn
+        |> fetch_session()
+        |> get_session(:current_user_id)
+
+      conn = post conn, event_participation_path(conn, :create, event_id)
+      assert %{"event_id" => ^event_id, "user_id" => ^current_user_id} = json_response(conn, 201)
+    end
+
+    test "does not allow owner to create new participation", %{conn: conn, event: %Event{id: event_id}} do
+      conn = Plug.Test.init_test_session(conn, %{current_user_id: 1, current_user_type: :owner})
+      conn = post conn, event_participation_path(conn, :create, event_id)
+      assert json_response(conn, 401)
+    end
   end
 
   describe "delete" do
     setup [:sign_user_in]
 
-#    test "deletes participation", %{conn: conn, event: %Event{id: event_id}} do
-#      current_user_id =
-#        conn
-#        |> fetch_session()
-#        |> get_session(:current_user_id)
-#
-#      post conn, event_participation_path(conn, :create, event_id)
-#      conn = delete conn, event_participation_path(conn, :delete, event_id)
-#      assert %{"event_id" => ^event_id, "user_id" => ^current_user_id} = json_response(conn, 200)
-#    end
+    test "deletes participation", %{conn: conn, event: %Event{id: event_id}} do
+      current_user_id =
+        conn
+        |> fetch_session()
+        |> get_session(:current_user_id)
+
+      post conn, event_participation_path(conn, :create, event_id)
+      conn = delete conn, event_participation_path(conn, :delete, event_id)
+      assert %{"event_id" => ^event_id, "user_id" => ^current_user_id} = json_response(conn, 200)
+    end
+
+    test "does not allow owner to delete participation", %{conn: conn, event: %Event{id: event_id}} do
+      current_user_id = fetch_session(conn) |> get_session(:current_user_id)
+      insert(:participation, user_id: current_user_id, event_id: event_id)
+
+      conn = delete conn, event_participation_path(conn, :delete, event_id)
+      assert %{"event_id" => ^event_id, "user_id" => ^current_user_id} = json_response(conn, 200)
+    end
   end
 
   defp sign_user_in(%{conn: conn}) do
     user = insert(:user)
-    conn_from_signed_in_user = Plug.Test.init_test_session(conn, %{current_user_id: user.id})
+    conn_from_signed_in_user = Plug.Test.init_test_session(conn, %{current_user_id: user.id, current_user_type: :client})
 
     {:ok, conn: conn_from_signed_in_user}
   end

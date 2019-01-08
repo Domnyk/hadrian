@@ -51,6 +51,8 @@ defmodule HadrianWeb.Api.SportArenaControllerTest do
   end
 
   describe "create sport_arena" do
+    setup [:sign_owner_in]
+
     test "renders sport arena when data is valid", %{conn: conn, sport_complex: _, sport_object: sport_object,
                                                      sport_disciplines_ids: sport_disciplines_ids,
                                                      sport_disciplines_as_map: sport_disciplines_as_map} do
@@ -73,10 +75,19 @@ defmodule HadrianWeb.Api.SportArenaControllerTest do
 
      assert resp != %{}
     end
+
+    test "client can't create arena", %{conn: conn, sport_object: sport_object} do
+      conn = sign_client_in(conn)
+      params = %{ data: %{ sport_arena: @invalid_attrs }}
+      conn = post conn, sport_object_sport_arena_path(conn, :create, sport_object.id), params
+
+      assert json_response(conn, 401)
+    end
   end
 
   describe "update sport arena" do
     alias Hadrian.Owners.SportDiscipline
+    setup [:sign_owner_in]
 
     test "renders sport arena when data is valid", %{conn: conn, sport_complex: _, sport_object: _,
                                                      sport_arena: sport_arena,
@@ -100,6 +111,13 @@ defmodule HadrianWeb.Api.SportArenaControllerTest do
       assert resp != %{}
     end
 
+    test "client can't update arena", %{conn: conn, sport_arena: sport_arena} do
+      conn = sign_client_in(conn)
+      conn = put conn, sport_arena_path(conn, :update, sport_arena), data: %{sport_arena: @invalid_attrs}
+
+      assert json_response(conn, 401)
+    end
+
     defp build_params(sport_disciplines_ids, name) do
       build(:sport_arena_params)
       |> Kernel.put_in(["data", "sport_arena", "name"], name)
@@ -108,10 +126,33 @@ defmodule HadrianWeb.Api.SportArenaControllerTest do
   end
   
   describe "delete sport_arena" do
+    setup [:sign_owner_in]
+
     test "deletes chosen sport_arena", %{conn: conn, sport_complex: _, sport_object: _, sport_arena: sport_arena} do
       conn = delete conn, sport_arena_path(conn, :delete, sport_arena)
       assert response(conn, 204)
       assert_raise Ecto.NoResultsError, fn -> Owners.get_sport_arena!(sport_arena.id) end
     end
+
+    test "client can't delete arena", %{conn: conn, sport_arena: sport_arena} do
+      conn = sign_client_in(conn)
+      conn = delete conn, sport_arena_path(conn, :delete, sport_arena)
+
+      assert json_response(conn, 401)
+    end
+  end
+
+  defp sign_owner_in(%{conn: conn}) do
+    owner = insert(:owner)
+    conn_with_signed_owner = Plug.Test.init_test_session(conn, %{current_user_id: owner.id, current_user_type: :owner})
+
+    {:ok, conn: conn_with_signed_owner}
+  end
+
+  defp sign_client_in(conn) do
+    client = insert(:user)
+    conn_with_signed_client = Plug.Test.init_test_session(conn, %{current_user_id: client.id, current_user_type: :client})
+
+    conn_with_signed_client
   end
 end

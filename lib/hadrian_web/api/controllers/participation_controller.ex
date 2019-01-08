@@ -4,11 +4,12 @@ defmodule HadrianWeb.Api.ParticipationController do
   require Logger
 
   alias Hadrian.Accounts
-  alias Hadrian.Payments
   alias Hadrian.Activities
   alias Hadrian.Activities.Participation
 
   action_fallback HadrianWeb.Api.FallbackController
+
+  plug HadrianWeb.Api.Plugs.AuthorizeClient when action in [:create, :delete]
 
   def index(conn, %{"event_id" => event_id}) do
     participations = Activities.list_participations(event_id)
@@ -21,7 +22,7 @@ defmodule HadrianWeb.Api.ParticipationController do
 
     with {:ok, %Participation{} = participation} <- Activities.create_participation(event, new_participation) do
       conn
-      |> put_status(:ok)
+      |> put_status(:created)
       |> render("show.json", participation: participation)
     end
   end

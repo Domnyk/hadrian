@@ -93,7 +93,8 @@ defmodule Hadrian.Owners.SportArena do
     {start_time_2, end_time_2} = second_event_times
 
     if Time.compare(start_time_1, start_time_2) == :gt do
-      Hadrian.Owners.SportArena.calculate_last_time_window(second_event_times, first_event_times)
+      # Hadrian.Owners.SportAren.calculate_last_time_window(second_event_times, first_event_times)
+      Hadrian.Time.diff_in_hours(end_time_2, start_time_1)
     else
       Hadrian.Time.diff_in_hours(end_time_1, start_time_2)
     end

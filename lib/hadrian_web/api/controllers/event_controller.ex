@@ -10,6 +10,7 @@ defmodule HadrianWeb.Api.EventController do
   alias Hadrian.Activities.Participation
 
   action_fallback HadrianWeb.Api.FallbackController
+  # plug HadrianWeb.Api.Plugs.AuthorizeClient when action in [:create, :update, :delete]
 
   def index(conn, %{"sport_arena_id" => sport_arena_id}) when is_binary(sport_arena_id) do
     {id, _} = Integer.parse(sport_arena_id)
@@ -23,8 +24,7 @@ defmodule HadrianWeb.Api.EventController do
     event_owner = Accounts.get_user!(get_session(conn, :current_user_id))
 
     with {:ok, %Event{} = event} <- Activities.create_event(params),
-         {:ok, %Participation{} = participation} <- Activities.create_participation(event, event_owner, true),
-         {:ok, %Participation{} = participation} <- Payments.create_payment(participation)
+         {:ok, %Participation{} = participation} <- Activities.create_participation(event, event_owner, true)
     do
       participations = Activities.list_participations(event.id)
       event = Activities.get_event!(event.id)

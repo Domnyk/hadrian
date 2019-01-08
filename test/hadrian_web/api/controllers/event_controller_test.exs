@@ -29,19 +29,17 @@ defmodule HadrianWeb.EventControllerTest do
   describe "create event" do
     setup [:sign_user_in]
 
-     # This test depends on paypal api
-     # TODO: Mock paypal's api
-#    test "renders event when data is valid", %{conn: conn, event: %Event{sport_arena_id: sport_arena_id}} do
-#      create_attrs =
-#        string_params_for(:event, sport_arena_id: sport_arena_id)
-#        |> prepare_time_attrs()
-#
-#      conn = post conn, sport_arena_event_path(conn, :create, sport_arena_id), event: create_attrs
-#      assert %{"id" => id} = json_response(conn, 201)
-#
-#      conn = get conn, sport_arena_event_path(conn, :show, sport_arena_id ,id)
-#      assert %{"id" => ^id} = json_response(conn, 200)
-#    end
+    test "renders event when data is valid", %{conn: conn, event: %Event{sport_arena_id: sport_arena_id}} do
+      create_attrs =
+        string_params_for(:event, sport_arena_id: sport_arena_id)
+        |> prepare_time_attrs()
+
+      conn = post conn, sport_arena_event_path(conn, :create, sport_arena_id), event: create_attrs
+      assert %{"id" => id} = json_response(conn, 201)
+
+      conn = get conn, sport_arena_event_path(conn, :show, sport_arena_id ,id)
+      assert %{"id" => ^id} = json_response(conn, 200)
+    end
 
     test "renders errors when data is invalid", %{conn: conn} do
       invalid_attrs = get_invalid_attrs()
@@ -51,17 +49,25 @@ defmodule HadrianWeb.EventControllerTest do
       assert json_response(conn, 422)["errors"] != %{}
     end
 
-#    defp prepare_time_attrs(event_attrs) do
-#      event_attrs
-#      |> Enum.map(fn {k, v} ->
-#        case k do
-#          "start_time" -> {"start_time", %{"hour" => Map.get(v, "hour"), "minute" => Map.get(v, "minute")}}
-#          "end_time" -> {"end_time", %{"hour" => Map.get(v, "hour"), "minute" => Map.get(v, "minute")}}
-#          _ -> {k, v}
-#        end
-#      end)
-#      |> Map.new()
-#    end
+    test "does not allow owner to create event", %{conn: conn, user: user} do
+      conn = Plug.Test.init_test_session(conn, %{current_user_id: user.id, current_user_type: :owner})
+      attrs = get_invalid_attrs() |> Map.put("users", [])
+
+      conn = post conn, sport_arena_event_path(conn, :create, "-1"), event: attrs
+      assert json_response(conn, 401)
+    end
+
+    defp prepare_time_attrs(event_attrs) do
+      event_attrs
+      |> Enum.map(fn {k, v} ->
+        case k do
+          "start_time" -> {"start_time", %{"hour" => Map.get(v, "hour"), "minute" => Map.get(v, "minute")}}
+          "end_time" -> {"end_time", %{"hour" => Map.get(v, "hour"), "minute" => Map.get(v, "minute")}}
+          _ -> {k, v}
+        end
+      end)
+      |> Map.new()
+    end
   end
 
   # TODO: Compare all fields
@@ -85,6 +91,14 @@ defmodule HadrianWeb.EventControllerTest do
       conn = put conn, sport_arena_event_path(conn, :update, event.sport_arena_id, event), event: invalid_attrs
       assert json_response(conn, 422)["errors"] != %{}
     end
+
+    test "does not allow owner to edit event", %{conn: conn, event: event, user: user} do
+      conn = Plug.Test.init_test_session(conn, %{current_user_id: user.id, current_user_type: :owner})
+      attrs = get_invalid_attrs() |> Map.put("users", [])
+
+      conn = put conn, sport_arena_event_path(conn, :update, event.sport_arena_id, event), event: attrs
+      assert json_response(conn, 401)
+    end
   end
 
   describe "delete event" do
@@ -97,11 +111,18 @@ defmodule HadrianWeb.EventControllerTest do
         get conn, sport_arena_event_path(conn, :show, event.sport_arena_id, event)
       end
     end
+
+    test "does not allow owner to delete event", %{conn: conn, user: user, event: event} do
+      conn = Plug.Test.init_test_session(conn, %{current_user_id: user.id, current_user_type: :owner})
+
+      conn = delete conn, sport_arena_event_path(conn, :delete, event.sport_arena_id, event)
+      assert json_response(conn, 401)
+    end
   end
 
   defp sign_user_in(%{conn: conn}) do
     user = insert(:user)
-    conn_from_signed_in_user = Plug.Test.init_test_session(conn, %{current_user_id: user.id})
+    conn_from_signed_in_user = Plug.Test.init_test_session(conn, %{current_user_id: user.id, current_user_type: :client})
 
     {:ok, conn: conn_from_signed_in_user}
   end

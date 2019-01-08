@@ -7,10 +7,15 @@ defmodule HadrianWeb.Api.ErrorView do
   #   "Internal Server Error"
   # end
 
-  def render("401.json", _assigns) do
+  def render("401.json", assigns) do
+    message = case Map.has_key?(assigns, :message) do
+      true -> assigns.message
+      false -> "You have to sign in to perform this action"
+    end
+
     %{
       status: :error,
-      reason: "You are not authorized to access this resource"
+      reason: message
     }
   end
 

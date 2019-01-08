@@ -10,7 +10,7 @@ defmodule HadrianWeb.Api.PaymentControllerTest do
     basketball = insert(:sport_discipline, name: "Basketball")
     sport_arena = insert(:sport_arena, sport_object_id: sport_object.id, sport_disciplines: [football, basketball])
     event = insert(:event, sport_arena_id: sport_arena.id, participators: [user])
-    conn = Plug.Test.init_test_session(conn, %{current_user_id: user.id})
+    conn = Plug.Test.init_test_session(conn, %{current_user_id: user.id, current_user_type: :client})
 
     {:ok, conn: put_req_header(conn, "accept", "application/json"), event: event, user: user}
   end
@@ -24,6 +24,34 @@ defmodule HadrianWeb.Api.PaymentControllerTest do
 
       conn = get conn, event_payment_path(conn, :approve, event.id)
       assert json_response(conn, 400)
+    end
+  end
+
+  describe "verify client authorization plug" do
+    test "returns 401 when owner attempts to approve transaction", %{conn: conn, event: event, user: user} do
+      conn = sign_in_as_owner(conn, user.id)
+      joining_end = Date.add(Date.utc_today(), -2)
+      paying_end = Date.add(joining_end, 4)
+      event = insert(:event, end_of_joining_phase: joining_end, end_of_paying_phase: paying_end,
+        sport_arena_id: event.sport_arena_id)
+
+      conn = get conn, event_payment_path(conn, :approve, event.id)
+      assert json_response(conn, 401)
+    end
+
+    test "returns 401 when owner attempts to execute transaction", %{conn: conn, event: event, user: user} do
+      conn = sign_in_as_owner(conn, user.id)
+      joining_end = Date.add(Date.utc_today(), -2)
+      paying_end = Date.add(joining_end, 4)
+      event = insert(:event, end_of_joining_phase: joining_end, end_of_paying_phase: paying_end,
+        sport_arena_id: event.sport_arena_id)
+
+      conn = get conn, event_payment_path(conn, :approve, event.id)
+      assert json_response(conn, 401)
+    end
+
+    defp sign_in_as_owner(conn, user_id) do
+      Plug.Test.init_test_session(conn, %{current_user_id: user_id, current_user_type: :owner})
     end
   end
 end
