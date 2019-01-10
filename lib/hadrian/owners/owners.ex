@@ -21,6 +21,11 @@ defmodule Hadrian.Owners do
     Repo.all(SportComplex)
   end
 
+  def list_sport_complexes(owner_id) do
+    list_sport_complexes()
+    |> Enum.filter(fn complex -> complex.complexes_owner_id == owner_id end)
+  end
+
   @doc """
   Gets a single sport_complex.
 

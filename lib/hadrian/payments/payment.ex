@@ -111,6 +111,8 @@ defmodule Hadrian.Payments.Payment do
     headers = create_headers(token)
     ok_status_code = 201
 
+    body |> inspect() |> IO.puts()
+
     with {:ok, response = %HTTP.Response{}} <- HTTP.post(url, body, headers),
          {:ok, %HTTP.Response{}} <- parse_status_code(response, ok_status_code),
          %{"approval_url" => approval_url, "execute" => execute_url} <- parse_creation_body(response.body) do

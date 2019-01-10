@@ -3,11 +3,13 @@ defmodule HadrianWeb.Api.ComplexController do
 
   alias Hadrian.Owners
   alias Hadrian.Owners.SportComplex
+  alias HadrianWeb.Api.Helpers.Session
 
   action_fallback HadrianWeb.Api.FallbackController
 
   def index(conn, _params) do
-    complexes = Owners.list_sport_complexes
+    owner_id = Session.get_user_id(conn)
+    complexes = Owners.list_sport_complexes(owner_id)
 
     render(conn, "index.json", complexes: complexes)
   end
@@ -21,7 +23,6 @@ defmodule HadrianWeb.Api.ComplexController do
       |> render("show.json", complex: complex)
     end
   end
-
 
   def update(conn, %{"id" => id} = attrs) do
     complex = Owners.get_sport_complex!(id)
