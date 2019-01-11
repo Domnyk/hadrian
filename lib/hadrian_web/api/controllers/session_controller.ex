@@ -17,7 +17,7 @@ defmodule HadrianWeb.Api.SessionController do
     |> fetch_session()
     |> put_session(:current_user_id, id)
     |> put_session(:current_user_type, :client)
-    |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}&email=#{user.email}")
+    |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}")
   end
 
   def new(conn, %{"redirect_url" => redirect_url}) do
