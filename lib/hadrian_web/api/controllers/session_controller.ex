@@ -68,9 +68,12 @@ defmodule HadrianWeb.Api.SessionController do
     with {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.get_complexes_owner_by_email(email),
          :match = Authentication.verify_password(password, complexes_owner.password_hash)
     do
+      token = Plug.CSRFProtection.get_csrf_token()
+
        conn_with_fetched_session
        |> put_session(:current_user_id, complexes_owner.id)
        |> put_session(:current_user_type, :owner)
+       |> put_resp_cookie("XSRF-TOKEN", token, http_only: :false)
        |> render("ok.create.json", complexes_owner: complexes_owner)
     end
   end
