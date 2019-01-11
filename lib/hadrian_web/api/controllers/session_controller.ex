@@ -17,7 +17,7 @@ defmodule HadrianWeb.Api.SessionController do
     |> fetch_session()
     |> put_session(:current_user_id, id)
     |> put_session(:current_user_type, :client)
-    |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}")
+    |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}&id=#{user.id}")
   end
 
   def new(conn, %{"redirect_url" => redirect_url}) do
@@ -89,7 +89,7 @@ defmodule HadrianWeb.Api.SessionController do
           |> fetch_session()
           |> put_session(:current_user_id, user.id)
           |> put_session(:current_user_type, :client)
-          |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}")
+          |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}&id=#{user.id}")
         {:no_such_user, fb_id: _} ->
           Logger.info("No user in database with such fb_id: #{inspect(fb_id)}. Creating user")
           {:ok, %User{} = user} = Accounts.create_user(%{fb_id: fb_id, display_name: name, paypal_email: "test@gmail.com"})
@@ -97,7 +97,7 @@ defmodule HadrianWeb.Api.SessionController do
           |> fetch_session()
           |> put_session(:current_user_id, user.id)
           |> put_session(:current_user_type, :client)
-          |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}")
+          |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}&id=#{user.id}")
       end
   end
 
