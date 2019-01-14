@@ -267,4 +267,18 @@ defmodule Hadrian.DataFactory do
       payer_id: nil
     }
   end
+
+  def external_event_factory do
+    alias Hadrian.Activities.ExternalEvent
+
+    today_plus_two_weeks = Date.add(Date.utc_today(), 14)
+    start_time = ~T[13:00:00.000000]
+    end_time = Time.add(start_time, 7200, :second)
+
+    %ExternalEvent{
+      event_day: today_plus_two_weeks,
+      start_time: start_time,
+      end_time: end_time
+    }
+  end
 end

@@ -44,7 +44,10 @@ defmodule HadrianWeb.Router do
 
     resources "/sport_arenas", SportArenaController, only: [] do
       resources "/events", EventController, only: [:index, :show]
+      resources "/external_events", ExternalEventController, only: [:index]
     end
+
+    resources "/external_events", ExternalEventController, only: [:show]
 
     scope "/" do
       pipe_through [Authorize]
@@ -62,7 +65,11 @@ defmodule HadrianWeb.Router do
           resources "/sport_arenas", SportArenaController, only: [:create]
         end
 
-        resources "/sport_arenas", SportArenaController, only: [:update, :delete]
+        resources "/sport_arenas", SportArenaController, only: [:update, :delete] do
+          resources "/external_events", ExternalEventController, only: [:create]
+        end
+
+        resources "/external_events", ExternalEventController, only: [:update, :delete]
       end
 
       delete "/session", SessionController, :delete

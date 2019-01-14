@@ -139,4 +139,35 @@ defmodule Hadrian.Activities do
   def delete_participation(%Participation{} = participation) do
     Repo.delete(participation)
   end
+
+  alias Hadrian.Activities.ExternalEvent
+
+  def list_external_events(sport_arena_id) when is_integer(sport_arena_id) do
+    Repo.all(ExternalEvent)
+    |> Enum.filter(fn event -> event.sport_arena_id == sport_arena_id end)
+  end
+
+  def get_external_event!(id) do
+    Repo.get!(ExternalEvent, id)
+  end
+
+  def create_external_event(attrs \\ %{}) do
+    %ExternalEvent{}
+    |> ExternalEvent.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_external_event(%ExternalEvent{} = external_event, attrs) do
+    external_event
+    |> ExternalEvent.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def delete_external_event(%ExternalEvent{} = external_event) do
+    Repo.delete(external_event)
+  end
+
+  def change_external_event(%ExternalEvent{} = external_event) do
+    ExternalEvent.changeset(external_event, %{})
+  end
 end
