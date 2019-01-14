@@ -28,15 +28,15 @@ defmodule HadrianWeb.Api.UserController do
     current_user_id = Session.get_user_id(conn)
 
     case Session.get_user_type(conn) do
-      :user -> update_user(conn, attrs, current_user_id)
-      :complexes_owner -> update_complexes_owner(conn, attrs, current_user_id)
+      :client -> update_client(conn, attrs, current_user_id)
+      :owner -> update_complexes_owner(conn, attrs, current_user_id)
       _ ->
         Logger.error("Current_user_type is nil")
         halt(conn)
     end
   end
 
-  defp update_user(conn, attrs, current_user_id) do
+  defp update_client(conn, attrs, current_user_id) do
     user = Accounts.get_user!(current_user_id)
 
     case Accounts.update_user(user, attrs) do
@@ -49,8 +49,7 @@ defmodule HadrianWeb.Api.UserController do
     complexes_owner = Accounts.get_complexes_owner!(current_user_id)
 
     case Accounts.update_complexes_owner(complexes_owner, attrs) do
-      {:ok, %ComplexesOwner{} = complexes_owner} -> render("show.json", complexes_owner: complexes_owner)
-      {:error, changeset} -> render(conn, "error.create.json", changeset: changeset)
+      {:ok, %ComplexesOwner{} = complexes_owner} -> render(conn, "show.json", complexes_owner: complexes_owner)
     end
   end
 end

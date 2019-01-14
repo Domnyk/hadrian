@@ -67,7 +67,7 @@ defmodule HadrianWeb.Router do
 
       delete "/session", SessionController, :delete
 
-      patch "/users", UserController, :update
+      patch "/users/:id", UserController, :update
 
       resources "/sport_arenas", SportArenaController do
         pipe_through :authorize_client

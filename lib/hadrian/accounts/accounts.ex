@@ -293,7 +293,7 @@ defmodule Hadrian.Accounts do
   """
   def update_complexes_owner(%ComplexesOwner{} = complexes_owner, attrs) do
     complexes_owner
-    |> ComplexesOwner.changeset(attrs)
+    |> ComplexesOwner.update_changeset(attrs)
     |> Repo.update()
   end
 

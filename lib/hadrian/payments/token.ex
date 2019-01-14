@@ -19,6 +19,7 @@ defmodule Hadrian.Payments.Token do
       Logger.info("Token fetched")
       token
     else
+      {:error, %HTTP.Error{reason: :timeout}} -> "" # Returning empty string. Other paypal related functions will fetch token
       {:error, error = %HTTP.Error{}} -> handle_fetch_error(error)
       {:status_code_is_not_200, response = %HTTP.Response{}} -> handle_wrong_status_code(response)
       {:json_decoding_error, %{error: error, body: body}} -> handle_decoding_error(error, body)
