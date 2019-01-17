@@ -26,8 +26,8 @@ defmodule HadrianWeb.Api.Plugs.ValidatePaymentTime do
 
   defp payment_after_joining_phase?(%Date{} = now, %Date{} = end_of_joining_phase) do
     case Date.compare(now, end_of_joining_phase) do
-      :gt -> true
-      _ -> false
+      :lt -> false
+      _ -> true
     end
   end
 
