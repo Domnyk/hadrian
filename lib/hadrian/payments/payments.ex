@@ -41,8 +41,9 @@ defmodule Hadrian.Payments do
 
   defp create_payment_attrs(%SportObject{} = object, %ComplexesOwner{} = payee, %User{} = payer, event_id) do
     return_url = Endpoint.url <> Helpers.event_payment_path(Endpoint, :execute, event_id)
+    arena = Activities.get_event!(event_id) |> Map.get(:sport_arena_id) |> Owners.get_sport_arena!()
 
-    attrs = %{sport_object_name: object.name, amount_to_pay: 10, complexes_owner_email: payee.paypal_email,
+    attrs = %{sport_object_name: object.name, amount_to_pay: arena.price_per_hour, complexes_owner_email: payee.paypal_email,
               return_url: return_url, cancel_url: "https://localhost:8080", payer_email: payer.paypal_email}
 
     Logger.info ~s(Payment attrs \n #{inspect(attrs)})
