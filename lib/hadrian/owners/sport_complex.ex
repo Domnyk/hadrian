@@ -16,4 +16,15 @@ defmodule Hadrian.Owners.SportComplex do
     |> unique_constraint(:name, name: "sport_complex_name_idx")
     |> validate_required([:name, :complexes_owner_id])
   end
+
+  def name_unique?(attrs) when is_map(attrs) do
+    %Hadrian.Owners.SportComplex{}
+    |> cast(attrs, [:name])
+    |> unsafe_validate_unique([:name], Hadrian.Repo)
+    |> changeset_valid?()
+  end
+
+  defp changeset_valid?(changeset) do
+    changeset.valid?
+  end
 end

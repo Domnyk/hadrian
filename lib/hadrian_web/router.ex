@@ -26,6 +26,10 @@ defmodule HadrianWeb.Router do
   scope "/api", HadrianWeb.Api do
     pipe_through :api_with_logger
 
+    scope "/validate" do
+      post "/complex", ValidationController, :validate_complex
+    end
+
     resources "/complexes", ComplexController, only: [:index] do
       resources "/sport_objects", SportObjectController, only: [:index]
     end
