@@ -75,7 +75,7 @@ defmodule HadrianWeb.Api.SessionController do
        conn_with_fetched_session
        |> put_session(:current_user_id, complexes_owner.id)
        |> put_session(:current_user_type, :owner)
-       |> put_resp_cookie("XSRF-TOKEN", token, http_only: :false)
+       |> put_resp_cookie("XSRF-TOKEN", token, http_only: :false, domain: Application.get_env(:hadrian, :domain))
        |> put_session("_csrf_token", Process.get(:plug_unmasked_csrf_token))
        |> render("ok.create.json", complexes_owner: complexes_owner)
     else

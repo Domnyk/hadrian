@@ -26,7 +26,8 @@ defmodule HadrianWeb.Endpoint do
     store: :cookie,
     key: "_hadrian_key",
     signing_salt: "rrY7P9+r",
-    http_only: true
+    http_only: true,
+    domain: Application.get_env(:hadrian, :domain)
 
   # CORS Plug to allow requests from external apps
   plug CORSPlug,
