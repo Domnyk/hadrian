@@ -159,8 +159,8 @@ defmodule Hadrian.Accounts do
 
   def get_complexes_owner_by_email(email) do
     case Repo.get_by(ComplexesOwner, email: email) do
+      nil -> {:no_such_complexes_owner, email: email}
       %ComplexesOwner{} = complexes_owner -> {:ok, complexes_owner}
-      _ -> {:no_such_complexes_owner, email: email}
     end
   end
 

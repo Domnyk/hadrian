@@ -12,6 +12,10 @@ defmodule HadrianWeb.Api.SessionView do
     }
   end
 
+  def render("invalid-credentials.json", %{}) do
+    %{credentials: "invalid"}
+  end
+
   def render("ok.delete.json", %{}) do
     %{status: :ok}
   end

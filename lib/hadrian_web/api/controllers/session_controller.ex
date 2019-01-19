@@ -9,6 +9,8 @@ defmodule HadrianWeb.Api.SessionController do
   alias Hadrian.Accounts.ComplexesOwner
   alias HadrianWeb.Api.Helpers.Session
 
+  action_fallback HadrianWeb.Api.FallbackController
+
   # Only for dev env
   def new(conn, %{"id" => id, "redirect_url" => redirect_url}) do
     user = Accounts.get_user!(id)
@@ -65,13 +67,16 @@ defmodule HadrianWeb.Api.SessionController do
   end
 
   defp handle_not_signed_in(conn_with_fetched_session, %{email: email, password: password}) do
-    with {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.get_complexes_owner_by_email(email),
-         :match = Authentication.verify_password(password, complexes_owner.password_hash)
+    with {:ok, %ComplexesOwner{} = complexes_owner} <- Accounts.get_complexes_owner_by_email(email),
+         :match <- Authentication.verify_password(password, complexes_owner.password_hash)
     do
        conn_with_fetched_session
        |> put_session(:current_user_id, complexes_owner.id)
        |> put_session(:current_user_type, :owner)
        |> render("ok.create.json", complexes_owner: complexes_owner)
+    else
+      {:no_such_complexes_owner, _} -> render(conn_with_fetched_session, "invalid-credentials.json")
+      :no_match -> render(conn_with_fetched_session, "invalid-credentials.json")
     end
   end
 

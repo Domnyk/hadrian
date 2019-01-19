@@ -57,7 +57,7 @@ defmodule HadrianWeb.Api.SportObjectView do
       params: params}
   end
 
-  def render("result.json", %{result: %{object_id: id, average_price: avg_price, distance: dist}}) do
-    %{object_id: id, average_price: avg_price, distance: dist}
+  def render("result.json", %{result: %{object_id: id, lowest_price: lowest_price, distance: dist}}) do
+    %{object_id: id, lowest_price: lowest_price, distance: dist}
   end
 end

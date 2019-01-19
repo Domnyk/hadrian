@@ -297,7 +297,7 @@ defmodule Hadrian.Owners do
       %Types.GeoCoordinates{latitude: lat, longitude: lng} = object.geo_coordinates
 
       %{object_id: object.id,
-      average_price: SportObject.get_average_price(object, disciplines),
+      lowest_price: SportObject.get_lowest_price(object, disciplines),
       distance: Hadrian.Geo.distance({lat, lng}, geo_location, :km)}
     end
 

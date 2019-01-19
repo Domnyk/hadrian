@@ -26,14 +26,14 @@ defmodule Hadrian.Owners.SportObject do
     |> unique_constraint(:name, [name: "sport_object_name_idx"])
   end
 
-  def get_average_price(object, desired_disciplines_ids) do
+  def get_lowest_price(object, desired_disciplines_ids) do
     prices =
       object
       |> Map.get(:sport_arenas)
       |> Enum.filter(fn arena -> SportArena.are_disciplines_available?(arena, desired_disciplines_ids) end)
       |> Enum.map(fn arena -> arena.price_per_hour end)
 
-    Enum.sum(prices) / Enum.count(prices)
+    Enum.min(prices)
   end
 
   def are_disciplines_available?(%SportObject{} = object, desired_disciplines_ids) do

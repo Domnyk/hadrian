@@ -40,8 +40,9 @@ defmodule Hadrian.ObjectTest do
       insert(:arena, sport_disciplines: [football], sport_object_id: object.id, price_per_hour: 30)
       object = Hadrian.Repo.preload(object, :sport_arenas)
 
-      assert SportObject.get_average_price(object, [basketball.id]) == 15
-      refute SportObject.get_average_price(object, [basketball.id]) == 20
+      assert SportObject.get_lowest_price(object, [basketball.id]) == 10
+      refute SportObject.get_lowest_price(object, [basketball.id]) == 20
+      refute SportObject.get_lowest_price(object, [basketball.id]) == 30
     end
   end
 
@@ -54,7 +55,7 @@ defmodule Hadrian.ObjectTest do
       insert(:arena, sport_disciplines: [football, basketball], sport_object_id: id1)
       criteria = %{day: ~D[2019-01-03], disciplines: [football.id], geo_location: {52.287604, 21.075429}}
 
-      assert [%{object_id: ^id1, average_price: _, distance: _}] = Owners.search_for_objects(criteria)
+      assert [%{object_id: ^id1, lowest_price: _, distance: _}] = Owners.search_for_objects(criteria)
     end
   end
 
