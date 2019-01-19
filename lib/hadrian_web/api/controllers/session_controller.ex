@@ -19,7 +19,7 @@ defmodule HadrianWeb.Api.SessionController do
     |> fetch_session()
     |> put_session(:current_user_id, id)
     |> put_session(:current_user_type, :client)
-    |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}&id=#{user.id}")
+    |> redirect(external: redirect_url <> "#id=#{user.id}&paypal_email=#{user.paypal_email}&display_name=#{user.display_name}")
   end
 
   def new(conn, %{"redirect_url" => redirect_url}) do
@@ -70,9 +70,13 @@ defmodule HadrianWeb.Api.SessionController do
     with {:ok, %ComplexesOwner{} = complexes_owner} <- Accounts.get_complexes_owner_by_email(email),
          :match <- Authentication.verify_password(password, complexes_owner.password_hash)
     do
+      token = Plug.CSRFProtection.get_csrf_token()
+
        conn_with_fetched_session
        |> put_session(:current_user_id, complexes_owner.id)
        |> put_session(:current_user_type, :owner)
+       |> put_resp_cookie("XSRF-TOKEN", token, http_only: :false)
+       |> put_session("_csrf_token", Process.get(:plug_unmasked_csrf_token))
        |> render("ok.create.json", complexes_owner: complexes_owner)
     else
       {:no_such_complexes_owner, _} -> render(conn_with_fetched_session, "invalid-credentials.json")

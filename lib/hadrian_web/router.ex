@@ -18,6 +18,11 @@ defmodule HadrianWeb.Router do
     plug HadrianWeb.Api.Plugs.AuthorizeClient
   end
 
+  pipeline :authorize do
+    plug Authorize
+    plug Plug.CSRFProtection, allow_hosts: [Application.get_env(:hadrian, :client_url)]
+  end
+
   scope "/api", HadrianWeb.Api do
     pipe_through :api_without_logger
     get "/status", StatusController, :index
@@ -54,7 +59,7 @@ defmodule HadrianWeb.Router do
     resources "/external_events", ExternalEventController, only: [:show]
 
     scope "/" do
-      pipe_through [Authorize]
+      pipe_through :authorize
 
       post "/objects/search", SportObjectController, :search
 
