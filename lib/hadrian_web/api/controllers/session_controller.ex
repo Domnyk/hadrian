@@ -76,7 +76,7 @@ defmodule HadrianWeb.Api.SessionController do
        |> put_session(:current_user_id, complexes_owner.id)
        |> put_session(:current_user_type, :owner)
        |> put_session("_csrf_token", Process.get(:plug_unmasked_csrf_token))
-       |> render("ok.create.json", complexes_owner: complexes_owner)
+       |> render("ok.create.json", complexes_owner: complexes_owner, csrf_token: token)
     else
       {:no_such_complexes_owner, _} -> render(conn_with_fetched_session, "invalid-credentials.json")
       :no_match -> render(conn_with_fetched_session, "invalid-credentials.json")

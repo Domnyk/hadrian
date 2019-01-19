@@ -31,8 +31,6 @@ defmodule HadrianWeb.Router do
   scope "/api", HadrianWeb.Api do
     pipe_through :api_with_logger
 
-    get "/csrf", CsrfController, :index
-
     scope "/validate" do
       post "/complex", ValidationController, :validate_complex
     end
