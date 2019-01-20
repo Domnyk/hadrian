@@ -54,6 +54,16 @@ defmodule HadrianWeb.Api.SessionControllerTest do
     end
   end
 
+  describe "create/2 when client logs in using FB" do
+    test "redirects to angular app", %{conn: conn} do
+      attrs = %{"code" => "1234567890"}
+
+      conn = post conn, session_path(conn, :create, attrs)
+
+      assert redirected_to(conn, 302) =~ Application.get_env(:hadrian, :client_url)
+    end
+  end
+
   describe "delete/1" do
     test "clears session", %{conn: conn} do
       attrs = string_params_for(:user)

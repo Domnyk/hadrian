@@ -45,10 +45,11 @@ defmodule HadrianWeb.Router do
     end
 
     resources "/sport_disciplines", SportDisciplineController, only: [:index] 
-    
+
     resources "/users", UserController, only: [:index, :create]
 
     resources "/session", SessionController, only: [:new, :create]
+    delete "/session", SessionController, :delete
     get "/session", SessionController, :create
 
     resources "/sport_arenas", SportArenaController, only: [] do
@@ -80,8 +81,6 @@ defmodule HadrianWeb.Router do
 
         resources "/external_events", ExternalEventController, only: [:update, :delete]
       end
-
-      delete "/session", SessionController, :delete
 
       patch "/users/:id", UserController, :update
 

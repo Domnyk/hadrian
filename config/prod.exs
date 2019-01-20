@@ -1,6 +1,7 @@
 use Mix.Config
 
 host = "thawing-crag-67620.herokuapp.com"
+client_url = "https://vinci-11235813.herokuapp.com"
 
 # For production, we often load configuration from external
 # sources, such as your system environment. For this reason,
@@ -71,12 +72,15 @@ config :hadrian, Hadrian.Repo,
   ssl: true
 
 # Configure access token module for Facebook
-config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.HTTP
+config :hadrian, :fb_access_token, Hadrian.Authentication.Facebook
 
 # Configure client url
-config :hadrian, :client_url, "https://vinci-11235813.herokuapp.com"
+config :hadrian, :client_url, client_url
 
 config :hadrian, :domain, "vinci-11235813.herokuapp.com"
+
+# Redirect url when client's session in created
+config :hadrian, :redirect_client_url, client_url <> "/login_ok"
 
 # Paypal
 config :hadrian, :api_url, "https://api.sandbox.paypal.com"

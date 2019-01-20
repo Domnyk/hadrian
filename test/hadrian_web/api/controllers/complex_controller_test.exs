@@ -8,9 +8,7 @@ defmodule HadrianWeb.Api.ComplexControllerTest do
 
   setup %{conn: conn} do
     owner = insert(:complexes_owner)
-    owner_2 = insert(:complexes_owner)
     complex = insert(:sport_complex, complexes_owner_id: owner.id)
-    complex_2 = insert(:sport_complex, complexes_owner_id: owner_2.id)
     conn = Plug.Test.init_test_session(conn, %{current_user_id: owner.id})
 
     {:ok, conn: put_req_header(conn, "accept", "application/json"), complex: complex, owner: owner}

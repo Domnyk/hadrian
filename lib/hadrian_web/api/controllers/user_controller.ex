@@ -15,6 +15,16 @@ defmodule HadrianWeb.Api.UserController do
     render(conn, "index.json", users: users)
   end
 
+  def create_client(conn, attrs) do
+    with {:ok, %User{} = user} <- Accounts.create_user(attrs) do
+      conn
+      |> fetch_session()
+      |> put_session(:current_user_id, user.id)
+      |> put_session(:current_user_type, :client)
+      |> redirect(external: Session.get_redirection_url(user))
+    end
+  end
+
   def create(conn, attrs) do
     with {:ok, %ComplexesOwner{} = complexes_owner} <- Accounts.create_complexes_owner(attrs) do
       conn

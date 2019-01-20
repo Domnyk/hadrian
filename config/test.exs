@@ -1,5 +1,7 @@
 use Mix.Config
 
+client_url = "https://domain.test.com"
+
 # We don't run a server during test. If one is required,
 # you can enable the server option below.
 config :hadrian, HadrianWeb.Endpoint,
@@ -23,10 +25,13 @@ config :phoenix_integration,
   endpoint: HadrianWeb.Endpoint
 
 # Configure access token module for Facebook
-config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.InMemory
+config :hadrian, :fb_access_token, Hadrian.Authentication.Facebook.InMemory
 
 # Configure client url
-config :hadrian, :client_url, "https://domain.test.com"
+config :hadrian, :client_url, client_url
+
+# Redirect url when client's session in created
+config :hadrian, :redirect_client_url, client_url <> "/login_ok"
 
 # Configure Paypal's sandbox address
 config :hadrian, :api_url, "https://api.sandbox.paypal.com"

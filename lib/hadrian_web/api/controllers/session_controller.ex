@@ -84,32 +84,24 @@ defmodule HadrianWeb.Api.SessionController do
   end
 
   defp handle_fb_resp(conn, code) do
+    alias HadrianWeb.Api.UserController
+
     Logger.info("Successful FB login")
-    redirect_url = Agent.get(__MODULE__, fn state -> state end)
+    fb = Application.get_env(:hadrian, :fb_access_token)
 
-    with {:ok, access_token} <- Authentication.Facebook.exchange_code_for_access_token(code),
-         {:ok, %{fb_id: fb_id, name: name}} <- Authentication.Facebook.get_user(access_token)
-    do
-      case Accounts.get_user_by_fb_id(fb_id) do
-        {:ok, %User{} = user} ->
-          Logger.info("User exists in DB. Creating session")
-          conn
-          |> fetch_session()
-          |> put_session(:current_user_id, user.id)
-          |> put_session(:current_user_type, :client)
-          |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}&id=#{user.id}")
-        {:no_such_user, fb_id: _} ->
-          Logger.info("No user in database with such fb_id: #{inspect(fb_id)}. Creating user")
-          {:ok, %User{} = user} = Accounts.create_user(%{fb_id: fb_id, display_name: name, paypal_email: "test@gmail.com"})
-          conn
-          |> fetch_session()
-          |> put_session(:current_user_id, user.id)
-          |> put_session(:current_user_type, :client)
-          |> redirect(external: redirect_url <> "#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}&id=#{user.id}")
-      end
+    with {:ok, access_token} <- fb.exchange_code_for_access_token(code),
+         {:ok, user} <- fb.get_user(access_token),
+         {:ok, %User{} = user} <- Accounts.get_user_by_fb(user) do
+      Logger.info("User exists in DB. Creating session")
+      conn
+      |> fetch_session()
+      |> put_session(:current_user_id, user.id)
+      |> put_session(:current_user_type, :client)
+      |> redirect(external: Session.get_redirection_url(user))
+    else
+      {:no_such_user, %{fb_id: id, name: name}} -> UserController.create_client(conn, %{fb_id: id, display_name: name, paypal_email: "test@test.com"})
+    end
   end
-
-end
 
   defp handle_error_from_fb(conn, error, error_reason) do
     redirect_url = Agent.get(__MODULE__, fn state -> state end)

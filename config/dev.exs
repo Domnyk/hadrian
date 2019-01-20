@@ -1,6 +1,7 @@
 use Mix.Config
 
 host = "localhost"
+client_url = "https://localhost:8080"
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -65,10 +66,13 @@ config :hadrian, Hadrian.Repo,
   pool_size: 10
 
 # Configure access token module for Facebook
-config :hadrian, :access_token, Hadrian.Session.Facebook.AccessToken.HTTP
+config :hadrian, :fb_access_token, Hadrian.Authentication.Facebook
 
 # Configure client url
-config :hadrian, :client_url, "https://localhost:8080"
+config :hadrian, :client_url, client_url
+
+# Url where client will be redirected when his session is created
+config :hadrian, :redirect_client_url, client_url <> "/login_ok"
 
 config :hadrian, :domain, "localhost"
 

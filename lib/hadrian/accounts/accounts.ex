@@ -53,6 +53,13 @@ defmodule Hadrian.Accounts do
     end
   end
 
+  def get_user_by_fb(%{fb_id: fb_id, name: _} = user) do
+    case Repo.get_by(User, fb_id: fb_id) do
+      %User{} = user -> {:ok, user}
+      _ -> {:no_such_user, user}
+    end
+  end
+
   @doc """
   Creates a user.
 

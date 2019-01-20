@@ -4,7 +4,7 @@ defmodule HadrianWeb.Api.UserControllerTest do
   alias Hadrian.Accounts
 
   describe "create" do
-    test "inserts user when data is valid", %{conn: conn} do
+    test "inserts owner when data is valid", %{conn: conn} do
       attrs = string_params_for(:complexes_owner)
       conn = post conn, user_path(conn, :create), attrs
       resp = json_response(conn, 200)
