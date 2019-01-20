@@ -19,7 +19,7 @@ defmodule HadrianWeb.Api.SessionControllerTest do
       conn = post conn, session_path(conn, :create, attrs)
 
       assert json_response(conn, 200) == %{"id" => owner.id, "email" => owner.email,
-                                           "paypal_email" => owner.paypal_email}
+                                           "paypal_email" => owner.paypal_email, "csrf_token" => Plug.CSRFProtection.get_csrf_token()}
       assert Plug.Conn.get_session(conn, :current_user_id) == owner.id
     end
 
@@ -49,7 +49,8 @@ defmodule HadrianWeb.Api.SessionControllerTest do
         |> post(session_path(conn, :create, attrs))
         |> json_response(200)
 
-      assert response == %{"id" => owner.id, "email" => owner.email, "paypal_email" => owner.paypal_email}
+      assert response == %{"id" => owner.id, "email" => owner.email, "paypal_email" => owner.paypal_email,
+                           "csrf_token" => Plug.CSRFProtection.get_csrf_token()}
     end
   end
 
