@@ -2,7 +2,6 @@ defmodule Hadrian.Owners.SportObject do
   use Ecto.Schema
   import Ecto.Changeset
   alias Types.TimeInterval
-  alias Hadrian.Repo
   alias Hadrian.Owners.SportArena
   alias Hadrian.Owners.SportObject
 

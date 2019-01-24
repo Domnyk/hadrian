@@ -3,7 +3,6 @@ defmodule HadrianWeb.Api.EventController do
 
   require Logger
 
-  alias Hadrian.Payments
   alias Hadrian.Accounts
   alias Hadrian.Activities
   alias Hadrian.Activities.Event
@@ -24,7 +23,7 @@ defmodule HadrianWeb.Api.EventController do
     event_owner = Accounts.get_user!(get_session(conn, :current_user_id))
 
     with {:ok, %Event{} = event} <- Activities.create_event(params),
-         {:ok, %Participation{} = participation} <- Activities.create_participation(event, event_owner, true)
+         {:ok, %Participation{}} <- Activities.create_participation(event, event_owner, true)
     do
       participations = Activities.list_participations(event.id)
       event = Activities.get_event!(event.id)

@@ -200,13 +200,4 @@ defmodule Hadrian.Payments.Payment do
     token = Payments.fetch_token()
     execute(execute_payment_url, payer_id, token)
   end
-
-  defp parse_execution_body(body) when is_binary(body) do
-
-  end
-
-  defp parse_execution_body(body) do
-    msg = "Argument is not string. body: #{inspect(body)}"
-    raise ArgumentError, message: msg
-  end
 end

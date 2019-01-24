@@ -3,7 +3,6 @@ defmodule Hadrian.Activities.Participation do
   import Ecto.Changeset
   import Ecto.Query, only: [from: 2]
 
-  alias Ecto.Query
   alias Hadrian.Repo
   alias Hadrian.Activities
   alias Hadrian.Activities.Event
@@ -49,7 +48,7 @@ defmodule Hadrian.Activities.Participation do
     end
   end
 
-  defp get_num_of_participators(%Event{id: id} = event) do
+  defp get_num_of_participators(%Event{id: id}) do
     Repo.one(from p in "participations", where: p.event_id == ^id, select: count(p.id))
   end
 end

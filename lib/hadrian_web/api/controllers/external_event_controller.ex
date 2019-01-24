@@ -3,7 +3,6 @@ defmodule HadrianWeb.Api.ExternalEventController do
 
   require Logger
 
-  alias Hadrian.Accounts
   alias Hadrian.Activities
   alias Hadrian.Activities.ExternalEvent
 

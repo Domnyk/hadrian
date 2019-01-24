@@ -3,10 +3,9 @@ defmodule HadrianWeb.Api.Plugs.ValidatePaymentTime do
 
   alias Hadrian.Activities
   alias Hadrian.Activities.Event
-  alias HadrianWeb.Api.Helpers.Session
 
   def init(opts) do
-
+    opts
   end
 
   def call(%Plug.Conn{path_params: %{"event_id" => event_id}} = conn, _opts) do
@@ -18,7 +17,7 @@ defmodule HadrianWeb.Api.Plugs.ValidatePaymentTime do
     end
   end
 
-  defp valid_payment_time?(%Event{end_of_joining_phase: end_1, end_of_paying_phase: end_2} = event) do
+  defp valid_payment_time?(%Event{end_of_joining_phase: end_1, end_of_paying_phase: end_2}) do
     now = Date.utc_today()
 
     payment_after_joining_phase?(now, end_1) && payment_before_payment_phase_end?(now, end_2)
