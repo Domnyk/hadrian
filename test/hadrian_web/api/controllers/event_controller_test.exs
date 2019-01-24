@@ -18,7 +18,6 @@ defmodule HadrianWeb.EventControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json"), event: event, user: user}
   end
 
-  # TODO: Compare all fields
   describe "index" do
     test "lists all events in sport arena", %{conn: conn, event: %Event{id: id} = event} do
       conn = get conn, sport_arena_event_path(conn, :index, event.sport_arena_id)
@@ -70,7 +69,6 @@ defmodule HadrianWeb.EventControllerTest do
     end
   end
 
-  # TODO: Compare all fields
   describe "update event" do
     setup [:sign_user_in]
 

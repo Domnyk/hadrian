@@ -117,18 +117,6 @@ defmodule Hadrian.ParticipationsTest do
       assert participation.is_event_owner == is_event_owner
       assert Activities.get_event!(event.id).participators != []
     end
-
-    # TODO: Write trigger to make this test pass
-    # test "create_participation/3 does not allow for event to have 2 owners", %{sport_arena: sport_arena} do
-    #   event = insert(:event, sport_arena_id: sport_arena.id)
-    #   user_1 = insert(:user)
-    #   user_2 = insert(:user)
-    #   is_event_owner = true
-    #
-    #   assert {:ok, %Participation{}} = Activities.create_participation(event, user_1, is_event_owner)
-    #   assert {:error, %Changeset{errors: [is_event_owner: {"event can have only one owner", []}]}}
-    #          = Activities.create_participation(event, user_2, is_event_owner)
-    # end
   end
 
   test "delete_participation/2 deletes participation", %{sport_arena: sport_arena} do

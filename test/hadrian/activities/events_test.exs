@@ -26,7 +26,6 @@ defmodule Hadrian.EventsTest do
     assert Activities.list_events(sport_arena.id) == [event]
   end
 
-  # TODO: Compare all fields
   test "get_event!/1 returns the event with given id", %{sport_arena: sport_arena} do
     %Event{id: id} = insert(:event, sport_arena_id: sport_arena.id)
 

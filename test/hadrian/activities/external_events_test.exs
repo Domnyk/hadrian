@@ -25,7 +25,6 @@ defmodule Hadrian.ExternalEventsTest do
     assert Activities.list_external_events(sport_arena.id) == [external_event]
   end
 
-  # TODO: Compare all fields
   test "get_external_event!/1 returns the external event with given id", %{sport_arena: sport_arena} do
     %ExternalEvent{id: id} = insert(:external_event, sport_arena_id: sport_arena.id)
 

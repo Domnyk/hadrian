@@ -195,7 +195,6 @@ defmodule Hadrian.Payments.Payment do
     raise ArgumentError, message: msg
   end
 
-  # TODO: This should be generalized with handle_unauthorized/2
   defp handle_unauthorized_when_executing(execute_payment_url, payer_id) do
     Logger.warn("Token expired")
     token = Payments.fetch_token()

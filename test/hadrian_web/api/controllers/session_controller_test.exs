@@ -27,9 +27,6 @@ defmodule HadrianWeb.Api.SessionControllerTest do
       attrs = string_params_for(:complexes_owner)
       {:ok, %ComplexesOwner{} = complexes_owner} = Accounts.create_complexes_owner(attrs)
 
-      # Initializing session this way depends makes it dependent on how current user is stored.
-      # Ideally: request is made, then second request with session set to first request's session value is made
-      # TODO: Refactor session initialization
       response =
         conn
         |> Plug.Test.init_test_session(current_user_id: complexes_owner.id)

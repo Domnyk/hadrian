@@ -103,7 +103,6 @@ defmodule HadrianWeb.SportObjectControllerTest do
   describe "update" do
     setup [:sign_owner_in]
 
-    # TODO: This is verbose
     test "renders sport object when data is valid", %{conn: conn, sport_object: sport_object} do
       params = build(:sport_object_params)
                |> Kernel.put_in(["data", "sport_object", "sport_complex_id"], sport_object.sport_complex_id)
@@ -165,7 +164,6 @@ defmodule HadrianWeb.SportObjectControllerTest do
     end
   end
 
-  # TODO: This is verbose
   defp are_sport_objects_the_same(%SportObject{} = sport_object, sport_object_in_json_format) do
     assert sport_object_in_json_format["id"] == sport_object.id
     assert sport_object_in_json_format["name"] == sport_object.name

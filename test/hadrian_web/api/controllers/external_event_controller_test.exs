@@ -18,7 +18,6 @@ defmodule ExternalEventControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json"), external_event: external_event, user: user}
   end
 
-  # TODO: Compare all fields
   describe "index" do
     test "lists all external events in sport arena", %{conn: conn, external_event: %ExternalEvent{id: id} = external_event} do
       conn = get conn, sport_arena_external_event_path(conn, :index, external_event.sport_arena_id)
@@ -69,7 +68,6 @@ defmodule ExternalEventControllerTest do
     end
   end
 
-  # TODO: Compare all fields
   describe "update external_event" do
     setup [:sign_owner_in]
 
