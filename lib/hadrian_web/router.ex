@@ -20,7 +20,6 @@ defmodule HadrianWeb.Router do
 
   pipeline :authorize do
     plug Authorize
-    plug Plug.CSRFProtection, allow_hosts: [Application.get_env(:hadrian, :client_url)]
   end
 
   scope "/api", HadrianWeb.Api do

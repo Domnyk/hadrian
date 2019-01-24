@@ -17,10 +17,13 @@ defmodule HadrianWeb.Api.UserController do
 
   def create_client(conn, attrs) do
     with {:ok, %User{} = user} <- Accounts.create_user(attrs) do
+      token = Plug.CSRFProtection.get_csrf_token()
+
       conn
       |> fetch_session()
       |> put_session(:current_user_id, user.id)
       |> put_session(:current_user_type, :client)
+      |> put_session("_csrf_token", Process.get(:plug_unmasked_csrf_token))
       |> redirect(external: Session.get_redirection_url(user))
     end
   end
