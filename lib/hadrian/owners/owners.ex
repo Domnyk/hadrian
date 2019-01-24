@@ -185,6 +185,14 @@ defmodule Hadrian.Owners do
   """
   def get_sport_object!(id), do: Repo.get!(SportObject, id)
 
+  def get_sport_object(id) do
+    try do
+      {:ok, Repo.get!(SportObject, id)}
+    rescue
+      Ecto.NoResultsError -> {:error, :not_found}
+    end
+  end
+
   @doc """
   Gets a single sport object with loaded sport arenas and disciplines
 
@@ -384,6 +392,14 @@ defmodule Hadrian.Owners do
 
   """
   def get_sport_arena!(id), do: Repo.get!(SportArena, id)
+
+  def get_sport_arena(id) do
+    try do
+      {:ok, Repo.get!(SportArena, id)}
+    rescue
+      Ecto.NoResultsError -> {:error, :not_found}
+    end
+  end
 
   @doc """
   Creates a sport_arena.

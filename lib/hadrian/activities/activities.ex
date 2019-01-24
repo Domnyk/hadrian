@@ -151,6 +151,14 @@ defmodule Hadrian.Activities do
     Repo.get!(ExternalEvent, id)
   end
 
+  def get_external_event(id) do
+    try do
+      {:ok, Repo.get!(ExternalEvent, id)}
+    rescue
+      Ecto.NoResultsError -> {:error, :not_found}
+    end
+  end
+
   def create_external_event(attrs \\ %{}) do
     %ExternalEvent{}
     |> ExternalEvent.changeset(attrs)

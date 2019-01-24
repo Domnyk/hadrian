@@ -6,11 +6,13 @@ defmodule HadrianWeb.SportObjectControllerTest do
   alias Hadrian.Owners.SportArena
 
   setup %{conn: conn} do
-    sport_complex = insert(:sport_complex)
+    [owner, owner_2] = insert_pair(:complexes_owner)
+    sport_complex = insert(:sport_complex, complexes_owner_id: owner.id)
     sport_object = insert(:sport_object, sport_complex_id: sport_complex.id)
+    conn = Plug.Test.init_test_session(conn, %{current_user_id: owner.id, current_user_type: :owner})
 
     {:ok, conn: put_req_header(conn, "accept", "application/json"), sport_complex: sport_complex,
-     sport_object: sport_object}
+     sport_object: sport_object, owner: owner, owner_2: owner_2}
   end
 
   describe "index/0" do
@@ -58,8 +60,6 @@ defmodule HadrianWeb.SportObjectControllerTest do
   end
 
   describe "create" do
-    setup [:sign_owner_in]
-
     test "when data is valid it should create sport object", %{conn: conn, sport_complex: sport_complex} do
       request_data = build(:sport_object_params)
       |> Kernel.put_in(["data", "sport_object", "sport_complex_id"], sport_complex.id)
@@ -101,8 +101,6 @@ defmodule HadrianWeb.SportObjectControllerTest do
   end
 
   describe "update" do
-    setup [:sign_owner_in]
-
     test "renders sport object when data is valid", %{conn: conn, sport_object: sport_object} do
       params = build(:sport_object_params)
                |> Kernel.put_in(["data", "sport_object", "sport_complex_id"], sport_object.sport_complex_id)
@@ -135,11 +133,18 @@ defmodule HadrianWeb.SportObjectControllerTest do
 
       assert json_response(conn, 401)
     end
+
+    test "owner can't update object that's not his", %{conn: conn, sport_object: sport_object, owner_2: owner_2} do
+      conn = Plug.Test.init_test_session(conn, %{current_user_id: owner_2.id, current_user_type: :owner})
+      params = %{"data" => %{"sport_object" => %{"name" => nil}}}
+
+      conn = put conn, sport_object_path(conn, :update, sport_object.id), params
+
+      assert json_response(conn, 401)
+    end
   end
 
   describe "delete" do
-    setup [:sign_owner_in]
-
     test "deletes chosen sport object", %{conn: conn, sport_object: sport_object} do
       conn = delete conn, sport_object_path(conn, :delete, sport_object.id)
 
@@ -162,6 +167,13 @@ defmodule HadrianWeb.SportObjectControllerTest do
 
       assert json_response(conn, 401)
     end
+
+    test "owner can't delete object he doesn't own", %{conn: conn, sport_object: sport_object, owner_2: owner_2} do
+      conn = Plug.Test.init_test_session(conn, %{current_user_id: owner_2.id, current_user_type: :owner})
+      conn = delete conn, sport_object_path(conn, :delete, sport_object.id)
+
+      assert json_response(conn, 401)
+    end
   end
 
   defp are_sport_objects_the_same(%SportObject{} = sport_object, sport_object_in_json_format) do
@@ -173,13 +185,6 @@ defmodule HadrianWeb.SportObjectControllerTest do
     assert sport_object_in_json_format["booking_margin"]["days"] == sport_object.booking_margin.days
     assert sport_object_in_json_format["booking_margin"]["secs"] == sport_object.booking_margin.secs
     assert sport_object_in_json_format["sport_complex_id"] == sport_object.sport_complex_id
-  end
-
-  defp sign_owner_in(%{conn: conn}) do
-    owner = insert(:owner)
-    conn_with_signed_owner = Plug.Test.init_test_session(conn, %{current_user_id: owner.id, current_user_type: :owner})
-
-    {:ok, conn: conn_with_signed_owner}
   end
 
   defp sign_client_in(conn) do

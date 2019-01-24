@@ -22,6 +22,13 @@ defmodule HadrianWeb.Api.Helpers.Session do
     end
   end
 
+  def handle_unauthorized_owner(conn, entity) when is_binary(entity) do
+    conn
+    |> put_status(:unauthorized)
+    |> Phoenix.Controller.render(HadrianWeb.Api.ErrorView, :"401", message: "You aren't owner of this #{entity}.")
+    |> halt()
+  end
+
   def get_redirection_url(%User{} = user) do
     redirect_url = Application.get_env(:hadrian, :client_url)
     params = "/#paypal_email=#{user.paypal_email}&display_name=#{user.display_name}&id=#{user.id}"

@@ -5,6 +5,7 @@ defmodule HadrianWeb.Api.SportObjectController do
 
   alias Hadrian.Owners
   alias Hadrian.Owners.SportObject
+  alias HadrianWeb.Api.Helpers.Session
 
   action_fallback HadrianWeb.Api.FallbackController
 
@@ -41,13 +42,16 @@ defmodule HadrianWeb.Api.SportObjectController do
   def update(conn, %{"data" => %{"sport_object" => sport_object_params}, "id" => id}) do
     sport_object = Owners.get_sport_object!(id)
 
-    with {:ok, %SportObject{} = sport_object} <- Owners.update_sport_object(sport_object, sport_object_params) do
+    with {:ok, :match} <- authorize_owner(conn, id),
+         {:ok, %SportObject{} = sport_object} <- Owners.update_sport_object(sport_object, sport_object_params) do
       render(conn, "show.json", sport_object: sport_object)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    with {:ok, %SportObject{}} <- Owners.delete_sport_object(id) do
+    with {:ok, _} <- Owners.get_sport_object(id),
+         {:ok, _} <- authorize_owner(conn, id),
+         {:ok, %SportObject{}} <- Owners.delete_sport_object(id) do
       send_resp(conn, :no_content, "")
     end
   end
@@ -58,6 +62,21 @@ defmodule HadrianWeb.Api.SportObjectController do
 
     with results when is_list(results) <- Owners.search_for_objects(criteria) do
       render(conn, "search.json", results: results, params: attrs)
+    end
+  end
+
+  defp authorize_owner(conn, object_id) do
+    owner_id = object_id
+    |> Owners.get_sport_object!()
+    |> Map.get(:sport_complex_id)
+    |> Owners.get_sport_complex!()
+    |> Map.get(:complexes_owner_id)
+
+    owner_id_from_session = Session.get_user_id(conn)
+
+    case owner_id == owner_id_from_session do
+      true -> {:ok, :match}
+      false -> {:error, :owner_mismatch}
     end
   end
 end

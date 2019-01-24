@@ -21,4 +21,10 @@ defmodule HadrianWeb.Api.FallbackController do
     |> put_status(:not_found)
     |> render(HadrianWeb.Api.ErrorView, :"404")
   end
+
+  def call(conn, {:error, :owner_mismatch}) do
+    conn
+    |> put_status(:unauthorized)
+    |> render(HadrianWeb.Api.ErrorView, :"401", message: "You aren't owner of this entity.")
+  end
 end

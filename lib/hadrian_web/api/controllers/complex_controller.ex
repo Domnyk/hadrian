@@ -28,7 +28,8 @@ defmodule HadrianWeb.Api.ComplexController do
     complex = Owners.get_sport_complex!(id)
     attrs = insert_owner_in_attrs(attrs, conn)
 
-    with {:ok, %SportComplex{} = complex} <- Owners.update_sport_complex(complex, attrs) do
+    with {:ok, :match} <- authorize_owner(conn, id),
+         {:ok, %SportComplex{} = complex} <- Owners.update_sport_complex(complex, attrs) do
       conn
       |> put_status(:ok)
       |> render("show.json", complex: complex)
@@ -37,6 +38,7 @@ defmodule HadrianWeb.Api.ComplexController do
   
   def delete(conn, %{"id" => id}) do
     with {:ok, %SportComplex{} = complex} <- Owners.get_sport_complex(id),
+         {:ok, :match} <- authorize_owner(conn, id),
          {:ok, %SportComplex{}} <- Owners.delete_sport_complex(complex) do
       conn
       |> put_status(:ok)
@@ -52,5 +54,15 @@ defmodule HadrianWeb.Api.ComplexController do
 
   defp insert_owner_in_attrs(attrs, conn) when is_map(attrs) do
     Map.merge(attrs, %{"complexes_owner_id" => get_owner_id(conn)})
+  end
+
+  defp authorize_owner(conn, complex_id) do
+    %SportComplex{complexes_owner_id: owner_id} = Owners.get_sport_complex!(complex_id)
+    owner_id_from_session = Session.get_user_id(conn)
+
+    case owner_id == owner_id_from_session do
+      true -> {:ok, :match}
+      false -> {:error, :owner_mismatch}
+    end
   end
 end

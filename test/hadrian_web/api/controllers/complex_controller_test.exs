@@ -7,11 +7,11 @@ defmodule HadrianWeb.Api.ComplexControllerTest do
   @invalid_attrs %{name: nil}
 
   setup %{conn: conn} do
-    owner = insert(:complexes_owner)
+    [owner, owner_2] = insert_pair(:complexes_owner)
     complex = insert(:sport_complex, complexes_owner_id: owner.id)
-    conn = Plug.Test.init_test_session(conn, %{current_user_id: owner.id})
+    conn = Plug.Test.init_test_session(conn, %{current_user_id: owner.id, current_user_type: :owner})
 
-    {:ok, conn: put_req_header(conn, "accept", "application/json"), complex: complex, owner: owner}
+    {:ok, conn: put_req_header(conn, "accept", "application/json"), complex: complex, owner: owner, owner_2: owner_2}
   end
 
   describe "index" do
@@ -50,8 +50,6 @@ defmodule HadrianWeb.Api.ComplexControllerTest do
   end
 
   describe "update" do
-    setup [:sign_owner_in]
-
     test "updates complex", %{conn: conn, complex: sport_complex} do
       attrs = string_params_for(:sport_complex)
 
@@ -74,11 +72,17 @@ defmodule HadrianWeb.Api.ComplexControllerTest do
 
       assert json_response(conn, 401)
     end
+
+    test "owner can't change complex that is not his", %{conn: conn, complex: sport_complex, owner_2: owner_2} do
+      conn = Plug.Test.init_test_session(conn, %{current_user_id: owner_2.id})
+      attrs = string_params_for(:sport_complex)
+
+      conn = put conn, complex_path(conn, :update, sport_complex.id), attrs
+      assert json_response(conn, 401)
+    end
   end
 
   describe "delete" do
-    setup [:sign_owner_in]
-
     test "deletes chosen sport complex", %{conn: conn, complex: complex} do
       conn = delete conn, complex_path(conn, :delete, complex.id)
       %{"id" => id} = resp = json_response(conn, 200)
@@ -99,6 +103,13 @@ defmodule HadrianWeb.Api.ComplexControllerTest do
       conn = sign_client_in(conn)
       conn = delete conn, complex_path(conn, :delete, complex.id)
 
+      assert json_response(conn, 401)
+    end
+
+    test "owner can't delete complex that is not his", %{conn: conn, complex: complex, owner_2: owner_2} do
+      conn = Plug.Test.init_test_session(conn, %{current_user_id: owner_2.id, current_user_type: :owner})
+
+      conn = delete conn, complex_path(conn, :delete, complex.id)
       assert json_response(conn, 401)
     end
   end
