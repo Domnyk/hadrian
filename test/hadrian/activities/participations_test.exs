@@ -65,7 +65,7 @@ defmodule Hadrian.ParticipationsTest do
     end
 
     test "allows to join same user to different events", %{sport_arena: sport_arena} do
-      event_1 = insert(:event, sport_arena_id: sport_arena.id)
+      event_1 = insert(:event, sport_arena_id: sport_arena.id, start_time: ~T[11:00:00.000000], end_time: ~T[13:00:00.000000])
       event_2 = insert(:event, sport_arena_id: sport_arena.id)
       user = insert(:user)
 

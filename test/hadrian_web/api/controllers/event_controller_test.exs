@@ -30,7 +30,7 @@ defmodule HadrianWeb.EventControllerTest do
 
     test "renders event when data is valid", %{conn: conn, event: %Event{sport_arena_id: sport_arena_id}} do
       create_attrs =
-        string_params_for(:event, sport_arena_id: sport_arena_id)
+        string_params_for(:event, sport_arena_id: sport_arena_id, start_time: ~T[11:00:00.000000], end_time: ~T[13:00:00.000000])
         |> prepare_time_attrs()
 
       conn = post conn, sport_arena_event_path(conn, :create, sport_arena_id), event: create_attrs
