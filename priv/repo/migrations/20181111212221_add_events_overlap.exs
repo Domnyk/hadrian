@@ -4,28 +4,23 @@ defmodule Hadrian.Repo.Migrations.AddEventsOverlap do
   def up do
     execute "
       CREATE FUNCTION events_overlap()
-        RETURNS TRIGGER
+        RETURNS trigger
       LANGUAGE plpgsql
       AS $$
       DECLARE
-        overlaping_event_start_time TIME;
-        overlaping_event_end_time TIME;
-      BEGIN
-        SELECT events.start_time, events.end_time INTO overlaping_event_start_time, overlaping_event_end_time FROM events
-        WHERE
-          event_day = NEW.event_day AND
-          (
-            (NEW.end_time > events.start_time AND NEW.end_time < events.end_time) OR
-            (NEW.start_time > events.start_time AND NEW.start_time < events.end_time)
-          );
+          existing_start_time TIME;
+          existing_end_time TIME;
 
-        IF (overlaping_event_start_time IS NOT NULL OR overlaping_event_end_time IS NOT NULL) THEN
-          RAISE EXCEPTION 'This event would overlap with existing one. Existing event takes place during: % and %',
-                       overlaping_event_start_time, overlaping_event_end_time;
-        END IF;
+          BEGIN
+            SELECT events.start_time, events.end_time INTO existing_start_time, existing_end_time FROM events;
 
-        RETURN NEW;
-      END
+            IF ((NEW.start_time, NEW.end_time) OVERLAPS (existing_start_time, existing_end_time )) THEN
+              RAISE EXCEPTION 'This event would overlap with existing one. Existing event takes place during: % and %',
+                           existing_start_time, existing_end_time;
+            END IF;
+
+            RETURN NEW;
+          END
       $$;
     "
 
