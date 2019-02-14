@@ -26,7 +26,7 @@ jobs:
       - MIX_ENV=dev POSTGRES_DB=hadrian_dev POSTGRES_USER=postgres POSTGRES_PASSWORD=""
     name: "Run migrations"
     before_script:
-      - psql -c 'create database $POSTGRES_DB;' -U $POSTGRES_USER
+      - psql -c "create database $POSTGRES_DB;" -U $POSTGRES_USER
       - mix deps.get --only $MIX_ENV
       - mix ecto.create
     script:
