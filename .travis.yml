@@ -2,6 +2,9 @@ language: elixir
 elixir: '1.7.2'
 otp_release: '21.0'
 
+services:
+  - postgresql
+
 
 stages:
   - "Build"
@@ -18,6 +21,17 @@ jobs:
       - mix local.rebar --force
       - mix deps.get --only $MIX_ENV
     script: mix compile
+  - stage: "Build"
+    env:
+      - MIX_ENV=dev POSTGRES_DB=hadrian_dev POSTGRES_USER=postgres POSTGRES_PASSWORD=""
+    name: "Run migrations"
+    before_script:
+      - psql -c 'create database $POSTGRES_DB;' -U $POSTGRES_USER
+      - mix deps.get --only $MIX_ENV
+      - mix ecto.create
+    script:
+      - mix ecto.migrate
+
 
 
 
