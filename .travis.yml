@@ -34,6 +34,29 @@ jobs:
       - mix ecto.create
     script:
       - mix ecto.migrate
+  - stage: "Test"
+    name: "Run unit tests"
+    env:
+      - MIX_ENV=test POSTGRES_DB=hadrian_test POSTGRES_USER=postgres POSTGRES_PASSWORD=""
+    before_script:
+    - psql -c "create database $POSTGRES_DB;" -U $POSTGRES_USER
+    - mix local.hex --force
+    - mix local.rebar --force
+    - mix deps.get --only $MIX_ENV
+    - mix ecto.create
+    - mix ecto.migrate
+    script:
+      - mix test
+  - stage: "Release"
+    name: "Release"
+    script: skip
+    deploy:
+      provider: heroku
+      api_key: $HEROKU_API_KEY
+      app: thawing-crag-67620
+
+
+
 
 
 
