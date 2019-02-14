@@ -1,0 +1,21 @@
+language: elixir
+
+
+stages:
+  - "Build"
+  - "Test"
+  - name: "Release"
+  - if: branch = master
+
+jobs:
+  include:
+  - stage: "Build"
+    name: "Build app"
+    before_script:
+      - mix local.hex --force
+      - mix local.rebar --force
+      - mix deps.get --only $MIX_ENV
+    script: mix compile
+
+
+
