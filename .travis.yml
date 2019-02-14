@@ -5,6 +5,8 @@ otp_release: '21.0'
 services:
   - postgresql
 
+addons:
+  postgresql: "10.0"
 
 stages:
   - "Build"
